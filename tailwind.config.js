@@ -12,8 +12,16 @@ export default {
 
     theme: {
         extend: {
+            //page colors are taken from: https://www.realtimecolors.com/?colors=070b10-f7f9fc-0068ff-83aeea-4f91ed&fonts=Poppins-Poppins
+            colors: {
+                primary: '#0068FF',
+                secondary: '#83AEEA', 
+                accent: '#4F91ED',
+                textColor: '#525252',
+                lightBlueBackground: '#EBF3FF',
+              },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Montserrat', defaultTheme.fontFamily.sans],
             },
         },
     },
