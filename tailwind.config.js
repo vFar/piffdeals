@@ -11,6 +11,10 @@ export default {
     ],
 
     theme: {
+        container: {
+            center: true,
+            padding: '2rem',
+        },
         extend: {
             //page colors are taken from: https://www.realtimecolors.com/?colors=070b10-f7f9fc-0068ff-83aeea-4f91ed&fonts=Poppins-Poppins
             colors: {
@@ -19,6 +23,7 @@ export default {
                 accent: '#4F91ED',
                 textColor: '#525252',
                 lightBlueBackground: '#EBF3FF',
+                whiter: '#f3f8ff',
               },
             fontFamily: {
                 sans: ['Montserrat', defaultTheme.fontFamily.sans],

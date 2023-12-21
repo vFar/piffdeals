@@ -1,6 +1,11 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import Navbar from './Navbar.vue';
+import Footer from './Footer.vue';
+
+
+
+const getImageUrl = (filename) => `/storage/images/${filename}`;
 
 defineProps({
     canLogin: {
@@ -21,11 +26,26 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Store" />
-    <Navbar/>
+    <Head title="Veikals" />
+    <Navbar />
+    <div class="cross-patternSVGLight">
+        <div class="container flex items-center mx-auto max-w-screen-xl">
+            <div
+                class="w-72 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-md shadow-md">
 
-    <div class="bg-lightBlueBackground min-h-screen">
-            asdasd
+                <a href="" class="flex text-textColor uppercase leading-7 ">Ķermenim</a>
+                <a href="" class="flex text-textColor uppercase leading-7">Saldumi</a>
+                <a href="" class="flex text-textColor uppercase leading-7">Sadzīves ķīmija</a>
+                <a href="" class="flex text-textColor uppercase leading-7">ĒDIENS</a>
+                <a href="" class="flex text-textColor uppercase leading-7">Lorem, ipsum.</a>
+                <a href="" class="flex text-textColor uppercase leading-7">Lorem, ipsum dolor.</a>
+                <a href="" class="flex text-textColor uppercase leading-7">Lorem ipsum dolor sit.</a>
+                
+
+
+            </div>
+        </div>
+        <Footer />
     </div>
 
     <!-- <div
@@ -328,3 +348,13 @@ defineProps({
         </div>
     </div> -->
 </template>
+
+<script>
+export default {
+    methods: {
+        getImageUrl(filename) {
+            return `/storage/images/${filename}`;
+        },
+    },
+};
+</script>
