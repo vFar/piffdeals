@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.5.1",
-        "ant-design-vue": "^4.0.6"
+        "ant-design-vue": "^4.0.6",
+        "ziggy-js": "github:tightenco/ziggy"
     }
 }
