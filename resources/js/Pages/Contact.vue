@@ -6,7 +6,7 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
 </script>
 
 <template>
-    <Head title="Sīkdatņu politika" />
+    <Head title="Kontakti" />
     <Navbar />
     <div class="cross-patternSVGLight">
         <div class="py-8">

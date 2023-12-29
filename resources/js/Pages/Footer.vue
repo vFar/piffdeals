@@ -62,8 +62,7 @@
                                 <Link href="/contact" class="border-grow hover:text-whiter footer-hrefs">Sazinies ar mums</Link>
                             </li>
                             <li>
-                                <a href="https://tailwindcss.com/" class="border-grow hover:text-whiter footer-hrefs">Par mums</a>
-                            </li>
+                                <Link href="/about-us" class="border-grow hover:text-whiter footer-hrefs">Par mums</Link>                            </li>
                         </ul>
                     </div>
                     <div>
