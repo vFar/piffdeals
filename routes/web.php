@@ -39,6 +39,22 @@ Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 });
 
+Route::get('/cookies-information', function () {
+    return Inertia::render('CookiesInfo');
+});
+
+Route::get('/terms-of-use', function () {
+    return Inertia::render('TermsOfUse');
+});
+
+Route::get('/contact', function () {
+    return Inertia::render('Contact');
+});
+
+Route::get('/about-us', function () {
+    return Inertia::render('AboutUs');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -28,30 +28,28 @@
 
 
 <template>
-    <img :src="getImageUrl('footer_wave_svg.svg')" alt="Text" class="w-full">
+            <img :src="getImageUrl('footer_wave_svg.svg')" alt="Text" class="w-full mt-12">
 
-
-    <footer class="p-4 bg-primary sm:p-6">
+    <footer class="p-4 bg-primary">
         <div class="mx-auto max-w-screen-xl">
-            <div class="md:flex md:justify-between">
-                <div class="mb-6 md:mb-0">
-                    <a href="https://piffdeals.lv" class="flex items-center">
+            <div class="flex justify-between">
+                <div class="mb-6">
+                    <a href="/" class="flex items-center">
                         <img :src="getImageUrl('piffdeals_logo_text_accent.svg')" alt="Text" class="w-8/12">
                     </a>
                 </div>
-                <div class="grid grid-cols-4 gap-8 sm:gap-6 sm:grid-cols-4">
+                <div class="grid grid-cols-4 gap-8">
                     <div>
                         <h2 class="mb-6 text-sm font-bold text-lightBlueBackground uppercase">Internetveikals</h2>
                         <ul class="text-gray-400">
                             <li class="mb-4">
-                                <Link href="/privacy-policy" class="border-grow hover:text-secondary footer-hrefs">Privātuma politika</Link>
-                                <!-- <a href="#" class="border-grow hover:text-secondary footer-hrefs">Privātuma politika</a> -->
+                                <Link href="/privacy-policy" class="border-grow hover:text-whiter footer-hrefs">Privātuma politika</Link>
                             </li>
                             <li class="mb-4">
-                                <a href="#" class="border-grow hover:text-secondary footer-hrefs">Lietošanas noteikumi</a>
+                                <Link href="/terms-of-use" class="border-grow hover:text-whiter footer-hrefs">Lietošanas noteikumi</Link>
                             </li>
                             <li class="mb-4">
-                                <a href="#" class="border-grow hover:text-secondary footer-hrefs">Sīkdatnes</a>
+                                <Link href="/cookies-information" class="border-grow hover:text-whiter footer-hrefs">Sīkdatnes</Link>
                             </li>
 
                         </ul>
@@ -61,10 +59,10 @@
                         <h2 class="mb-6 text-sm font-bold text-lightBlueBackground uppercase">Informācija</h2>
                         <ul class="text-gray-400">
                             <li class="mb-4">
-                                <a href="https://piffdeals.lv" class="border-grow hover:text-secondary footer-hrefs">Sazinies ar mums</a>
+                                <Link href="/contact" class="border-grow hover:text-whiter footer-hrefs">Sazinies ar mums</Link>
                             </li>
                             <li>
-                                <a href="https://tailwindcss.com/" class="border-grow hover:text-secondary footer-hrefs">Par mums</a>
+                                <a href="https://tailwindcss.com/" class="border-grow hover:text-whiter footer-hrefs">Par mums</a>
                             </li>
                         </ul>
                     </div>
@@ -72,10 +70,10 @@
                         <h2 class="mb-6 text-sm font-bold text-lightBlueBackground uppercase">Profils</h2>
                         <ul class="text-gray-400">
                             <li class="mb-4">
-                                <a href="#" class="border-grow hover:text-secondary footer-hrefs">Profils</a>
+                                <a href="#" class="border-grow hover:text-whiter footer-hrefs">Profils</a>
                             </li>
                             <li class="mb-4">
-                                <a href="#" class="border-grow hover:text-secondary footer-hrefs">Vēlmju saraksts</a>
+                                <a href="#" class="border-grow hover:text-whiter footer-hrefs">Vēlmju saraksts</a>
                             </li>
                         </ul>
                     </div>
@@ -83,10 +81,10 @@
                         <h2 class="mb-6 text-sm font-bold text-lightBlueBackground uppercase">SIA FGHDKDFGKDFGIK</h2>
                         <ul class="text-gray-400">
                             <li class="mb-4">
-                                <a href="mailto:info@piffdeals.lv" class="border-grow hover:text-secondary footer-hrefs">info@piffdeals.lv</a>
+                                <a href="mailto:info@piffdeals.lv" class="border-grow hover:text-whiter footer-hrefs">info@piffdeals.lv</a>
                             </li>
                             <li class="mb-4">
-                                <a href="tel:+37129999999" class="border-grow hover:text-secondary footer-hrefs">+371 29 999 999</a>
+                                <a href="tel:+37129999999" class="border-grow hover:text-whiter footer-hrefs">+371 29 999 999</a>
                             </li>
                         </ul>
                     </div>

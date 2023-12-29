@@ -6,8 +6,8 @@
     <header class="bg-lightBlueBackground text-black p-1">
         <div class="container text-textColor mx-auto max-w-screen-xl flex justify-between items-center">
             <div class="flex space-x-12">
-                <h1 class="text-sm">info@piffdeals.lv</h1>
-                <h1 class="text-sm">+371 29 999 999</h1>
+                <a href="mailto:info@piffdeals.lv" class="hover:underline"><h1 class="text-sm text-textColor">info@piffdeals.lv</h1></a>
+                <a href="tel:+37129999999" class="hover:underline"><h1 class="text-sm text-textColor">+371 29 999 999</h1></a>
             </div>
 
 
@@ -26,7 +26,7 @@
         </div>
     </header>
 
-    <nav class="bg-primary py-6 relative">
+    <nav class="bg-primary py-4 sticky top-0 z-50">
         <div class="container mx-auto max-w-screen-xl grid grid-cols-3 justify-between items-center gap-6">
 
             <!-- Logo -->
@@ -64,7 +64,7 @@
     </nav>
 
     <div class="flex justify-center items-center bg-slate-600 tracking-wider uppercase text-white py-1">
-        <h1 class="font-semibold">Atrodi visu nepieciešamo ar Piffdeals</h1>
+        <h1 class="font-semibold text-whiter">Atrodi visu nepieciešamo ar Piffdeals</h1>
     </div>
 </template>
 

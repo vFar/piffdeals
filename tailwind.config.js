@@ -23,7 +23,7 @@ export default {
                 accent: '#4F91ED',
                 textColor: '#525252',
                 lightBlueBackground: '#EBF3FF',
-                whiter: '#f3f8ff',
+                whiter: '#fffafa',
               },
             fontFamily: {
                 sans: ['Montserrat', defaultTheme.fontFamily.sans],
