@@ -26,22 +26,22 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
                             <label for="email" class="block mb-2 text-sm font-medium text-textColor">E-pasts: <span
                                     class="text-red-600">*</span></label>
                             <input type="email" id="email"
-                                class="placeholder-gray-300 shadow-sm bg-whiter border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
+                                class="placeholder-gray-300 shadow-sm bg-whiter border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 "
                                 placeholder="piemers@epasts.lv" required>
                         </div>
                         <div>
                             <label for="subject" class="block mb-2 text-sm font-medium text-textColor">Temats: <span
                                     class="text-red-600">*</span></label>
                             <input type="text" id="subject"
-                                class="placeholder-gray-300 block p-3 w-full text-sm text-gray-900 bg-whiter rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                class="placeholder-gray-300 block p-3 w-full text-sm text-gray-900 bg-whiter rounded-lg border border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
                                 placeholder="Kā mēs varam palīdzēt?" required>
                         </div>
                         <div class="sm:col-span-2">
                             <label for="message" class="block mb-2 text-sm font-medium text-textColor">Jūsu ziņojums: <span
                                     class="text-red-600">*</span></label>
-                            <textarea id="message" rows="6"
-                                class="placeholder-gray-300 block p-2.5 w-full text-sm text-gray-900 bg-whiter rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
-                                placeholder="Leave a comment..."></textarea>
+                            <textarea id="message" rows="6" cols="50"
+                                class="placeholder-gray-300 resize-none block p-2.5 w-full text-sm text-gray-900 bg-whiter rounded-lg shadow-sm border border-gray-300 focus:ring-primary focus:border-primary"
+                                placeholder="Paskaidro situāciju šeit"></textarea>
                         </div>
                         <button type="submit"
                             class="mt-6 inline-flex items-center font-semibold border text-primary border-primary hover:text-whiter hover:bg-primary rounded-lg text-sm px-5 py-2.5 text-center mb-2">Sūtīt

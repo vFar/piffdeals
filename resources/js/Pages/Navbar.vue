@@ -1,9 +1,10 @@
 <script setup>
     import { Link } from '@inertiajs/vue3';
+    import ThemeSwitch from '../Components/ThemeSwitch.vue';
 </script>
 
 <template>
-    <header class="bg-lightBlueBackground text-black p-1">
+    <header class="bg-whiter text-black p-1">
         <div class="container text-textColor mx-auto max-w-screen-xl flex justify-between items-center">
             <div class="flex space-x-12">
                 <a href="mailto:info@piffdeals.lv" class="hover:underline"><h1 class="text-sm text-textColor">info@piffdeals.lv</h1></a>
@@ -12,11 +13,12 @@
 
 
             <!-- will need reworking, potential web translators: google translate API -->
-            <div>
+            <div class="flex space-x-4">
                 
+                <ThemeSwitch />
                 
                 <select
-                    class="py-1 pr-7 text-sm bg-lightBlueBackground border-none font-semibold focus:ring-lightBlueBackground rounded-lg">
+                    class="py-1 pr-7 text-sm bg-whiter border-none font-semibold focus:ring-whiter rounded-lg">
                     <option selected>LV</option>
                     <option>RU</option>
                     <option>EN</option>
