@@ -28,14 +28,13 @@
 
 
 <template>
-            <img :src="getImageUrl('footer_wave_svg.svg')" alt="Text" class="w-full mt-12">
-
+            <img :src="getImageUrl('footer_wave_svg.svg')" alt="footerWave" draggable="false" class="select-none w-full mt-12">
     <footer class="p-4 bg-primary">
         <div class="mx-auto max-w-screen-xl">
             <div class="flex justify-between">
                 <div class="mb-6">
                     <a href="/" class="flex items-center">
-                        <img :src="getImageUrl('piffdeals_logo_text_accent.svg')" alt="Text" class="w-8/12">
+                        <img :src="getImageUrl('piffdeals_logo_text_accent.svg')" draggable="false" alt="footerLogo" class="select-none w-8/12">
                     </a>
                 </div>
                 <div class="grid grid-cols-4 gap-8">
@@ -91,11 +90,11 @@
             </div>
             <hr class="my-6 border-accent sm:mx-auto lg:my-8" />
             <div class="sm:flex sm:items-center sm:justify-between">
-                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 Piffdeals. Visas tiesības
+                <span class="text-sm text-gray-500 sm:text-center">© 2024 Piffdeals. Visas tiesības
                     aizsargātas.
                 </span>
                 <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">
-                    <a href="https://www.linkedin.com/in/markuss-balodis-918389265/" class="text-3xl has-tooltip">
+                    <a href="https://www.linkedin.com/in/markuss-balodis-918389265/" target="_blank" class="text-3xl has-tooltip">
                         <i class="fa-brands fa-linkedin text-lightBlueBackground"></i>
                         <span
                             class='tooltip rounded shadow-lg p-1 bg-gray-100 text-xs text-textColor -mt-6 -ml-10'>Developer</span>

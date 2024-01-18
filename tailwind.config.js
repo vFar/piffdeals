@@ -13,6 +13,7 @@ export default {
     theme: {
         container: {
             center: true,
+            
         },
         extend: {
             //page colors are taken from: https://www.realtimecolors.com/?colors=070b10-f7f9fc-0068ff-83aeea-4f91ed&fonts=Poppins-Poppins

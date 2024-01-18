@@ -1,5 +1,12 @@
 @import "@fortawesome/fontawesome-free/css/all.css";
 
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 *,
 *::before,
 *::after {
@@ -8,6 +15,7 @@
     margin: 0;
     transition: all 0.1s linear;
 }
+
 
 .cross-patternSVGLight {
     background-color: #EBF3FF;

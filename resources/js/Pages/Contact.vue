@@ -1,8 +1,25 @@
-<script setup>
-import { Head, Link } from '@inertiajs/vue3';
+<script setup="ts">
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import Navbar from './Navbar.vue';
 import Footer from './Footer.vue';
 import Breadcrumbs from '../Components/Breadcrumbs.vue';
+
+const form = useForm({
+    email: '',
+    title: '',
+    Textmessage: '',
+})
+
+const submitForm = () => {
+    form.post('/contact/submit', {
+        onSuccess: () => {
+            console.log("yessir")
+        },
+        onError: () => {
+            // Handle error (e.g., show error message)
+        }
+    });
+}
 </script>
 
 <template>
@@ -18,28 +35,30 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
             <section class="">
                 <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
                     <h1 class="mb-4 text-4xl tracking-tight text-center">Sazinies ar mums</h1>
-                    <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">
+                    <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 sm:text-xl">
                         Saskārāties ar tehniskām grūtībām, lietojot mūsu tiešsaistes e-veikalu? Vēlaties dalīties ar
                         atsauksmēm par mūsu tīmekļa vietnes funkcijām? Mēs esam šeit, lai jums palīdzētu!</p>
-                    <form action="#" class="space-y-8">
+
+
+                    <form class="space-y-8" @submit.prevent="submitForm">
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-textColor">E-pasts: <span
                                     class="text-red-600">*</span></label>
-                            <input type="email" id="email"
-                                class="placeholder-gray-300 shadow-sm bg-whiter border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 "
+                            <input type="email" id="email" v-model="form.email"
+                                class="placeholder-gray-300 shadow-sm bg-whiter border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 autofill:bg-red-600"
                                 placeholder="piemers@epasts.lv" required>
                         </div>
                         <div>
                             <label for="subject" class="block mb-2 text-sm font-medium text-textColor">Temats: <span
                                     class="text-red-600">*</span></label>
-                            <input type="text" id="subject"
+                            <input type="text" id="subject" v-model="form.title"
                                 class="placeholder-gray-300 block p-3 w-full text-sm text-gray-900 bg-whiter rounded-lg border border-gray-300 shadow-sm focus:ring-primary focus:border-primary"
                                 placeholder="Kā mēs varam palīdzēt?" required>
                         </div>
                         <div class="sm:col-span-2">
                             <label for="message" class="block mb-2 text-sm font-medium text-textColor">Jūsu ziņojums: <span
                                     class="text-red-600">*</span></label>
-                            <textarea id="message" rows="6" cols="50"
+                            <textarea id="message" rows="6" cols="50" v-model="form.textMessage"
                                 class="placeholder-gray-300 resize-none block p-2.5 w-full text-sm text-gray-900 bg-whiter rounded-lg shadow-sm border border-gray-300 focus:ring-primary focus:border-primary"
                                 placeholder="Paskaidro situāciju šeit"></textarea>
                         </div>

@@ -28,18 +28,66 @@ defineProps({
 <template>
     <Head title="Veikals" />
     <Navbar />
-    <div class="cross-patternSVGLight">
+    <div class="cross-patternSVGLight bg-whiter">
         <div class="container flex items-center mx-auto max-w-screen-xl">
             <div
-                class="w-72 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-md shadow-md">
+                class="w-80 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-md shadow-md">
 
-                <a href="" class="flex text-textColor uppercase leading-7 ">Ķermenim</a>
-                <a href="" class="flex text-textColor uppercase leading-7">Saldumi</a>
-                <a href="" class="flex text-textColor uppercase leading-7">Sadzīves ķīmija</a>
-                <a href="" class="flex text-textColor uppercase leading-7">ĒDIENS</a>
-                <a href="" class="flex text-textColor uppercase leading-7">Lorem, ipsum.</a>
-                <a href="" class="flex text-textColor uppercase leading-7">Lorem, ipsum dolor.</a>
-                <a href="" class="flex text-textColor uppercase leading-7">Lorem ipsum dolor sit.</a>
+                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
+                    <div>
+                        <span class="fas fa-person fa-fw"></span>
+                        <span> Ķermenim</span>
+                    </div>
+                    <span class="fas fa-angle-right"></span>
+                </a>
+
+                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
+                    <div>
+                        <span class="fas fa-ice-cream fa-fw"></span>
+                        <span> Saldumi</span>
+                    </div>
+                    <span class="fas fa-angle-right"></span>
+                </a>
+
+                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
+                    <div>
+                        <span class="fas fa-vial fa-fw"></span>
+                        <span> Sadzīves ķīmija</span>
+                    </div>
+                    <span class="fas fa-angle-right"></span>
+                </a>
+
+                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
+                    <div>
+                        <span class="fas fa-utensils fa-fw"></span>
+                        <span> Ēdiens</span>
+                    </div>
+                    <span class="fas fa-angle-right"></span>
+                </a>
+
+                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
+                    <div>
+                        <span class="fas fa-vial fa-fw"></span>
+                        <span> ķīmija</span>
+                    </div>
+                    <span class="fas fa-angle-right"></span>
+                </a>
+
+                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
+                    <div>
+                        <span class="fas fa-gamepad fa-fw"></span>
+                        <span> Rotaļlietas</span>
+                    </div>
+                    <span class="fas fa-angle-right"></span>
+                </a>
+
+                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
+                    <div>
+                        <span class="fas fa-tv fa-fw"></span>
+                        <span> IT un Datortehnika</span>
+                    </div>
+                    <span class="fas fa-angle-right"></span>
+                </a>
                 
 
 
@@ -47,6 +95,7 @@ defineProps({
         </div>
         <Footer />
     </div>
+
 
 
     <!-- <div
