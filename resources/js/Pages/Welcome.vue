@@ -1,7 +1,8 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import Navbar from './Navbar.vue';
-import Footer from './Footer.vue';
+import Navbar from '../Components/Navbar.vue';
+import Footer from '../Components/Footer.vue';
+import ScrollTopBtn from '../Components/ScrollToTopBtn.vue';
 
 
 
@@ -28,11 +29,11 @@ defineProps({
 <template>
     <Head title="Veikals" />
     <Navbar />
+    <ScrollTopBtn />
     <div class="cross-patternSVGLight bg-whiter">
         <div class="container flex items-center mx-auto max-w-screen-xl">
             <div
                 class="w-80 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-md shadow-md">
-
                 <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
                     <div>
                         <span class="fas fa-person fa-fw"></span>
@@ -88,13 +89,13 @@ defineProps({
                     </div>
                     <span class="fas fa-angle-right"></span>
                 </a>
-                
-
-
             </div>
         </div>
+        <ScrollTopBtn />
         <Footer />
     </div>
+
+
 
 
 

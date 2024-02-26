@@ -1,7 +1,7 @@
 <script setup="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import Navbar from './Navbar.vue';
-import Footer from './Footer.vue';
+import Navbar from '../Components/Navbar.vue';
+import Footer from '../Components/Footer.vue';
 import Breadcrumbs from '../Components/Breadcrumbs.vue';
 
 const form = useForm({
@@ -36,7 +36,7 @@ const submitForm = () => {
                 <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
                     <h1 class="mb-4 text-4xl tracking-tight text-center">Sazinies ar mums</h1>
                     <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 sm:text-xl">
-                        Saskārāties ar tehniskām grūtībām, lietojot mūsu tiešsaistes e-veikalu? Vēlaties dalīties ar
+                        Saskārāties ar tehniskām grūtībām, lietojot mūsu e-veikalu? Vēlaties dalīties ar
                         atsauksmēm par mūsu tīmekļa vietnes funkcijām? Mēs esam šeit, lai jums palīdzētu!</p>
 
 

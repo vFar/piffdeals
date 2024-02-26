@@ -90,14 +90,13 @@
             </div>
             <hr class="my-6 border-accent sm:mx-auto lg:my-8" />
             <div class="sm:flex sm:items-center sm:justify-between">
-                <span class="text-sm text-gray-500 sm:text-center">© 2024 Piffdeals. Visas tiesības
+                <span class="text-sm text-gray-400 sm:text-center">© 2024 Piffdeals. Visas tiesības
                     aizsargātas.
                 </span>
                 <div class="flex mt-4 space-x-6 sm:justify-center sm:mt-0">
                     <a href="https://www.linkedin.com/in/markuss-balodis-918389265/" target="_blank" class="text-3xl has-tooltip">
                         <i class="fa-brands fa-linkedin text-lightBlueBackground"></i>
-                        <span
-                            class='tooltip rounded shadow-lg p-1 bg-gray-100 text-xs text-textColor -mt-6 -ml-10'>Developer</span>
+                        
                     </a>
                 </div>
             </div>

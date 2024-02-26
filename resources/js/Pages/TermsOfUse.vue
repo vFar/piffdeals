@@ -1,8 +1,9 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import Navbar from './Navbar.vue';
-import Footer from './Footer.vue';
+import Navbar from '../Components/Navbar.vue';
+import Footer from '../Components/Footer.vue';
 import Breadcrumbs from '../Components/Breadcrumbs.vue';
+import ScrollTopBtn from '../Components/ScrollToTopBtn.vue';
 </script>
 
 <template>
@@ -283,5 +284,6 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
         </Link>
 
     </section>
+    <ScrollTopBtn/>
     <Footer />
 </div></template>
