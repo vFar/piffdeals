@@ -77,8 +77,8 @@
 
             <!-- Navigation Links -->
             <ul class="flex space-x-10 items-center justify-evenly">
-                <li class="text-white uppercase text-base navbar-hrefs"><a
-                        href="#"><i class="far fa-circle-user mr-1.5 text-xl"></i><span>Profils</span></a></li>
+                <li class="text-white uppercase text-base navbar-hrefs"><Link
+                        href="#"><i class="far fa-circle-user mr-1.5 text-xl"></i><span>Profils</span></Link></li>
                 <li class="text-white uppercase text-base navbar-hrefs"><a
                         href="#"><i class="fas fa-sharp fa-cart-shopping mr-1.5 text-xl"></i><span>Grozs</span></a></li>
                 <li class="text-white uppercase text-base navbar-hrefs"><a

@@ -7,7 +7,7 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
 const form = useForm({
     email: '',
     title: '',
-    Textmessage: '',
+    textmessage: '',
 })
 
 const submitForm = () => {

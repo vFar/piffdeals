@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,6 +45,10 @@ Route::get('/terms-of-use', function () {
 Route::get('/contact', function () {
     return Inertia::render('Contact');
 });
+
+Route::post('/contact', 'ContactController@sendMail')->name('contact.send');
+
+Route::get('/contact/success', [ContactController::class, 'success'])->name('contact.success');
 
 Route::get('/about-us', function () {
     return Inertia::render('AboutUs');
