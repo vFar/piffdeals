@@ -1,6 +1,16 @@
 <script setup>
     import { Link } from '@inertiajs/vue3';
     import ThemeSwitch from '../Components/ThemeSwitch.vue';
+
+    defineProps({
+    canLogin: {
+        type: Boolean,
+    },
+    canRegister: {
+        type: Boolean,
+    },
+});
+
 </script>
 
 <style>

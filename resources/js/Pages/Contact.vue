@@ -7,17 +7,14 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
 const form = useForm({
     email: '',
     title: '',
-    textmessage: '',
+    textMessage: '',
 })
 
 const submitForm = () => {
-    form.post('/contact/submit', {
+    form.post('/contact', {
         onSuccess: () => {
-            console.log("yessir")
+            form.reset();
         },
-        onError: () => {
-            // Handle error (e.g., show error message)
-        }
     });
 }
 </script>
@@ -60,7 +57,7 @@ const submitForm = () => {
                                     class="text-red-600">*</span></label>
                             <textarea id="message" rows="6" cols="50" v-model="form.textMessage"
                                 class="placeholder-gray-300 resize-none block p-2.5 w-full text-sm text-gray-900 bg-whiter rounded-lg shadow-sm border border-gray-300 focus:ring-primary focus:border-primary"
-                                placeholder="Paskaidro situāciju šeit"></textarea>
+                                placeholder="Paskaidro situāciju šeit" required></textarea>
                         </div>
                         <button type="submit"
                             class="mt-6 inline-flex items-center font-semibold border text-primary border-primary hover:text-whiter hover:bg-primary rounded-lg text-sm px-5 py-2.5 text-center mb-2">Sūtīt
@@ -80,7 +77,6 @@ const submitForm = () => {
                 </svg> Atgriezties uz veikalu
             </button>
             </Link>
-
         </section>
         <Footer />
 </div></template>

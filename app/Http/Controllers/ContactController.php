@@ -11,19 +11,18 @@ class ContactController extends Controller
     public function sendMail(Request $request)
     {
         $request->validate([
-            'name' => 'required',
             'email' => 'required|email',
-            'message' => 'required',
+            'title' => 'required',
+            'textMessage' => 'required',
         ]);
-
-        // Determine the appropriate "from" address based on the context
-        $fromAddress = 'markussdove@gmail.com'; // Example for support emails
-        // You can adjust the $fromAddress based on your specific logic and context
-
-        Mail::to('your@email.com')->send(new ContactFormMail($request->all(), $fromAddress));
-
-        return redirect()->route('contact.success');
+    
+        $toAddress = 'desmundalajeeh@gmail.com'; // Specify the recipient's email address here
+    
+        Mail::to($toAddress)->send(new ContactFormMail($request->all(), 'no-reply@yourdomain.com'));
+    
+        return redirect('/contact')->with('message', 'Ziņa veiksmīgi nosūtīta!');
     }
+    
 
     public function success()
     {

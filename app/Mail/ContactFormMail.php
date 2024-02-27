@@ -11,17 +11,21 @@ class ContactFormMail extends Mailable
     use Queueable, SerializesModels;
 
     public $formData;
-    public $fromAddress;
+    public $toAddress;
 
-    public function __construct($formData, $fromAddress)
+    public function __construct($formData, $toAddress)
     {
         $this->formData = $formData;
-        $this->fromAddress = $fromAddress;
+        $this->toAddress = $toAddress;
     }
 
     public function build()
     {
-        return $this->from($this->fromAddress)
-                    ->view('emails.contact'); // Adjust the view name as per your setup
+        return $this->from('no-reply@example.com') // Use a static "from" address or pull from .env
+                    ->view('emails.contact')
+                    ->with([
+                        'formData' => $this->formData,
+                    ]);
     }
+    
 }

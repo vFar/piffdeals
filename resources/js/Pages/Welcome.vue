@@ -3,27 +3,13 @@ import { Head, Link } from '@inertiajs/vue3';
 import Navbar from '../Components/Navbar.vue';
 import Footer from '../Components/Footer.vue';
 import ScrollTopBtn from '../Components/ScrollToTopBtn.vue';
-
-
+import { ref, onMounted } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
 const getImageUrl = (filename) => `/storage/images/${filename}`;
 
-defineProps({
-    canLogin: {
-        type: Boolean,
-    },
-    canRegister: {
-        type: Boolean,
-    },
-    laravelVersion: {
-        type: String,
-        required: true,
-    },
-    phpVersion: {
-        type: String,
-        required: true,
-    },
-});
+const flashMessage = ref('');
+
 </script>
 
 <template>

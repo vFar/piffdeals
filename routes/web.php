@@ -21,8 +21,6 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 });
 
@@ -46,9 +44,8 @@ Route::get('/contact', function () {
     return Inertia::render('Contact');
 });
 
-Route::post('/contact', 'ContactController@sendMail')->name('contact.send');
-
-Route::get('/contact/success', [ContactController::class, 'success'])->name('contact.success');
+// Route::post('/contact', 'ContactController@sendMail')->name('contact.send');
+Route::post('/contact', 'App\Http\Controllers\ContactController@sendMail')->name('contact.send');
 
 Route::get('/about-us', function () {
     return Inertia::render('AboutUs');
