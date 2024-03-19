@@ -8,7 +8,7 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
 <template>
     <Head title="Sīkdatņu politika" />
     <Navbar />
-    <div class="cross-patternSVGLight">
+    <div class="cross-patternSVGLight bg-whiter">
         <div class="py-8">
             <Breadcrumbs currentPage="Sīkdatnes" />
         </div>

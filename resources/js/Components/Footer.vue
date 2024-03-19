@@ -28,7 +28,7 @@
 
 
 <template>
-            <img :src="getImageUrl('footer_wave_svg.svg')" alt="footerWave" draggable="false" class="select-none w-full mt-12">
+    <img :src="getImageUrl('footer_wave_svg.svg')" alt="footerWave" draggable="false" class="select-none w-full mt-12">
     <footer class="p-4 bg-primary">
         <div class="mx-auto max-w-screen-xl">
             <div class="flex justify-between">
@@ -68,7 +68,7 @@
                         <h2 class="mb-6 text-sm font-bold text-lightBlueBackground uppercase">Profils</h2>
                         <ul class="text-gray-400">
                             <li class="mb-4">
-                                <a href="#" class="border-grow hover:text-whiter footer-hrefs">Profils</a>
+                                <Link href="/profile" clLinkss="border-grow hover:text-whiter footer-hrefs">Profils</Link>
                             </li>
                             <li class="mb-4">
                                 <a href="#" class="border-grow hover:text-whiter footer-hrefs">Vēlmju saraksts</a>
