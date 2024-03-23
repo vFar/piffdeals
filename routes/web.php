@@ -44,6 +44,10 @@ Route::get('/contact', function () {
     return Inertia::render('Contact');
 });
 
+Route::get('/profile', function () {
+    return Inertia::render('Profile');
+});
+
 // Route::post('/contact', 'ContactController@sendMail')->name('contact.send');
 Route::post('/contact', 'App\Http\Controllers\ContactController@sendMail')->name('contact.send');
 

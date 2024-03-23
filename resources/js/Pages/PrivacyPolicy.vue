@@ -9,7 +9,7 @@ import ScrollTopBtn from '../Components/ScrollToTopBtn.vue';
 <template>
     <Head title="Privātuma politika" />
     <Navbar />
-    <div class="cross-patternSVGLight">
+    <div class="cross-patternSVGLight bg-whiter">
         <div class="py-8">
             <Breadcrumbs currentPage="Privātuma politika" />
         </div>
