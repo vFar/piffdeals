@@ -8,6 +8,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 defineProps({
     canResetPassword: {
@@ -29,6 +30,15 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+const inputType = ref('password');
+
+// Function to toggle the visibility of the password
+const togglePasswordVisibility = () => {
+    console.log('Current inputType:', inputType.value); // Check the current type
+  inputType.value = inputType.value === 'password' ? 'text' : 'password';
+  console.log('New inputType:', inputType.value); // Check the new type
+}
 
 </script>
 
@@ -53,74 +63,97 @@ const submit = () => {
                 {{ status }}
             </div>
 
-            <div class="relative py-3 sm:max-w-xl sm:mx-auto">
-                <div
-                    class="absolute inset-0 bg-gradient-to-r from-primary to-accent shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-[8deg] sm:rounded-3xl">
-                </div>
-                <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-md sm:p-20">
-                    <div class="max-w-md mx-auto">
-                        <div>
-                            <h1 class="text-2xl font-semibold text-primary">Pieslēgties</h1>
+            <div class="flex max-w-4xl p-6 px-2 items-center bg-whiter border border-gray-200 rounded-md shadow-xl">
+                <div class="md:w-1/4 xl:w-3/6 px-2 md:px-8">
+                    <h2 class="font-bold text-2xl text-primary uppercase">Pieslēgties</h2>
+
+                    <form @submit.prevent="submit" class="flex flex-col gap-4">
+                        <input
+                            class="p-2 mt-8 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
+                            id="email" type="email" placeholder="E-pasts" v-model="form.email" required autofocus
+                            autocomplete="username">
+
+                        <div class="relative">
+                            <input
+                                class="p-2 rounded-xl border border-gray-200 w-full text-textColor focus:ring-primary focus:border-primary"
+                                id="password" v-model="form.password" required
+                                autocomplete="current-password" placeholder="Parole" :type="inputType">
+                            <!-- <svg @click="togglePasswordVisibility" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"
+                                class="bi bi-eye absolute top-1/2 right-3 -translate-y-1/2 pointer" viewBox="0 0 16 16">
+                                <path
+                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                <path
+                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                            </svg> -->
+                            <button @click="togglePasswordVisibility" class="bi bi-eye absolute top-1/2 right-3 -translate-y-1/2 pointer" type="button">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
-                        <div class="divide-y divide-gray-200">
-                            <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                                <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-
-                            </div>
+                        <div class="block mt-2">
+                            <label class="flex items-center">
+                                <Checkbox name="remember" v-model:checked="form.remember" />
+                                <span class="ms-2 text-sm text-gray-600">Atcerēties mani</span>
+                            </label>
                         </div>
+                        <!-- <button
+                            class="bg-primary rounded-xl hover:bg-gray-700 text-white py-2 hover:scale-105 duration-300 text-md uppercase"
+                            :class="{ 'opacity-25': form.processing }
+                            :disabled =" form.processing">
+                            Pieslēgties
+                        </button> -->
+                        <button class="bg-primary rounded-xl hover:bg-gray-700 text-white py-2 hover:scale-105 duration-300 text-md uppercase" :class="{ 'opacity-25': form.processing }"
+                            :disabled="form.processing">
+                            Pieslēgties
+                        </button>
+                    </form>
+
+                    <div class="mt-6 grid grid-cols-3 items-center text-gray-400">
+                        <hr class="border-gray-400">
+                        <p class="text-center text-sm">VAI</p>
+                        <hr class="border-gray-400">
                     </div>
+
+                    <button
+                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
+                        <svg class="mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25px">
+                            <path fill="#FFC107"
+                                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                            <path fill="#FF3D00"
+                                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                            <path fill="#4CAF50"
+                                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                            <path fill="#1976D2"
+                                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+                        </svg>
+                        Login with Google
+                    </button>
+
+                    <button
+                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
+                        <i class="fa-brands fa-facebook"></i>
+                        Login with Facebook
+                    </button>
+
+                    <div class="mt-5 text-xs border-b border-[#002D74] py-4 text-[#002D74]">
+                        <Link v-if="canResetPassword" :href="route('password.request')"
+                            class="text-xs text-gray-600 hover:text-primary rounded-md ">
+                        Aizmirsi paroli?
+                        </Link>
+                    </div>
+
+                    <div class="mt-3 text-xs flex justify-between items-center text-[#002D74]">
+                        <p>Nav konta?</p>
+                        <SecondaryButton class="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300">
+                            <Link href="/register">Reģistrējies</Link></SecondaryButton>
+                    </div>
+                </div>
+
+                <div
+                    class="flex items-center md:block w-1/2 rounded-2xl bg-gradient-to-b from-primary to-secondary px-4 py-6 text-white md:mx-6 md:p-12 md:block hidden">
+                    <h4 class="my-36 text-2xl font-semibold text-left text-[2rem] select-none leading-relaxed">
+                        Mūsu biznesa mērķis? Digitalizēt iepirkšanos tiešsaistē.
+                    </h4>
                 </div>
             </div>
 

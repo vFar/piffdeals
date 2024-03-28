@@ -55,6 +55,14 @@ Route::get('/about-us', function () {
     return Inertia::render('AboutUs');
 });
 
+Route::get('/admin-panel', function () {
+    if (Auth::user()->role_id === 2) {
+        return Inertia::render('Admin/AdminPanel');
+    } else {
+        abort(403, 'Unauthorized action.');
+    }
+})->middleware(['auth', 'verified'])->name('admin.panel');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
