@@ -35,18 +35,16 @@ const inputType = ref('password');
 
 // Function to toggle the visibility of the password
 const togglePasswordVisibility = () => {
-    console.log('Current inputType:', inputType.value); // Check the current type
-  inputType.value = inputType.value === 'password' ? 'text' : 'password';
-  console.log('New inputType:', inputType.value); // Check the new type
+    inputType.value = inputType.value === 'password' ? 'text' : 'password';
 }
 
 </script>
 
 <template>
     <div class="cross-patternSVGLight">
-        <Link href="/" class="fixed">
+        <Link href="/" class="static 2xl:fixed">
         <button type="button"
-            class="mt-6 ml-4 bg-white inline-flex items-center font-semibold border text-primary border-primary hover:text-whiter hover:bg-primary rounded-lg text-sm px-5 py-2.5 text-center mb-2">
+            class="mt-6 ml-4 bg-white inline-flex items-center font-semibold border text-primary border-primary hover:text-whiter hover:bg-primary rounded-lg text-xs md:text-sm px-3 md:px-5 py-1.5 md:py-2.5 text-center mb-2">
             <svg class="w-[18px] h-[18px] mr-2 hover:text-whiter" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                 fill="none" viewBox="0 0 14 10">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3"
@@ -55,7 +53,7 @@ const togglePasswordVisibility = () => {
         </button>
         </Link>
 
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+        <div class="min-h-screen flex items-center justify-center">
 
             <Head title="Pieslēgties" />
 
@@ -63,9 +61,11 @@ const togglePasswordVisibility = () => {
                 {{ status }}
             </div>
 
-            <div class="flex max-w-4xl p-6 px-2 items-center bg-whiter border border-gray-200 rounded-md shadow-xl">
-                <div class="md:w-1/4 xl:w-3/6 px-2 md:px-8">
-                    <h2 class="font-bold text-2xl text-primary uppercase">Pieslēgties</h2>
+            <div
+                class="flex justify-center max-w-4xl mx-4 p-2 sm:p-6 bg-whiter border border-gray-200 rounded-md shadow-xl w-full">
+                <!-- Responsive padding and width -->
+                <div class="w-full md:w-1/2 px-2 md:px-8">
+                    <h2 class="font-bold text-2xl text-primary uppercase text-center md:text-left">Pieslēgties</h2>
 
                     <form @submit.prevent="submit" class="flex flex-col gap-4">
                         <input
@@ -73,20 +73,19 @@ const togglePasswordVisibility = () => {
                             id="email" type="email" placeholder="E-pasts" v-model="form.email" required autofocus
                             autocomplete="username">
 
+                        <InputError :message="form.errors.email" />
+
                         <div class="relative">
                             <input
                                 class="p-2 rounded-xl border border-gray-200 w-full text-textColor focus:ring-primary focus:border-primary"
-                                id="password" v-model="form.password" required
-                                autocomplete="current-password" placeholder="Parole" :type="inputType">
-                            <!-- <svg @click="togglePasswordVisibility" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray"
-                                class="bi bi-eye absolute top-1/2 right-3 -translate-y-1/2 pointer" viewBox="0 0 16 16">
-                                <path
-                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                <path
-                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                            </svg> -->
-                            <button @click="togglePasswordVisibility" class="bi bi-eye absolute top-1/2 right-3 -translate-y-1/2 pointer" type="button">
-                                <i class="fas fa-eye"></i>
+                                id="password" v-model="form.password" required autocomplete="current-password"
+                                placeholder="Parole" :type="inputType">
+
+                            <InputError :message="form.errors.password" />
+
+                            <button @click="togglePasswordVisibility" class="absolute top-1/2 right-3 -translate-y-1/2"
+                                type="button">
+                                <i :class="inputType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
                             </button>
                         </div>
 
@@ -102,8 +101,9 @@ const togglePasswordVisibility = () => {
                             :disabled =" form.processing">
                             Pieslēgties
                         </button> -->
-                        <button class="bg-primary rounded-xl hover:bg-gray-700 text-white py-2 hover:scale-105 duration-300 text-md uppercase" :class="{ 'opacity-25': form.processing }"
-                            :disabled="form.processing">
+                        <button
+                            class="bg-primary rounded-xl hover:bg-gray-700 text-white py-2 hover:scale-105 duration-300 text-md uppercase"
+                            :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             Pieslēgties
                         </button>
                     </form>
@@ -131,7 +131,19 @@ const togglePasswordVisibility = () => {
 
                     <button
                         class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
-                        <i class="fa-brands fa-facebook"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0,0,256,256" width="25px" class="mr-3">
+                            <g fill="#1877f2" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                                font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                                style="mix-blend-mode: normal">
+                                <g transform="scale(5.12,5.12)">
+                                    <path
+                                        d="M25,3c-12.15,0 -22,9.85 -22,22c0,11.03 8.125,20.137 18.712,21.728v-15.897h-5.443v-5.783h5.443v-3.848c0,-6.371 3.104,-9.168 8.399,-9.168c2.536,0 3.877,0.188 4.512,0.274v5.048h-3.612c-2.248,0 -3.033,2.131 -3.033,4.533v3.161h6.588l-0.894,5.783h-5.694v15.944c10.738,-1.457 19.022,-10.638 19.022,-21.775c0,-12.15 -9.85,-22 -22,-22z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
                         Login with Facebook
                     </button>
 
@@ -144,13 +156,16 @@ const togglePasswordVisibility = () => {
 
                     <div class="mt-3 text-xs flex justify-between items-center text-[#002D74]">
                         <p>Nav konta?</p>
-                        <SecondaryButton class="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300">
-                            <Link href="/register">Reģistrējies</Link></SecondaryButton>
+                        <Link href="/register">
+                            <SecondaryButton class="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300">
+                                Reģistrējies
+                            </SecondaryButton>
+                        </Link>
                     </div>
                 </div>
 
                 <div
-                    class="flex items-center md:block w-1/2 rounded-2xl bg-gradient-to-b from-primary to-secondary px-4 py-6 text-white md:mx-6 md:p-12 md:block hidden">
+                    class="hidden md:flex md:w-1/2 items-center rounded-2xl bg-gradient-to-b from-primary to-secondary px-4 py-6 text-white md:mx-6 md:p-12">
                     <h4 class="my-36 text-2xl font-semibold text-left text-[2rem] select-none leading-relaxed">
                         Mūsu biznesa mērķis? Digitalizēt iepirkšanos tiešsaistē.
                     </h4>

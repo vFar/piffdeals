@@ -6,12 +6,40 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
+
+
+const props = defineProps({
+    recaptchaSiteKey: String
+});
 
 const form = useForm({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
+    recaptcha: ''
+});
+
+const recaptchaWidgetId = ref(null);
+
+const onLoadCallback = () => {
+    recaptchaWidgetId.value = grecaptcha.render('recaptcha-container', {
+        'sitekey': props.recaptchaSiteKey, // Replace with your site key
+        'callback': verifyCallback,
+    });
+};
+
+const verifyCallback = (response) => {
+    form.recaptcha = response; // Assign the response token to the form data
+};
+
+onMounted(() => {
+    if (window.grecaptcha && window.grecaptcha.render) {
+        onLoadCallback();
+    } else {
+        window.onloadCallback = onLoadCallback;
+    }
 });
 
 const submit = () => {
@@ -19,13 +47,26 @@ const submit = () => {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
+
+const passwordType = ref('password');
+const confirmPasswordType = ref('password');
+
+// This function now accepts an identifier to toggle the appropriate input field
+const togglePasswordVisibility = (field) => {
+    if (field === 'password') {
+        passwordType.value = passwordType.value === 'password' ? 'text' : 'password';
+    } else if (field === 'confirmPassword') {
+        confirmPasswordType.value = confirmPasswordType.value === 'password' ? 'text' : 'password';
+    }
+}
+
 </script>
 
 <template>
     <div class="cross-patternSVGLight">
-        <Link href="/" class="fixed">
+        <Link href="/" class="static 2xl:fixed">
         <button type="button"
-            class="mt-6 ml-4 bg-white inline-flex items-center font-semibold border text-primary border-primary hover:text-whiter hover:bg-primary rounded-lg text-sm px-5 py-2.5 text-center mb-2">
+            class="mt-6 ml-4 bg-white inline-flex items-center font-semibold border text-primary border-primary hover:text-whiter hover:bg-primary rounded-lg text-xs md:text-sm px-3 md:px-5 py-1.5 md:py-2.5 text-center mb-2">
             <svg class="w-[18px] h-[18px] mr-2 hover:text-whiter" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                 fill="none" viewBox="0 0 14 10">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3"
@@ -34,14 +75,15 @@ const submit = () => {
         </button>
         </Link>
 
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4 sm:px-6">
 
             <Head title="Reģistrēties" />
 
-            <div class="flex max-w-4xl p-6 px-2 items-center bg-whiter border border-gray-200 rounded-md shadow-xl">
+            <div
+                class="w-full flex justify-center max-w-4xl mx-4 p-2 sm:p-6 bg-whiter border border-gray-200 rounded-md shadow-xl">
 
                 <div
-                    class="flex items-center md:block w-1/2 rounded-2xl bg-gradient-to-b from-primary to-secondary px-4 py-6 text-white md:mx-6 md:p-12 md:block hidden">
+                    class="hidden md:flex md:w-1/2 items-center rounded-2xl bg-gradient-to-b from-primary to-secondary px-4 py-6 text-white md:mx-6 md:p-12">
                     <div class="my-36">
                         <h4 class="font-semibold text-left text-[2rem] select-none leading-relaxed">
                             Laiks kļūt par dalībnieku. <br>Viss sākas šeit!
@@ -49,31 +91,49 @@ const submit = () => {
                     </div>
                 </div>
 
-                <div class="md:w-1/4 xl:w-3/6 px-2 md:px-8">
-                    <h2 class="font-bold text-2xl text-primary text-right uppercase">Reģistrēties</h2>
+                <div class="w-full md:w-1/2 px-2 md:px-8">
+                    <h2 class="font-bold text-2xl text-primary uppercase text-center md:text-right">Reģistrēties</h2>
 
                     <form @submit.prevent="submit" class="flex flex-col gap-4">
                         <input
                             class="p-2 mt-8 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
-                            id="email" type="text" placeholder="Vārds, uzvārds" v-model="form.name" required
-                            autofocus autocomplete="name">
+                            id="name" type="text" placeholder="Vārds, uzvārds" v-model="form.name" required autofocus
+                            autocomplete="name">
+                        <InputError class="mt-2" :message="form.errors.name" />
 
                         <input
                             class="p-2 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
                             id="email" type="email" placeholder="E-pasts" v-model="form.email" required
-                            autocomplete="username" >
+                            autocomplete="username">
 
-                        <input
-                            class="p-2 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
-                            id="email" type="password" placeholder="Parole" v-model="form.password"
-                            required autocomplete="new-password" >
+                        <InputError class="mt-2" :message="form.errors.email" />
+
+                        <div class="relative">
+                            <input
+                                class="w-full p-2 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
+                                id="password" placeholder="Parole" v-model="form.password" required
+                                autocomplete="new-password" :type="passwordType">
+
+                            <InputError class="mt-2" :message="form.errors.password" />
+
+                            <button @click="togglePasswordVisibility('password')" class="absolute top-1/2 right-3 -translate-y-1/2"
+                                type="button">
+                                <i :class="passwordType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
+                            </button>
+                        </div>
 
                         <div class="relative">
                             <input
                                 class="p-2 rounded-xl border border-gray-200 w-full text-textColor focus:ring-primary focus:border-primary"
-                                id="password" v-model="form.password_confirmation" required autocomplete="new-password"
-                                placeholder="Parole atkārtoti" type="password">
+                                id="password_confirmation" v-model="form.password_confirmation" required
+                                autocomplete="new-password" placeholder="Parole atkārtoti" :type="confirmPasswordType">
 
+                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
+
+                            <button @click="togglePasswordVisibility('confirmPassword')" class="absolute top-1/2 right-3 -translate-y-1/2"
+                                type="button">
+                                <i :class="confirmPasswordType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
+                            </button>
                         </div>
                         <!-- <button
                             class="bg-primary rounded-xl hover:bg-gray-700 text-white py-2 hover:scale-105 duration-300 text-md uppercase"
@@ -81,8 +141,10 @@ const submit = () => {
                             :disabled =" form.processing">
                             Pieslēgties
                         </button> -->
-                        <button
-                        type="submit"
+                        <div id="recaptcha-container" class="w-full flex justify-center px-2 md:px-0">
+                            <!-- reCAPTCHA widget will render here -->
+                        </div>
+                        <button type="submit"
                             class="bg-primary rounded-xl hover:bg-gray-700 text-white py-2 hover:scale-105 duration-300 text-md uppercase"
                             :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             Reģistrēties
@@ -96,7 +158,7 @@ const submit = () => {
                     </div>
 
                     <button
-                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
+                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 hover:text-primary duration-300 text-textColor">
                         <svg class="mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25px">
                             <path fill="#FFC107"
                                 d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
@@ -111,23 +173,35 @@ const submit = () => {
                     </button>
 
                     <button
-                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
-                        <i class="fa-brands fa-facebook"></i>
+                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 hover:text-primary duration-300 text-textColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0,0,256,256" width="25px" class="mr-3">
+                            <g fill="#1877f2" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
+                                font-family="none" font-weight="none" font-size="none" text-anchor="none"
+                                style="mix-blend-mode: normal">
+                                <g transform="scale(5.12,5.12)">
+                                    <path
+                                        d="M25,3c-12.15,0 -22,9.85 -22,22c0,11.03 8.125,20.137 18.712,21.728v-15.897h-5.443v-5.783h5.443v-3.848c0,-6.371 3.104,-9.168 8.399,-9.168c2.536,0 3.877,0.188 4.512,0.274v5.048h-3.612c-2.248,0 -3.033,2.131 -3.033,4.533v3.161h6.588l-0.894,5.783h-5.694v15.944c10.738,-1.457 19.022,-10.638 19.022,-21.775c0,-12.15 -9.85,-22 -22,-22z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg>
+
                         Login with Facebook
                     </button>
 
-                    <div class="mt-5 text-xs border-b border-[#002D74] py-4 text-[#002D74]">
-                        <Link v-if="canResetPassword" :href="route('password.request')"
-                            class="text-xs text-gray-600 hover:text-primary rounded-md ">
-                        Aizmirsi paroli?
-                        </Link>
-                    </div>
+                    <hr class="mt-5 text-xs border-gray-400 py-2 text-gray-400">
+                    </hr>
 
-                    <div class="mt-3 text-xs flex justify-between items-center text-[#002D74]">
+                    <div class="text-xs flex justify-between items-center text-gray-400">
                         <p>Konts pastāv?</p>
+
+                        <Link href="/login">
                         <SecondaryButton class="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300">
-                            <Link href="/login">Pieslēdzies</Link>
+                            Pieslēdzies
                         </SecondaryButton>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Validator;
+
 
 class RegisteredUserController extends Controller
 {
@@ -21,7 +23,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'recaptchaSiteKey' => env('RECAPTCHA_V2_SECRET_KEY')
+        ]);
     }
 
     /**
@@ -35,7 +39,19 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'recaptcha' => 'required' // Ensure the reCAPTCHA response is required
         ]);
+
+        $validator = Validator::make($request->all(), [
+            'recaptcha' => 'required|captcha'
+        ]);
+
+        // if ($validator->fails()) {
+        //     return redirect()->back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
+        
 
         $user = User::create([
             'name' => $request->name,

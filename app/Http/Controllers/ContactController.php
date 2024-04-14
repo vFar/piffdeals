@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ContactFormMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use Validator;
 
 class ContactController extends Controller
 {
@@ -14,6 +15,11 @@ class ContactController extends Controller
             'email' => 'required|email',
             'title' => 'required',
             'textMessage' => 'required',
+            'recaptcha' => 'required' // Ensure the reCAPTCHA response is required
+        ]);
+
+        $validator = Validator::make($request->all(), [
+            'recaptcha' => 'required|captcha'
         ]);
     
         $toAddress = 'desmundalajeeh@gmail.com'; // Specify the recipient's email address here

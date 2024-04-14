@@ -3,11 +3,14 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import Navbar from '../Components/Navbar.vue';
 import Footer from '../Components/Footer.vue';
 import Breadcrumbs from '../Components/Breadcrumbs.vue';
+import { onMounted, ref } from 'vue';
+
 
 const form = useForm({
     email: '',
     title: '',
     textMessage: '',
+    recaptcha: ''
 })
 
 const submitForm = () => {
@@ -17,6 +20,28 @@ const submitForm = () => {
         },
     });
 }
+
+const recaptchaWidgetId = ref(null);
+
+const onLoadCallback = () => {
+    recaptchaWidgetId.value = grecaptcha.render('recaptcha-container', {
+        'sitekey': '6LddUowpAAAAACNfuxHImPP-a6bX5POVPEFZzhqi', // Replace with your site key
+        'callback': verifyCallback,
+    });
+};
+
+const verifyCallback = (response) => {
+    form.recaptcha = response; // Assign the response token to the form data
+};
+
+onMounted(() => {
+    if (window.grecaptcha && window.grecaptcha.render) {
+        onLoadCallback();
+    } else {
+        window.onloadCallback = onLoadCallback;
+    }
+});
+
 </script>
 
 <template>
@@ -59,6 +84,9 @@ const submitForm = () => {
                                 class="placeholder-gray-300 resize-none block p-2.5 w-full text-sm text-gray-900 bg-whiter rounded-lg shadow-sm border border-gray-300 focus:ring-primary focus:border-primary"
                                 placeholder="Paskaidro situāciju šeit" required></textarea>
                         </div>
+
+                        <div id="recaptcha-container" class="w-full md:px-0"></div>
+
                         <button type="submit"
                             class="mt-6 inline-flex items-center font-semibold border text-primary border-primary hover:text-whiter hover:bg-primary rounded-lg text-sm px-5 py-2.5 text-center mb-2">Sūtīt
                             ziņu</button>

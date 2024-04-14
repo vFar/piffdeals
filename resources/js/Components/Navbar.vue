@@ -121,11 +121,9 @@ defineProps({
 </template>
 
 <script>
-export default {
-    methods: {
-        getImageUrl(filename) {
-            return `/storage/images/${filename}`;
-        },
-    },
+import { ref } from 'vue';
+
+const getImageUrl = (filename) => {
+    return `/storage/images/${filename}`;
 };
 </script>
