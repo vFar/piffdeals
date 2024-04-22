@@ -44,8 +44,8 @@
     <body>
         <div class="flex-center position-ref full-height">
             <div class="content">
-                <div class="title">
-                    @yield('message')
+                <div class="w-80 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-xl shadow-md">
+                        @yield('message')
                 </div>
             </div>
         </div>

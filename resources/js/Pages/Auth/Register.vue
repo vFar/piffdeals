@@ -13,6 +13,9 @@ const props = defineProps({
     recaptchaSiteKey: String
 });
 
+console.log("sitekey");
+console.log(props.recaptchaSiteKey);
+
 const form = useForm({
     name: '',
     email: '',
@@ -80,7 +83,7 @@ const togglePasswordVisibility = (field) => {
             <Head title="Reģistrēties" />
 
             <div
-                class="w-full flex justify-center max-w-4xl mx-4 p-2 sm:p-6 bg-whiter border border-gray-200 rounded-md shadow-xl">
+                class="w-full flex justify-center max-w-4xl mx-4 p-2 sm:p-6 bg-whiter border border-gray-200 rounded-xl shadow-xl">
 
                 <div
                     class="hidden md:flex md:w-1/2 items-center rounded-2xl bg-gradient-to-b from-primary to-secondary px-4 py-6 text-white md:mx-6 md:p-12">
@@ -117,7 +120,7 @@ const togglePasswordVisibility = (field) => {
                             <InputError class="mt-2" :message="form.errors.password" />
 
                             <button @click="togglePasswordVisibility('password')" class="absolute top-1/2 right-3 -translate-y-1/2"
-                                type="button">
+                                type="button" tabindex="-1">
                                 <i :class="passwordType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
                             </button>
                         </div>
@@ -131,7 +134,7 @@ const togglePasswordVisibility = (field) => {
                             <InputError class="mt-2" :message="form.errors.password_confirmation" />
 
                             <button @click="togglePasswordVisibility('confirmPassword')" class="absolute top-1/2 right-3 -translate-y-1/2"
-                                type="button">
+                                type="button" tabindex="-1">
                                 <i :class="confirmPasswordType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
                             </button>
                         </div>
@@ -207,7 +210,7 @@ const togglePasswordVisibility = (field) => {
             </div>
 
 
-            <!-- <div class="border border-gray-200 rounded-md bg-whiter shadow-md py-3 px-3 pl-6">
+            <!-- <div class="border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
                 <form @submit.prevent="submit">
                     <div>
                         <InputLabel for="name" value="Vārds, uzvārds" />
@@ -247,7 +250,7 @@ const togglePasswordVisibility = (field) => {
 
                     <div class="flex items-center justify-end mt-4">
                         <Link :href="route('login')"
-                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Jau reģistrēts?
                         </Link>
 

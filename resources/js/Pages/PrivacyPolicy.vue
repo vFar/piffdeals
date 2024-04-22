@@ -14,7 +14,7 @@ import ScrollTopBtn from '../Components/ScrollToTopBtn.vue';
             <Breadcrumbs currentPage="Privātuma politika" />
         </div>
 
-        <div class="container mx-auto max-w-screen-xl border border-gray-200 rounded-md bg-whiter shadow-md py-3 px-3 pl-6">
+        <div class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
             <section class="legal">
                 <br>
                 <p>Šī privātuma politika informē par privātuma praksi un personas datu apstrādes principiem

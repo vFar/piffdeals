@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
-use Validator;
 
 
 class RegisteredUserController extends Controller
@@ -22,9 +21,11 @@ class RegisteredUserController extends Controller
      * Display the registration view.
      */
     public function create(): Response
-    {
+    {   
+        $siteKey = config('captcha.v2.site_key'); // Example for accessing v2 site key
+        \Log::info('ReCaptcha Site Key: ' . $siteKey);
         return Inertia::render('Auth/Register', [
-            'recaptchaSiteKey' => env('RECAPTCHA_V2_SECRET_KEY')
+            'recaptchaSiteKey' => $siteKey
         ]);
     }
 
@@ -42,9 +43,6 @@ class RegisteredUserController extends Controller
             'recaptcha' => 'required' // Ensure the reCAPTCHA response is required
         ]);
 
-        $validator = Validator::make($request->all(), [
-            'recaptcha' => 'required|captcha'
-        ]);
 
         // if ($validator->fails()) {
         //     return redirect()->back()

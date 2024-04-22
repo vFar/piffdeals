@@ -2,36 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ContactFormMail;
-use Illuminate\Support\Facades\Mail;
+use App\Notifications\ContactFormNotification;
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Notification;
+use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
+use Inertia\Inertia;
 
 class ContactController extends Controller
 {
     public function sendMail(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'email' => 'required|email',
             'title' => 'required',
             'textMessage' => 'required',
-            'recaptcha' => 'required' // Ensure the reCAPTCHA response is required
         ]);
 
-        $validator = Validator::make($request->all(), [
-            'recaptcha' => 'required|captcha'
-        ]);
-    
-        $toAddress = 'desmundalajeeh@gmail.com'; // Specify the recipient's email address here
-    
-        Mail::to($toAddress)->send(new ContactFormMail($request->all(), 'no-reply@yourdomain.com'));
-    
-        return redirect('/contact')->with('message', 'Ziņa veiksmīgi nosūtīta!');
-    }
-    
 
-    public function success()
-    {
-        return Inertia::render('ContactSuccess'); // Assuming you have a view named ContactSuccess
+        try {
+            // Sending the notification
+            Notification::route('mail', env('ADMIN_EMAIL_ADDRESS', 'admin@example.com'))
+                ->notify(new ContactFormNotification($validatedData));
+
+            return Inertia::render('Contact', [
+                'message' => 'Message sent successfully!'
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send notification: ' . $e->getMessage());
+            return Inertia::render('Contact', [
+                'errors' => ['server' => 'Unable to send email. Please try again later.']
+            ]);
+        }
     }
 }
+

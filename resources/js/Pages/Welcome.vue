@@ -19,7 +19,7 @@ const flashMessage = ref('');
     <div class="cross-patternSVGLight bg-whiter">
         <div class="container flex items-center mx-auto max-w-screen-xl">
             <div
-                class="w-80 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-md shadow-md">
+                class="w-80 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-xl shadow-md">
                 <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
                     <div>
                         <span class="fas fa-person fa-fw"></span>

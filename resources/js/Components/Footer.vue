@@ -84,7 +84,7 @@ import { Link } from '@inertiajs/vue3';
                             </li>
                             <!-- Show ADMIN for users with role_id = 2 -->
                             <li v-else class="mb-4">
-                                <Link href="/admin-panel" class="border-grow hover:text-whiter footer-hrefs">ADMIN
+                                <Link href="/admin-dashboard" class="border-grow hover:text-whiter footer-hrefs">ADMIN
                                 </Link>
                             </li>
                         </ul>

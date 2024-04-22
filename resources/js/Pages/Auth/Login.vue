@@ -62,7 +62,7 @@ const togglePasswordVisibility = () => {
             </div>
 
             <div
-                class="flex justify-center max-w-4xl mx-4 p-2 sm:p-6 bg-whiter border border-gray-200 rounded-md shadow-xl w-full">
+                class="flex justify-center max-w-4xl mx-4 p-2 sm:p-6 bg-whiter border border-gray-200 rounded-xl shadow-xl w-full">
                 <!-- Responsive padding and width -->
                 <div class="w-full md:w-1/2 px-2 md:px-8">
                     <h2 class="font-bold text-2xl text-primary uppercase text-center md:text-left">Pieslēgties</h2>
@@ -115,7 +115,7 @@ const togglePasswordVisibility = () => {
                     </div>
 
                     <button
-                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
+                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 hover:text-primary duration-300 text-textColor">
                         <svg class="mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25px">
                             <path fill="#FFC107"
                                 d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
@@ -130,7 +130,7 @@ const togglePasswordVisibility = () => {
                     </button>
 
                     <button
-                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
+                        class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 hover:text-primary duration-300 text-textColor">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                             viewBox="0,0,256,256" width="25px" class="mr-3">
                             <g fill="#1877f2" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
@@ -147,14 +147,14 @@ const togglePasswordVisibility = () => {
                         Login with Facebook
                     </button>
 
-                    <div class="mt-5 text-xs border-b border-[#002D74] py-4 text-[#002D74]">
+                    <div class="mt-5 text-xs border-b border-textColor py-4 text-textColor">
                         <Link v-if="canResetPassword" :href="route('password.request')"
-                            class="text-xs text-gray-600 hover:text-primary rounded-md ">
+                            class="text-xs text-gray-600 hover:text-primary rounded-xl ">
                         Aizmirsi paroli?
                         </Link>
                     </div>
 
-                    <div class="mt-3 text-xs flex justify-between items-center text-[#002D74]">
+                    <div class="mt-3 text-xs flex justify-between items-center text-red-600">
                         <p>Nav konta?</p>
                         <Link href="/register">
                             <SecondaryButton class="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300">
@@ -172,7 +172,7 @@ const togglePasswordVisibility = () => {
                 </div>
             </div>
 
-            <!-- <div class="border border-gray-200 rounded-md bg-whiter shadow-md py-3 px-3 pl-6">
+            <!-- <div class="border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
                 <form @submit.prevent="submit">
                     <div>
                         <InputLabel for="email" value="E-pasts" />
@@ -201,7 +201,7 @@ const togglePasswordVisibility = () => {
 
                     <div class="flex items-center justify-end mt-4">
                         <Link v-if="canResetPassword" :href="route('password.request')"
-                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Aizmirsi paroli?
                         </Link>
 

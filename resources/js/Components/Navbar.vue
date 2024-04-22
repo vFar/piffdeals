@@ -84,7 +84,7 @@ defineProps({
                         </svg>
                     </div>
                     <input type="search" id="default-search"
-                        class="w-full py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-md bg-lightBlueBackground shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                        class="w-full py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-lightBlueBackground shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
                         placeholder="Meklēt" required>
                 </form>
             </div>
@@ -93,23 +93,30 @@ defineProps({
             <ul class="flex space-x-10 items-center justify-evenly">
                 <!-- Always show Profile link -->
                 <li class="text-white uppercase text-base navbar-hrefs">
-                    <Link href="/profile"><i class="far fa-circle-user mr-1.5 text-xl"></i><span>Profils</span></Link>
+                    <Link v-if="$page.props.auth.user" href="/profile">
+                        <i class="far fa-circle-user mr-1.5 text-xl fa-fw"></i>
+                        <span>Profils</span>
+                    </Link>
+                    <Link v-else href="/login">
+                        <i class="fas fa-right-to-bracket mr-1.5 text-xl fa-fw"></i>
+                        <span>Pieslēgties</span>
+                    </Link>
                 </li>
 
                 <!-- Show Grozs and Vēlmes only for guests (no user logged in) or users with role_id = 1 -->
                 <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
                     class="text-white uppercase text-base navbar-hrefs">
-                    <a href="/cart"><i class="fas fa-sharp fa-cart-shopping mr-1.5 text-xl"></i><span>Grozs</span></a>
+                    <a href="/cart"><i class="fas fa-sharp fa-cart-shopping mr-1.5 text-xl fa-fw"></i><span>Grozs</span></a>
                 </li>
                 <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
                     class="text-white uppercase text-base navbar-hrefs">
-                    <a href="/wishlist"><i class="far fa-sharp fa-heart mr-1.5 text-xl"></i><span>Vēlmes</span></a>
+                    <a href="/wishlist"><i class="far fa-sharp fa-heart mr-1.5 text-xl fa-fw"></i><span>Vēlmes</span></a>
                 </li>
 
                 <!-- Show Admin only for users with role_id = 2 -->
                 <li v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2"
                     class="text-white uppercase text-base navbar-hrefs">
-                    <Link href="/admin-panel"><i class="fa fa-tools mr-1.5 text-xl"></i><span>ADMIN</span></Link>
+                    <Link href="/admin-dashboard"><i class="fa fa-tools mr-1.5 text-xl"></i><span>ADMIN</span></Link>
                 </li>
             </ul>
         </div>
