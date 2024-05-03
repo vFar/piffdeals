@@ -91,6 +91,18 @@ Route::get('/admin-goods', function () {
     }
 })->middleware(['auth', 'verified'])->name('admin.goods');
 
+Route::get('/admin-categories', function () {
+    if (Auth::user()->role_id === 2) {
+        return Inertia::render('Admin/Categories');
+    } else {
+        abort(404);
+    }
+
+    if (!Auth::check()){
+        abort(404);
+    }
+})->middleware(['auth', 'verified'])->name('admin.categories');
+
 Route::get('/admin-logfiles', function () {
     if (Auth::user()->role_id === 2) {
         return Inertia::render('Admin/Logfiles');
@@ -102,6 +114,18 @@ Route::get('/admin-logfiles', function () {
         abort(404);
     }
 })->middleware(['auth', 'verified'])->name('admin.logfiles');
+
+Route::get('/admin-administrators', function () {
+    if (Auth::user()->role_id === 2) {
+        return Inertia::render('Admin/Administrators');
+    } else {
+        abort(404);
+    }
+
+    if (!Auth::check()){
+        abort(404);
+    }
+})->middleware(['auth', 'verified'])->name('admin.administrators');
 
 Route::get('/admin-users', function () {
     if (Auth::user()->role_id === 2) {

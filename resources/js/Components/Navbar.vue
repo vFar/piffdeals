@@ -20,19 +20,40 @@ defineProps({
     display: inline-block;
     text-decoration: none;
     font-family: sans-serif;
+    padding: 0.75rem 1rem;
+    /* Adjusted padding for better spacing */
+    /* Margins for separation between navbar elements */
+    border-radius: 0.5rem;
+    /* Optional: Rounded corners */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    /* Transition for transform, shadow, and background color */
+}
+
+.navbar-hrefs:hover,
+.navbar-hrefs:focus {
+    transform: scale(1.06);
+    /* Scale effect on hover/focus */
+    box-shadow: 0 4px 8px -2px rgb(0 0 0 / 0.2);
+    /* Subtle shadow for depth */
+    background: #4F91ED;
+    /* Initial background color for navbar elements */
 }
 
 .navbar-hrefs:after {
     display: block;
     content: '';
-    width: inherit;
+    width: 100%;
+    /* Ensures the underline covers the full width of the text */
     border-bottom: solid 3px #EBF3FF;
+    /* Color of the underline */
     transform: scaleX(0);
     transition: transform 250ms ease-in-out;
 }
 
-.navbar-hrefs:hover:after {
+.navbar-hrefs:hover:after,
+.navbar-hrefs:focus:after {
     transform: scaleX(1);
+    /* Ensures underline animation on hover/focus */
 }
 </style>
 
@@ -90,33 +111,31 @@ defineProps({
             </div>
 
             <!-- Navigation Links -->
-            <ul class="flex space-x-10 items-center justify-evenly">
+            <ul class="flex space-x-4 items-center justify-evenly">
                 <!-- Always show Profile link -->
-                <li class="text-white uppercase text-base navbar-hrefs">
-                    <Link v-if="$page.props.auth.user" href="/profile">
-                        <i class="far fa-circle-user mr-1.5 text-xl fa-fw"></i>
-                        <span>Profils</span>
+                <li class="text-white uppercase text-base ">
+                    <Link v-if="$page.props.auth.user" href="/profile" class="navbar-hrefs">
+                        <i class="far fa-circle-user text-xl fa-fw"></i>
                     </Link>
-                    <Link v-else href="/login">
-                        <i class="fas fa-right-to-bracket mr-1.5 text-xl fa-fw"></i>
-                        <span>Pieslēgties</span>
+                    <Link v-else href="/login" class="navbar-hrefs">
+                        <i class="fas fa-right-to-bracket text-xl fa-fw"></i>
                     </Link>
                 </li>
 
                 <!-- Show Grozs and Vēlmes only for guests (no user logged in) or users with role_id = 1 -->
                 <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
-                    class="text-white uppercase text-base navbar-hrefs">
-                    <a href="/cart"><i class="fas fa-sharp fa-cart-shopping mr-1.5 text-xl fa-fw"></i><span>Grozs</span></a>
+                    class="text-white uppercase text-base">
+                    <Link href="/cart" class="navbar-hrefs"><i class="fas fa-sharp fa-cart-shopping text-xl fa-fw"></i><span></span></Link>
                 </li>
                 <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
-                    class="text-white uppercase text-base navbar-hrefs">
-                    <a href="/wishlist"><i class="far fa-sharp fa-heart mr-1.5 text-xl fa-fw"></i><span>Vēlmes</span></a>
+                    class="text-white uppercase text-base">
+                    <Link href="/wishlist" class="navbar-hrefs"><i class="far fa-sharp fa-heart text-xl fa-fw"></i><span></span></Link>
                 </li>
 
                 <!-- Show Admin only for users with role_id = 2 -->
                 <li v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2"
-                    class="text-white uppercase text-base navbar-hrefs">
-                    <Link href="/admin-dashboard"><i class="fa fa-tools mr-1.5 text-xl"></i><span>ADMIN</span></Link>
+                    class="text-white uppercase text-base">
+                    <Link href="/admin-dashboard" class="navbar-hrefs"><i class="fa fa-tools text-xl"></i><span></span></Link>
                 </li>
             </ul>
         </div>

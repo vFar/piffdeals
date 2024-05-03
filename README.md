@@ -43,7 +43,7 @@
     <li>
       <a href="#about-the-project">Par Projektu</a>
       <ul>
-        <li><a href="#built-with">Lietotie Rīki</a></li>
+        <li><a href="#Izmantotie Rīki">Lietotie Rīki</a></li>
       </ul>
     </li>
     <li>
@@ -76,7 +76,7 @@
 
 ## Uzsākšana
 
-Lai izveidotu un palaistu lokālu kopiju, tad jāizpilda šie nepieciešamie soļi
+Lai izveidotu un palaistu lokālu kopiju, jāizpilda šādi nepieciešamie soļi
 
 ### Priekšnosacījumi
 
@@ -146,3 +146,15 @@ Nepieciešamie darbības soļi, lai lokāli uzsāktu projektu.
 [Vue-url]: https://vuejs.org/
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [Laravel-url]: https://laravel.com
+
+[NodeJS.org]: https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white
+[NodeJS-url]: https://nodejs.org/en
+
+[vitejs.dev]: https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white
+[viteJS-url]: https://vitejs.dev
+
+[tailwindcss.com]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[TailwindCSS-url]: https://tailwindcss.com/
+
+[Ziggy-url]: https://github.com/tighten/ziggy
+
