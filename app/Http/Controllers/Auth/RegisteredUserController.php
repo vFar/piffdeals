@@ -23,7 +23,6 @@ class RegisteredUserController extends Controller
     public function create(): Response
     {   
         $siteKey = config('captcha.v2.site_key'); // Example for accessing v2 site key
-        \Log::info('ReCaptcha Site Key: ' . $siteKey);
         return Inertia::render('Auth/Register', [
             'recaptchaSiteKey' => $siteKey
         ]);

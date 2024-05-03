@@ -121,7 +121,7 @@ const togglePasswordVisibility = (field) => {
 
                             <button @click="togglePasswordVisibility('password')" class="absolute top-1/2 right-3 -translate-y-1/2"
                                 type="button" tabindex="-1">
-                                <i :class="passwordType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
+                                <i :class="passwordType === 'password' ? 'fas fa-eye fa-fw text-gray-400' : 'fas fa-eye-slash fa-fw text-gray-400'"></i>
                             </button>
                         </div>
 
@@ -135,7 +135,7 @@ const togglePasswordVisibility = (field) => {
 
                             <button @click="togglePasswordVisibility('confirmPassword')" class="absolute top-1/2 right-3 -translate-y-1/2"
                                 type="button" tabindex="-1">
-                                <i :class="confirmPasswordType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
+                                <i :class="confirmPasswordType === 'password' ? 'fas fa-eye fa-fw text-gray-400' : 'fas fa-eye-slash fa-fw text-gray-400'"></i>
                             </button>
                         </div>
                         <!-- <button

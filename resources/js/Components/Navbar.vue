@@ -1,6 +1,8 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import ThemeSwitch from '../Components/ThemeSwitch.vue';
+import Dropdown from '@/Components/Dropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
 
 defineProps({
     canLogin: {
@@ -54,6 +56,14 @@ defineProps({
 .navbar-hrefs:focus:after {
     transform: scaleX(1);
     /* Ensures underline animation on hover/focus */
+}
+
+.navbar-hrefs i,
+.navbar-hrefs svg {
+    display: inline-block;
+    /* Ensures elements are on the same line */
+    vertical-align: middle;
+    /* Aligns elements vertically */
 }
 </style>
 
@@ -113,29 +123,54 @@ defineProps({
             <!-- Navigation Links -->
             <ul class="flex space-x-4 items-center justify-evenly">
                 <!-- Always show Profile link -->
-                <li class="text-white uppercase text-base ">
-                    <Link v-if="$page.props.auth.user" href="/profile" class="navbar-hrefs">
-                        <i class="far fa-circle-user text-xl fa-fw"></i>
-                    </Link>
-                    <Link v-else href="/login" class="navbar-hrefs">
-                        <i class="fas fa-right-to-bracket text-xl fa-fw"></i>
-                    </Link>
-                </li>
 
                 <!-- Show Grozs and Vēlmes only for guests (no user logged in) or users with role_id = 1 -->
                 <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
                     class="text-white uppercase text-base">
-                    <Link href="/cart" class="navbar-hrefs"><i class="fas fa-sharp fa-cart-shopping text-xl fa-fw"></i><span></span></Link>
+                    <Link href="/cart" class="navbar-hrefs"><i
+                        class="fas fa-sharp fa-cart-shopping text-xl fa-fw"></i><span></span></Link>
                 </li>
                 <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
                     class="text-white uppercase text-base">
-                    <Link href="/wishlist" class="navbar-hrefs"><i class="far fa-sharp fa-heart text-xl fa-fw"></i><span></span></Link>
+                    <Link href="/wishlist" class="navbar-hrefs"><i
+                        class="far fa-sharp fa-heart text-xl fa-fw"></i><span></span></Link>
                 </li>
 
                 <!-- Show Admin only for users with role_id = 2 -->
                 <li v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2"
                     class="text-white uppercase text-base">
-                    <Link href="/admin-dashboard" class="navbar-hrefs"><i class="fa fa-tools text-xl"></i><span></span></Link>
+                    <Link href="/admin-dashboard" class="navbar-hrefs"><i class="fa fa-tools text-xl"></i><span></span>
+                    </Link>
+                </li>
+
+                <li class="text-white uppercase text-base">
+                    <!-- Conditionally render Dropdown if user is authenticated -->
+                    <div v-if="$page.props.auth.user">
+                        <Dropdown align="right" width="48">
+                            <template #trigger>
+                                <button type="button"
+                                    class="inline-flex  navbar-hrefs items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-gray-500">
+                                    <i class="far fa-circle-user text-xl fa-fw text-white"></i>
+                                    <svg class="ms-2 -me-0.5 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </template>
+                            <template #content>
+                                <DropdownLink :href="route('profile.edit')" class="uppercase">PROFILS</DropdownLink>
+                                <DropdownLink :href="route('logout')" method="post" as="button" class="uppercase">ATSLĒGTIES
+                                </DropdownLink>
+                            </template>
+                        </Dropdown>
+                    </div>
+
+                    <!-- Show Link to /login if user is not authenticated -->
+                    <Link v-else href="/login" class="navbar-hrefs">
+                    <i class="far fa-circle-user text-xl fa-fw"></i>
+                    </Link>
                 </li>
             </ul>
         </div>

@@ -85,7 +85,7 @@ const togglePasswordVisibility = () => {
 
                             <button @click="togglePasswordVisibility" class="absolute top-1/2 right-3 -translate-y-1/2"
                                 type="button">
-                                <i :class="inputType === 'password' ? 'fas fa-eye fa-fw' : 'fas fa-eye-slash fa-fw'"></i>
+                                <i :class="inputType === 'password' ? 'fas fa-eye fa-fw text-gray-400' : 'fas fa-eye-slash fa-fw text-gray-400'"></i>
                             </button>
                         </div>
 
