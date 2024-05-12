@@ -139,17 +139,17 @@ defineProps({
                 <!-- Show Admin only for users with role_id = 2 -->
                 <li v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2"
                     class="text-white uppercase text-base">
-                    <Link href="/admin-dashboard" class="navbar-hrefs"><i class="fa fa-tools text-xl"></i><span></span>
+                    <Link href="/admin-dashboard" class="navbar-hrefs"><i class="fa fa-tools text-xl fa-fw"></i><span></span>
                     </Link>
                 </li>
 
                 <li class="text-white uppercase text-base">
                     <!-- Conditionally render Dropdown if user is authenticated -->
                     <div v-if="$page.props.auth.user">
-                        <Dropdown align="right" width="48">
+                        <Dropdown align="right" width="60">
                             <template #trigger>
                                 <button type="button"
-                                    class="inline-flex  navbar-hrefs items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-gray-500">
+                                    class="inline-flex items-center px-3 py-2 border border-transparent navbar-hrefs text-sm leading-4 font-medium rounded-xl text-gray-500">
                                     <i class="far fa-circle-user text-xl fa-fw text-white"></i>
                                     <svg class="ms-2 -me-0.5 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20" fill="currentColor">
@@ -159,9 +159,19 @@ defineProps({
                                     </svg>
                                 </button>
                             </template>
-                            <template #content>
+                            <template #userinfo>
+                                <div>{{ $page.props.auth.user.name }}</div>
+                                <div class="font-medium truncate">{{ $page.props.auth.user.email }}</div>
+                            </template>
+                            <template #links>
+                                <DropdownLink :href="route('profile.edit')" class="uppercase">IEPIRKUMU GROZS</DropdownLink>
+                                <DropdownLink :href="route('profile.edit')" class="uppercase">VĒLMJU SARAKSTS</DropdownLink>
                                 <DropdownLink :href="route('profile.edit')" class="uppercase">PROFILS</DropdownLink>
-                                <DropdownLink :href="route('logout')" method="post" as="button" class="uppercase">ATSLĒGTIES
+                            </template>
+                            <template #actions>
+                                <DropdownLink href="/admin-dashboard" v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2" class="uppercase">ADMIN</DropdownLink>
+                                <DropdownLink :href="route('logout')" method="post" as="button" class="uppercase">
+                                    ATSLĒGTIES
                                 </DropdownLink>
                             </template>
                         </Dropdown>

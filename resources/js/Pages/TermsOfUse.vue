@@ -9,7 +9,7 @@ import ScrollTopBtn from '../Components/ScrollToTopBtn.vue';
 <template>
     <Head title="Lietošanas noteikumi" />
     <Navbar />
-    <div class="cross-patternSVGLight">
+    <div class="cross-patternSVGLight bg-white">
         <div class="py-8">
             <Breadcrumbs currentPage="Lietošanas noteikumi" />
         </div>

@@ -24,8 +24,11 @@ Route::get('/', function () {
     ]);
 });
 
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return redirect()->intended('/');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/privacy-policy', function () {
@@ -102,6 +105,19 @@ Route::get('/admin-categories', function () {
         abort(404);
     }
 })->middleware(['auth', 'verified'])->name('admin.categories');
+
+Route::get('/admin-categories/create', function () {
+    if (Auth::user()->role_id === 2) {
+        return Inertia::render('Admin/CreateCategory');
+    } else {
+        abort(404);
+    }
+
+    if (!Auth::check()){
+        abort(404);
+    }
+})->middleware(['auth', 'verified'])->name('admin.createcategory');
+
 
 Route::get('/admin-logfiles', function () {
     if (Auth::user()->role_id === 2) {

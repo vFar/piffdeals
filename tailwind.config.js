@@ -7,8 +7,11 @@ export default {
     content: [
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
         "./storage/framework/views/*.php",
-        "./resources/views/**/*.blade.php",
-        "./resources/js/**/*.vue",
+        "./resources/**/*.blade.php",
+        "./resources/**/*.js",
+        "./resources/**/*.vue",
+        "./node_modules/flowbite/**/*.js"
+        
     ],
 
     theme: {
@@ -23,7 +26,7 @@ export default {
                 accent: "#4F91ED",
                 textColor: "#525252",
                 lightBlueBackground: "#EBF3FF",
-                whiter: "#fffafa",
+                whiter: "#ffffff",
                 dark: "",
             },
             fontFamily: {
@@ -34,5 +37,6 @@ export default {
 
     plugins: [
         require("@tailwindcss/forms"), 
+        require('flowbite/plugin'),
     ],
 };

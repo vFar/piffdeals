@@ -6,6 +6,7 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 import { Head } from '@inertiajs/vue3';
 import Footer from '@/Components/Footer.vue';
 import Navbar from '@/Components/Navbar.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 
 defineProps({
     mustVerifyEmail: {
@@ -18,30 +19,41 @@ defineProps({
 </script>
 
 <template>
+
     <Head title="PROFILS" />
 
 
-    <Navbar/>
+    <Navbar />
     <AuthenticatedLayout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <UpdateProfileInformationForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
-                    />
-                </div>
 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <UpdatePasswordForm class="max-w-xl" />
-                </div>
+        <div class="">
+            <div class="py-8">
+                <Breadcrumbs currentPage="Profils" />
+            </div>
 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <DeleteUserForm class="max-w-xl" />
+            <div
+                class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
+                <div class="py-4 sm:py-8">
+                    <UpdateProfileInformationForm :must-verify-email="mustVerifyEmail" :status="status"
+                        class="max-w-full" />
+                </div>
+            </div>
+
+            <div
+                class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
+                <div class="py-4 sm:py-8">
+                    <UpdatePasswordForm class="max-w-full " />
+                </div>
+            </div>
+
+            <div
+                class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
+                <div class="py-4 sm:py-8">
+                    <DeleteUserForm class="max-w-full" />
+
                 </div>
             </div>
         </div>
-        <Footer/>
+        <Footer />
     </AuthenticatedLayout>
 </template>

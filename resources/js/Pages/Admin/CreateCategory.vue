@@ -63,24 +63,19 @@ const closeGoodsModal = () => {
         <main class="flex-1 bg-whiter ml-64"> <!-- ml-64 to offset the width of the sidebar -->
             <section class="max-w-full mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6 mb-8">
                 <div class="flex justify-between items-center py-2">
-                    <h1 class="uppercase font-semibold text-xl text-textColor">Visas Preces</h1>
+                    <h1 class="uppercase font-semibold text-xl text-textColor">Preču kategorijas</h1>
 
                     <div class="flex items-center">
-                        <button
-                            class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 mx-8">
-                            <i class="fas fa-download py-1 mr-2 fa-fw text-textColor"></i>
-                            Eksportēt
-                        </button>
 
                         <button @click="addGoodModal"
                             class="flex items-center p-3 rounded-lg text-white bg-accent uppercase font-semibold hover:bg-secondary group navbarElement">
-                            pievienot preci
+                            Izveidot jaunu kategoriju
                         </button>
 
                         <Modal :show="addGoodShow" @close="closeGoodsModal">
                             <div class="pt-6">
                                 <div class="flex items-center justify-between border-b mb-4">
-                                    <h3 class="text-xl p-4 uppercase">Pievienot jaunu preci</h3>
+                                    <h3 class="text-xl p-4 uppercase">Jauna kategorija</h3>
                                     <button @click="closeGoodsModal"
                                         class="m-4 bg-transparent hover:bg-gray-300 text-white p-2 rounded-xl">
                                         <i class="fas fa-xmark fa-fw text-textColor hover:text-white"></i>
@@ -88,33 +83,22 @@ const closeGoodsModal = () => {
                                 </div>
 
                                 <div class="mb-16 px-6">
-                                    <div class="mt-12">
-
-
-                                        <SelectInput autofocus placeholder="Kategorija" required class="mt-1 block w-full">
-                                            <option selected>Kategorija</option>
-                                        </SelectInput>
-
-
+                                    <form class="mt-16">
                                         <InputError class="mt-2" />
-                                    </div>
-                                    <div class="mt-6">
-                                        <TextInput type="text" placeholder="SKU" class="mt-1 block w-full" required
+
+                                        <TextInput type="text" placeholder="Nosaukums" class="mt-1 block w-full" required
                                             autofocus />
 
-                                            
-                                        <InputError class="mt-2" />
-                                    </div>
+                                    </form>
                                 </div>
 
                                 <div class="mx-6 py-6 border-t flex justify-end">
                                     <button @click="addGood"
                                         class="flex items-center p-3 rounded-lg text-white bg-primary uppercase font-semibold hover:bg-secondary group navbarElement">
-                                        pievienot preci
+                                        Izveidot kategoriju
                                     </button>
                                 </div>
                             </div>
-
                         </Modal>
 
 

@@ -68,12 +68,17 @@ const togglePasswordVisibility = () => {
                     <h2 class="font-bold text-2xl text-primary uppercase text-center md:text-left">Pieslēgties</h2>
 
                     <form @submit.prevent="submit" class="flex flex-col gap-4">
+                        <div class="mt-6">
+                            <InputError :message="form.errors.email" />
+                            <InputError :message="form.errors.password" />
+                        </div>
+
                         <input
                             class="p-2 mt-8 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
                             id="email" type="email" placeholder="E-pasts" v-model="form.email" required autofocus
                             autocomplete="username">
 
-                        <InputError :message="form.errors.email" />
+                        <!-- <InputError :message="form.errors.email" /> -->
 
                         <div class="relative">
                             <input
@@ -81,7 +86,7 @@ const togglePasswordVisibility = () => {
                                 id="password" v-model="form.password" required autocomplete="current-password"
                                 placeholder="Parole" :type="inputType">
 
-                            <InputError :message="form.errors.password" />
+                            <!-- <InputError :message="form.errors.password" /> -->
 
                             <button @click="togglePasswordVisibility" class="absolute top-1/2 right-3 -translate-y-1/2"
                                 type="button">

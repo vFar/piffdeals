@@ -25,7 +25,7 @@ const submitForm = () => {
 
     <Head title="Kontakti" />
     <Navbar />
-    <div class="cross-patternSVGLight">
+    <div class="cross-patternSVGLight bg-white">
         <div class="py-8">
             <Breadcrumbs currentPage="Kontakti" />
         </div>
