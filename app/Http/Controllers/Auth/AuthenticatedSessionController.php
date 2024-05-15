@@ -31,9 +31,17 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
+    
+        // Check if authenticated user is active
+        if (Auth::user()->status !== 'Aktīvs') {
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Nepareizs e-pasts un/vai parole!',
+            ]);
+        }
+    
         $request->session()->regenerate();
-
+    
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

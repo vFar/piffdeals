@@ -28,7 +28,6 @@ class ContactController extends Controller
                 'message' => 'Message sent successfully!'
             ]);
         } catch (\Exception $e) {
-            \Log::error('Failed to send notification: ' . $e->getMessage());
             return Inertia::render('Contact', [
                 'errors' => ['server' => 'Unable to send email. Please try again later.']
             ]);

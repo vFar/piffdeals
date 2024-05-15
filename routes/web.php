@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\ClientUserFetchController;
+use App\Http\Controllers\Admin\CreateClientAccountController;
+use App\Http\Controllers\Admin\ClientPasswordResetController;
+use App\Http\Controllers\Admin\EditClientAccountController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -143,17 +147,32 @@ Route::get('/admin-administrators', function () {
     }
 })->middleware(['auth', 'verified'])->name('admin.administrators');
 
-Route::get('/admin-users', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/Users');
-    } else {
-        abort(404);
-    }
+// Route::get('/admin-users', function () {
+//     if (Auth::user()->role_id === 2) {
+//         return Inertia::render('Admin/Users');
+//     } else {
+//         abort(404);
+//     }
 
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.users');
+//     if (!Auth::check()){
+//         abort(404);
+//     }
+// })->middleware(['auth', 'verified'])->name('admin.users');
+
+// Route::get('/your-route', [YourController::class, 'index'])->name('your.route');
+
+// Route::get('/admin-users', [ClientUserFetchController::class, 'index'])->middleware(['auth', 'verified'])->name('admin.users');
+Route::get('/admin-users', [ClientUserFetchController::class, 'index'])->name('admin-users');
+Route::post('/admin-users', [CreateClientAccountController::class, 'storeAdmin'])->name('admin.users.storeAdmin');
+Route::get('/admin-users/user/{id}', [ClientUserFetchController::class, 'show'])
+    ->name('admin.users.show')
+    ->middleware(['auth', 'verified']);
+Route::patch('/admin-users/update-status', [EditClientAccountController::class, 'updateStatus'])->name('admin.users.updateStatus');
+
+
+
+Route::post('/password/email', [ClientPasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+
 
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])

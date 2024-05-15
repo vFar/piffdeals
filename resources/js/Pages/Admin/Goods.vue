@@ -92,7 +92,7 @@ const closeGoodsModal = () => {
 
 
                                         <SelectInput autofocus placeholder="Kategorija" required class="mt-1 block w-full">
-                                            <option selected>Kategorija</option>
+                                            <option disabled value="">Kategorija</option>
                                         </SelectInput>
 
 
@@ -102,7 +102,7 @@ const closeGoodsModal = () => {
                                         <TextInput type="text" placeholder="SKU" class="mt-1 block w-full" required
                                             autofocus />
 
-                                            
+
                                         <InputError class="mt-2" />
                                     </div>
                                 </div>

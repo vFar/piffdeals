@@ -2,8 +2,10 @@
 import { onMounted, ref } from 'vue';
 
 const model = defineModel({
-    type: String,
-    required: true,
+    modelValue: String,
+    type: { type: String, default: 'text' },
+    placeholder: String,
+    autofocus: Boolean
 });
 
 const input = ref(null);

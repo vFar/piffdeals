@@ -13,8 +13,6 @@ const props = defineProps({
     recaptchaSiteKey: String
 });
 
-console.log("sitekey");
-console.log(props.recaptchaSiteKey);
 
 const form = useForm({
     name: '',
