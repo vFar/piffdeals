@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\Admin\ClientUserFetchController;
-use App\Http\Controllers\Admin\CreateClientAccountController;
-use App\Http\Controllers\Admin\ClientPasswordResetController;
-use App\Http\Controllers\Admin\EditClientAccountController;
+use App\Http\Controllers\NavigationDataController;
+use App\Http\Controllers\Admin\ClientAccountController;
+use App\Http\Controllers\Admin\CategoryGoodsController;
+use App\Http\Controllers\Admin\GroupGoodsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -98,30 +98,6 @@ Route::get('/admin-goods', function () {
     }
 })->middleware(['auth', 'verified'])->name('admin.goods');
 
-Route::get('/admin-categories', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/Categories');
-    } else {
-        abort(404);
-    }
-
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.categories');
-
-Route::get('/admin-categories/create', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/CreateCategory');
-    } else {
-        abort(404);
-    }
-
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.createcategory');
-
 
 Route::get('/admin-logfiles', function () {
     if (Auth::user()->role_id === 2) {
@@ -147,31 +123,28 @@ Route::get('/admin-administrators', function () {
     }
 })->middleware(['auth', 'verified'])->name('admin.administrators');
 
-// Route::get('/admin-users', function () {
-//     if (Auth::user()->role_id === 2) {
-//         return Inertia::render('Admin/Users');
-//     } else {
-//         abort(404);
-//     }
+Route::get('/navigation-data', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data');
 
-//     if (!Auth::check()){
-//         abort(404);
-//     }
-// })->middleware(['auth', 'verified'])->name('admin.users');
+Route::prefix('admin-groups')->middleware(['auth', 'can:admin-access'])->group(function () {
+    Route::get('/', [GroupGoodsController::class, 'index'])->name('admin.groups.index');
+    Route::post('/store', [GroupGoodsController::class, 'store'])->name('admin.groups.store');
+    Route::patch('/admin-groups/{id}', [GroupGoodsController::class, 'update'])->name('admin.groups.update');
+});
 
-// Route::get('/your-route', [YourController::class, 'index'])->name('your.route');
+Route::prefix('admin-categories')->middleware(['auth', 'can:admin-access'])->group(function () {
+    Route::get('/', [CategoryGoodsController::class, 'index'])->name('admin.categories.list');
+    Route::post('/store', [CategoryGoodsController::class, 'store'])->name('admin.goods.storeCategory');
+    Route::patch('/admin-categories/{id}', [CategoryGoodsController::class, 'update'])->name('admin.goods.updateCategory');
+});
 
-// Route::get('/admin-users', [ClientUserFetchController::class, 'index'])->middleware(['auth', 'verified'])->name('admin.users');
-Route::get('/admin-users', [ClientUserFetchController::class, 'index'])->name('admin-users');
-Route::post('/admin-users', [CreateClientAccountController::class, 'storeAdmin'])->name('admin.users.storeAdmin');
-Route::get('/admin-users/user/{id}', [ClientUserFetchController::class, 'show'])
-    ->name('admin.users.show')
-    ->middleware(['auth', 'verified']);
-Route::patch('/admin-users/update-status', [EditClientAccountController::class, 'updateStatus'])->name('admin.users.updateStatus');
-
-
-
-Route::post('/password/email', [ClientPasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::prefix('admin-users')->name('admin-users.')->group(function () {
+    Route::get('/', [ClientAccountController::class, 'index'])->name('index')->middleware('can:admin-access');
+    Route::post('/store', [ClientAccountController::class, 'storeAdmin'])->name('storeAdmin')->middleware('can:admin-access');
+    Route::get('/{id}', [ClientAccountController::class, 'show'])->name('show')->middleware('can:admin-access');
+    Route::post('/password/email', [ClientAccountController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('can:admin-access');
+    Route::patch('/update-status', [ClientAccountController::class, 'updateStatus'])->name('updateStatus')->middleware('can:admin-access');
+    Route::delete('/delete', [ClientAccountController::class, 'deleteUsers'])->name('delete')->middleware('can:admin-access');
+});
 
 
 

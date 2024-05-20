@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 
 const model = defineModel({
-    modelValue: String,
+    modelValue: Object,
     type: { type: String, default: 'text' },
     placeholder: String,
     autofocus: Boolean

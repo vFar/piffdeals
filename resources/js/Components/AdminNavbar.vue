@@ -42,7 +42,7 @@ if (
     settingsDropdownOpen.value = true;
 }
 
-if (props.currentPage === "goods" || props.currentPage === "categories") {
+if (props.currentPage === "goods" || props.currentPage === "categories" || props.currentPage === 'groups' || props.currentPage === 'attributes') {
     catalogDropdownOpen.value = true;
 }
 </script>
@@ -170,6 +170,20 @@ aside {
                                         href="/admin-goods"
                                         class="block p-2 rounded text-white uppercase ms-9"
                                         >Preces
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href="/admin-attributes"
+                                        class="block p-2 rounded text-white uppercase ms-9"
+                                        >Atribūti
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        href="/admin-groups"
+                                        class="block p-2 rounded text-white uppercase ms-9"
+                                        >Grupas
                                     </Link>
                                 </li>
                                 <li>

@@ -3,7 +3,6 @@ import { Head, Link } from "@inertiajs/vue3";
 import { ref, computed, onMounted, watch } from "vue";
 import { usePage, useForm } from "@inertiajs/vue3";
 import { Ziggy } from "@/ziggy";
-import route from "ziggy-js";
 import Modal from "@/Components/Modal.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -17,17 +16,18 @@ import SelectInput from "@/Components/SelectInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import dayjs from "dayjs"; // Import Day.js
 import { router } from "@inertiajs/vue3";
+import AdminFilterDrawer from "@/Components/AdminFilterDrawer.vue";
+import AdminSearchbar from "@/Components/AdminSearchbar.vue";
 
 const getImageUrl = (filename) => {
     return `/storage/images/${filename}`;
 };
 const createUserShow = ref(false);
 
-const isAnySelected = computed(() => selectedUsers.value.length > 0);
-const actionSelected = ref("");
+const selectedUsers = ref([]);
 
 const navigateToUserDetails = (userId) => {
-    const url = route("admin.users.show", { id: userId });
+    const url = route("admin-users.show", { id: userId });
     window.location.href = url;
 };
 
@@ -46,62 +46,18 @@ const openPasswordResetModal = (email) => {
 };
 
 const sendPasswordResetEmail = () => {
-    passwordResetForm.post(route("password.email"), {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: (response) => {
-            alert(
-                "Password reset link sent successfully to " +
-                    passwordResetForm.email
-            );
-            console.log(passwordResetForm.email);
-            showPasswordResetModal.value = false;
-            passwordResetForm.reset(); // Reset the form to clear the email field
+    showPasswordResetModal.value = false;
+    passwordResetForm.post(route("admin-users.password.email"), {
+        onSuccess: () => {
+            alert("Paroles atjaunošanas saite ir veiksmīgi nosūtīta klientam");
+            passwordResetForm.reset(); // Optionally reset the form field
         },
         onError: (errors) => {
-            if (errors.email) {
-                alert(errors.email);
-            } else {
-                alert("Error sending password reset email.");
-            }
+            alert("Failed to send password reset link.");
             console.error(errors);
         },
     });
 };
-
-const selectedUsers = ref([]);
-
-const allChecked = computed({
-    get: () =>
-        props.users.data &&
-        props.users.data.length > 0 &&
-        props.users.data.every((user) => selectedUsers.value.includes(user.id)),
-    set: (value) => {
-        console.log("Setting allChecked to: ", value);
-        if (value) {
-            selectedUsers.value = props.users.data.map((user) => user.id);
-        } else {
-            selectedUsers.value = [];
-        }
-        console.log(
-            "selectedUsers after setting allChecked: ",
-            selectedUsers.value
-        );
-    },
-});
-
-const toggleSelection = (id) => {
-    const index = selectedUsers.value.indexOf(id);
-    if (index > -1) {
-        selectedUsers.value.splice(index, 1);
-    } else {
-        selectedUsers.value.push(id);
-    }
-};
-
-const selectionText = computed(
-    () => `${selectedUsers.value.length} no ${props.totalUsers} izvēlēti`
-);
 
 const { errors } = usePage().props;
 const createUserForm = useForm({
@@ -111,108 +67,54 @@ const createUserForm = useForm({
 });
 
 const createUserSubmitForm = () => {
-    createUserForm.post(route("admin.users.storeAdmin"), {
-        preserveState: true, // This option prevents the page from fully reloading
-        preserveScroll: true, // Keeps the current scroll position after the request
+    createUserForm.post(route("admin-users.storeAdmin"), {
+        preserveState: true,
+        preserveScroll: true,
         onSuccess: (response) => {
+            // Reset the form and hide modal
             createUserForm.reset();
             createUserShow.value = false;
             selectedUsers.value = [];
-            // Optionally, fetch the updated list of users if not automatically handled by Inertia
+
+            // Fetch updated user list
+            fetchUsers();
         },
         onError: (error) => {
-            console.log("createUserForm submission error", error);
+            console.error("Submission error", error);
+            alert("Error: " + error.message);
+            if (error.response && error.response.data) {
+                console.error("Detailed errors", error.response.data.errors);
+            }
         },
     });
 };
 
+// Function to fetch users
+function fetchUsers() {
+    return router.get(route("admin-users.index"), { search: search.value }, {
+        preserveState: true,
+        replace: true,
+    }).then(response => {
+        // Handle response
+        console.log('Fetched users:', response);
+        // Update your state/data here
+    }).catch(error => {
+        console.error('Failed to fetch users:', error);
+    });
+}
+
+
 const search = ref(props.filters.search);
-// watch(search, (newValue) => {
-//     // Only navigate if there's a change in the search value and it's not empty
-//     if (newValue.trim()) {
-//         router.get(`/admin-users?search=${newValue}`, {
+// watch(search, (value) => {
+//     router.get(
+//         "/admin-users",
+//         { search: value },
+//         {
 //             preserveState: true,
-//             replace: true,  // This replaces the current entry in the history stack, not pushing a new one.
-//             only: ['users'], // Adjust depending on what parts of the page you want updated
-//         });
-//     }
-// }, { immediate: true });
-
-watch(search, (value) => {
-    router.get(
-        "/admin-users",
-        { search: value },
-        {
-            preserveState: true,
-            replace: true,
-        }
-    );
-});
-
-// const mainDropdownOpen = ref(false);
-// const nestedDropdownOpen = ref(false);
-
-// function toggleMainDropdown() {
-//     mainDropdownOpen.value = !mainDropdownOpen.value;
-//     if (mainDropdownOpen.value === false) {
-//         nestedDropdownOpen.value = false;  // Automatically close nested dropdown when main closes
-//     }
-// }
-
-// function toggleNestedDropdown() {
-//     nestedDropdownOpen.value = !nestedDropdownOpen.value;
-// }
-
-// function setStatus(status) {
-//     console.log(`Setting status to: ${status}`);
-//     mainDropdownOpen.value = false;
-//     nestedDropdownOpen.value = false;
-// }
-
-// function deleteAction() {
-//     console.log('Performing delete action');
-//     mainDropdownOpen.value = false;
-// }
-
-// Display text for selected count
-
-const applyAction = () => {
-    if (actionSelected.value === "delete") {
-        console.log("Deleting:", selectedUsers.value);
-        // Additional delete functionality as required
-    } else if (
-        actionSelected.value === "active" ||
-        actionSelected.value === "inactive"
-    ) {
-        updateUsersStatus(
-            actionSelected.value === "active" ? "Aktīvs" : "Deaktivizēts"
-        );
-    }
-
-    // Clear selections and reset dropdown
-    selectedUsers.value = [];
-    actionSelected.value = "";
-};
-
-const updateUsersStatus = async (status) => {
-    const userIds = selectedUsers.value;
-    await router
-        .patch(route("admin.users.updateStatus"), {
-            userIds,
-            status,
-        })
-        .then(() => {
-            console.log("Status updated successfully");
-            props.users.data.forEach((user) => {
-                if (userIds.includes(user.id)) {
-                    user.status = status;
-                }
-            });
-        })
-        .catch((error) => {
-            console.error("Failed to update status:", error);
-        });
-};
+//             replace: true,
+//         }
+//     );
+// });
 
 const formatDate = (date) => {
     return dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
@@ -238,6 +140,13 @@ const closeCreateUserModal = () => {
     createUserForm.reset();
 
     // form.reset();
+};
+
+const inputType = ref("password");
+
+// Function to toggle the visibility of the password
+const togglePasswordVisibility = () => {
+    inputType.value = inputType.value === "password" ? "text" : "password";
 };
 </script>
 
@@ -324,9 +233,9 @@ const closeCreateUserModal = () => {
                                                 :message="errors.email"
                                             />
                                         </div>
-                                        <div class="mt-6">
+                                        <div class="mt-6 relative">
                                             <TextInput
-                                                type="password"
+                                                :type="inputType"
                                                 class="w-full"
                                                 placeholder="Parole"
                                                 v-model="
@@ -334,6 +243,22 @@ const closeCreateUserModal = () => {
                                                 "
                                                 required
                                             />
+
+                                            <button
+                                                @click="
+                                                    togglePasswordVisibility
+                                                "
+                                                class="absolute top-1/2 right-3 -translate-y-1/2"
+                                                type="button"
+                                            >
+                                                <i
+                                                    :class="
+                                                        inputType === 'password'
+                                                            ? 'fas fa-eye fa-fw text-gray-400'
+                                                            : 'fas fa-eye-slash fa-fw text-gray-400'
+                                                    "
+                                                ></i>
+                                            </button>
                                             <InputError
                                                 class="mt-2"
                                                 :message="errors.password"
@@ -343,12 +268,15 @@ const closeCreateUserModal = () => {
                                     <div
                                         class="mx-6 py-6 border-t flex justify-end"
                                     >
-                                        <button
+                                        <SecondaryButton
+                                            @click="closeCreateUserModal"
+                                            >Atcelt
+                                        </SecondaryButton>
+                                        <PrimaryButton
                                             type="submit"
-                                            class="flex items-center p-3 rounded-lg text-white bg-primary uppercase font-semibold hover:bg-secondary"
-                                        >
-                                            Izveidot kontu
-                                        </button>
+                                            class="ms-3"
+                                            >Izveidot kontu
+                                        </PrimaryButton>
                                     </div>
                                 </div>
                             </form>
@@ -367,40 +295,8 @@ const closeCreateUserModal = () => {
                             class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 mx-4 p-4"
                         >
                             <div class="relative overflow-hidden">
-                                <div
-                                    v-if="isAnySelected"
-                                    class="flex space-x-6 items-center"
-                                >
-                                    <select
-                                        v-model="actionSelected"
-                                        @change="applyAction"
-                                        class="rounded-lg border-gray-300 text-sm text-gray-700"
-                                    >
-                                        <option
-                                            disabled
-                                            value=""
-                                            selected="selected"
-                                        >
-                                            Izvēlēties darbību
-                                        </option>
-                                        <optgroup label="Statuss">
-                                            <option value="active">
-                                                Aktivizēt
-                                            </option>
-                                            <option value="inactive">
-                                                Deaktivizēt
-                                            </option>
-                                        </optgroup>
-                                        <option value="delete">Dzēst</option>
-                                    </select>
-
-                                    <div>
-                                        <p>{{ selectionText }}</p>
-                                    </div>
-                                </div>
-
-                                <div v-else class="flex space-x-6 items-center">
-                                    <form class="relative">
+                                <div class="flex space-x-6 items-center">
+                                    <!-- <form class="relative">
                                         <div
                                             class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
                                         >
@@ -425,7 +321,12 @@ const closeCreateUserModal = () => {
                                             v-model="search"
                                             class="w-[300px] py-2 pl-10 pr-4 text-sm text-textColor rounded-xl bg-white"
                                         />
-                                    </form>
+                                    </form> -->
+                                    <AdminSearchbar
+                                        :initialQuery="props.filters.search"
+                                        @update:searchQuery="search = $event"
+                                        @search="fetchUsers"
+                                    />
 
                                     <p>
                                         {{ totalUsers }}
@@ -450,26 +351,25 @@ const closeCreateUserModal = () => {
                                         <AdminPaginator :links="users.links" />
                                     </div>
 
-                                    <div class="relative z-50">
-                                        <!-- Trigger Button -->
-                                        <button
+                                    <!-- <button
                                             @click="toggleDrawer"
                                             class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-textColor focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                             type="button"
                                         >
-                                            <!-- <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                                           <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
                                             class="h-4 w-4 mr-2 text-gray-400" viewbox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd"
                                                 d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
                                                 clip-rule="evenodd" />
-                                        </svg> -->
+                                        </svg>
                                             <i
                                                 class="fas fa-filter fa-fw mr-2 text-textColor"
                                             ></i>
                                             Filtrēt
                                         </button>
+                                        
+                                    <div class="relative z-50">
 
-                                        <!-- Backdrop -->
                                         <div
                                             v-show="drawerOpen"
                                             @click="closeDrawer"
@@ -482,7 +382,6 @@ const closeCreateUserModal = () => {
                                             }"
                                         ></div>
 
-                                        <!-- Drawer -->
                                         <div
                                             :class="{
                                                 'translate-x-0': drawerOpen,
@@ -510,11 +409,19 @@ const closeCreateUserModal = () => {
                                                 Here is some more content...
                                             </p>
                                         </div>
-                                    </div>
+                                    </div> -->
+                                    <AdminFilterDrawer
+                                        v-model:open="drawerOpen"
+                                    >
+                                        <!-- Additional filters can be added here -->
+                                    </AdminFilterDrawer>
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="overflow-x-auto">
+
                             <table
                                 class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
                             >
@@ -522,14 +429,6 @@ const closeCreateUserModal = () => {
                                     class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
                                 >
                                     <tr>
-                                        <th scope="col" class="px-4 py-3">
-                                            <Checkbox
-                                                :checked="allChecked"
-                                                @update:checked="
-                                                    allChecked = $event
-                                                "
-                                            />
-                                        </th>
                                         <th scope="col" class="px-4 py-3">
                                             Vārds, uzvārds / E-pasts / Telefons
                                         </th>
@@ -548,39 +447,17 @@ const closeCreateUserModal = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-if="!props.users.data.length">
-                                        <td
-                                            colspan="5"
-                                            class="text-center py-4"
-                                        >
-                                            Nav pieejamu ierakstu
-                                        </td>
-                                    </tr>
                                     <tr
                                         v-for="user in props.users.data"
                                         :key="user.id"
                                         class="hover:bg-slate-100"
                                     >
                                         <td class="px-4 py-3">
-                                            <Checkbox
-                                                :value="user.id"
-                                                :checked="
-                                                    selectedUsers.value
-                                                        ? selectedUsers.value.includes(
-                                                              user.id
-                                                          )
-                                                        : false
-                                                "
-                                                @update:checked="
-                                                    () =>
-                                                        toggleSelection(user.id)
-                                                "
-                                            />
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            {{ user.name }} <br />{{
-                                                user.email
-                                            }}
+                                            <span
+                                                class="font-semibold text-md text-textColor"
+                                                >{{ user.name }}
+                                            </span>
+                                            <br />{{ user.email }}
                                         </td>
                                         <td class="px-4 py-3">
                                             <span
@@ -607,18 +484,34 @@ const closeCreateUserModal = () => {
                                             <div
                                                 class="space-x-3 flex justify-center"
                                             >
-                                                <button
-                                                    @click="
-                                                        openPasswordResetModal(
-                                                            user.email
-                                                        )
+                                                <template
+                                                    v-if="
+                                                        user.status !==
+                                                        'Deaktivizēts'
                                                     "
-                                                    class="text-xl hover:bg-slate-200 rounded-lg p-2"
                                                 >
-                                                    <i
-                                                        class="fa-solid fa-envelope fa-fw"
-                                                    ></i>
-                                                </button>
+                                                    <button
+                                                        @click="
+                                                            openPasswordResetModal(
+                                                                user.email
+                                                            )
+                                                        "
+                                                        class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                                    >
+                                                        <i
+                                                            class="fa-solid fa-envelope fa-fw"
+                                                        ></i>
+                                                    </button>
+                                                </template>
+                                                <template v-else>
+                                                    <span
+                                                        class="text-xl text-gray-400 cursor-not-allowed p-2"
+                                                    >
+                                                        <i
+                                                            class="fa-solid fa-envelope fa-fw"
+                                                        ></i>
+                                                    </span>
+                                                </template>
 
                                                 <button
                                                     @click="
@@ -665,14 +558,11 @@ const closeCreateUserModal = () => {
 
                                         <div class="mb-16 px-6">
                                             <div class="mt-12">
-                                                <h1 class="text-2xl bg-red-600">
-                                                    NOT WORKIUNG ATM
-                                                </h1>
-                                                <h1>
+                                                <p class="text-textColor">
                                                     Vai tiešām vēlies sūtīt
                                                     paroles atjaunošanas
                                                     vēstuli?
-                                                </h1>
+                                                </p>
                                             </div>
                                         </div>
 

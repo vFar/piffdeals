@@ -27,6 +27,14 @@ const toggleDrawer = () => {
     drawerOpen.value = !drawerOpen.value;  // Toggle the state of the drawer
 };
 
+const categories = ref([
+    { text: 'Kategorija 1', value: '1' },
+    { text: 'Kategorija 2', value: '2' },
+    // Add more categories as needed
+]);
+
+const selectedCategory = ref('');
+
 const closeDrawer = () => {
     drawerOpen.value = false;
 };
@@ -91,9 +99,8 @@ const closeGoodsModal = () => {
                                     <div class="mt-12">
 
 
-                                        <SelectInput autofocus placeholder="Kategorija" required class="mt-1 block w-full">
-                                            <option disabled value="">Kategorija</option>
-                                        </SelectInput>
+                                        <SelectInput :modelValue="selectedCategory" :options="categories" class="mt-1 block w-full"  @update:modelValue="selectedCategory = $event" />
+
 
 
                                         <InputError class="mt-2" />

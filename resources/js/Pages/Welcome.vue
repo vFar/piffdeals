@@ -17,65 +17,8 @@ const flashMessage = ref('');
     <Navbar />
     <ScrollTopBtn />
     <div class="cross-patternSVGLight bg-whiter">
-        <div class="container flex items-center mx-auto max-w-screen-xl">
-            <div
-                class="w-80 max-w-md mt-8 p-6 bg-whiter border border-gray-200 rounded-xl shadow-md">
-                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
-                    <div>
-                        <span class="fas fa-person fa-fw"></span>
-                        <span> Ķermenim</span>
-                    </div>
-                    <span class="fas fa-angle-right"></span>
-                </a>
-
-                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
-                    <div>
-                        <span class="fas fa-ice-cream fa-fw"></span>
-                        <span> Saldumi</span>
-                    </div>
-                    <span class="fas fa-angle-right"></span>
-                </a>
-
-                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
-                    <div>
-                        <span class="fas fa-vial fa-fw"></span>
-                        <span> Sadzīves ķīmija</span>
-                    </div>
-                    <span class="fas fa-angle-right"></span>
-                </a>
-
-                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
-                    <div>
-                        <span class="fas fa-utensils fa-fw"></span>
-                        <span> Ēdiens</span>
-                    </div>
-                    <span class="fas fa-angle-right"></span>
-                </a>
-
-                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
-                    <div>
-                        <span class="fas fa-vial fa-fw"></span>
-                        <span> ķīmija</span>
-                    </div>
-                    <span class="fas fa-angle-right"></span>
-                </a>
-
-                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
-                    <div>
-                        <span class="fas fa-gamepad fa-fw"></span>
-                        <span> Rotaļlietas</span>
-                    </div>
-                    <span class="fas fa-angle-right"></span>
-                </a>
-
-                <a href="" class="flex justify-between align-center hover:underline items-center text-textColor uppercase leading-7 ">
-                    <div>
-                        <span class="fas fa-tv fa-fw"></span>
-                        <span> IT un Datortehnika</span>
-                    </div>
-                    <span class="fas fa-angle-right"></span>
-                </a>
-            </div>
+        <div class="container flex items-center mx-auto max-w-screen-3xl px-6">
+          
         </div>
         <ScrollTopBtn />
         <Footer />

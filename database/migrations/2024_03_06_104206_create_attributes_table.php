@@ -6,27 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        Schema::create('goods', function (Blueprint $table) {
+        Schema::create('attributes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->unsignedBigInteger('stock_quantity');
             $table->string('status')->default('Deaktivizēts');
             $table->unsignedBigInteger('group_id')->nullable();
-            $table->unsignedBigInteger('attribute_id')->nullable();
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('set null');
-            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('set null');
             $table->timestamps();
-
-            
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('goods');
+        Schema::dropIfExists('attributes');
     }
 };

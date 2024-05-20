@@ -27,6 +27,14 @@ const toggleDrawer = () => {
     drawerOpen.value = !drawerOpen.value;  // Toggle the state of the drawer
 };
 
+const categories = ref([
+    { text: 'Kategorija 1', value: '1' },
+    { text: 'Kategorija 2', value: '2' },
+    // Add more categories as needed
+]);
+
+const selectedCategory = ref('');
+
 const closeDrawer = () => {
     drawerOpen.value = false;
 };
@@ -53,9 +61,9 @@ const closeGoodsModal = () => {
 
 <template>
 
-    <Head title="PRECES" />
+    <Head title="ATRIBŪTI" />
     <div class="cross-patternSVGLight bg-whiter">
-        <AdminNavbar currentPage="goods" />
+        <AdminNavbar currentPage="attributes" />
 
         <!-- <section class="container mx-auto max-w-full border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
         </section> -->
@@ -63,19 +71,18 @@ const closeGoodsModal = () => {
         <main class="flex-1 bg-whiter ml-64"> <!-- ml-64 to offset the width of the sidebar -->
             <section class="max-w-full mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6 mb-8">
                 <div class="flex justify-between items-center py-2">
-                    <h1 class="uppercase font-semibold text-xl text-textColor">Preču kategorijas</h1>
+                    <h1 class="uppercase font-semibold text-xl text-textColor">Preču atribūti</h1>
 
                     <div class="flex items-center">
-
                         <button @click="addGoodModal"
                             class="flex items-center p-3 rounded-lg text-white bg-accent uppercase font-semibold hover:bg-secondary group navbarElement">
-                            Izveidot jaunu kategoriju
+                            Pievienot atribūtu
                         </button>
 
                         <Modal :show="addGoodShow" @close="closeGoodsModal">
                             <div class="pt-6">
                                 <div class="flex items-center justify-between border-b mb-4">
-                                    <h3 class="text-xl p-4 uppercase">Jauna kategorija</h3>
+                                    <h3 class="text-xl p-4 uppercase">Pievienot jaunu preci</h3>
                                     <button @click="closeGoodsModal"
                                         class="m-4 bg-transparent hover:bg-gray-300 text-white p-2 rounded-xl">
                                         <i class="fas fa-xmark fa-fw text-textColor hover:text-white"></i>
@@ -83,22 +90,32 @@ const closeGoodsModal = () => {
                                 </div>
 
                                 <div class="mb-16 px-6">
-                                    <form class="mt-16">
-                                        <InputError class="mt-2" />
+                                    <div class="mt-12">
 
-                                        <TextInput type="text" placeholder="Nosaukums" class="mt-1 block w-full" required
+
+                                        <SelectInput :modelValue="selectedCategory" :options="categories" class="mt-1 block w-full"  @update:modelValue="selectedCategory = $event" />
+
+
+
+                                        <InputError class="mt-2" />
+                                    </div>
+                                    <div class="mt-6">
+                                        <TextInput type="text" placeholder="SKU" class="mt-1 block w-full" required
                                             autofocus />
 
-                                    </form>
+
+                                        <InputError class="mt-2" />
+                                    </div>
                                 </div>
 
                                 <div class="mx-6 py-6 border-t flex justify-end">
                                     <button @click="addGood"
                                         class="flex items-center p-3 rounded-lg text-white bg-primary uppercase font-semibold hover:bg-secondary group navbarElement">
-                                        Izveidot kategoriju
+                                        pievienot preci
                                     </button>
                                 </div>
                             </div>
+
                         </Modal>
 
 

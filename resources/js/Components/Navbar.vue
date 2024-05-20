@@ -1,10 +1,17 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
-import ThemeSwitch from '../Components/ThemeSwitch.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
+import { ref, computed, onMounted } from "vue";
+import { usePage } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
+import ThemeSwitch from "../Components/ThemeSwitch.vue";
+import Dropdown from "@/Components/Dropdown.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import { router } from "@inertiajs/vue3";
 
-defineProps({
+const getImageUrl = (filename) => {
+    return `/storage/images/${filename}`;
+};
+
+const props = defineProps({
     canLogin: {
         type: Boolean,
     },
@@ -13,6 +20,14 @@ defineProps({
     },
 });
 
+const page = usePage();
+const activeCategories = computed(() => page.props.activeCategories);
+
+const pageProps = usePage().props;
+const authUser = computed(() => pageProps.auth.user);
+
+const isAuthenticated = computed(() => !!authUser.value);
+const isAdmin = computed(() => authUser.value?.role_id === 2);
 </script>
 
 <style>
@@ -27,7 +42,8 @@ defineProps({
     /* Margins for separation between navbar elements */
     border-radius: 0.5rem;
     /* Optional: Rounded corners */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease,
+        background-color 0.3s ease;
     /* Transition for transform, shadow, and background color */
 }
 
@@ -37,16 +53,16 @@ defineProps({
     /* Scale effect on hover/focus */
     box-shadow: 0 4px 8px -2px rgb(0 0 0 / 0.2);
     /* Subtle shadow for depth */
-    background: #4F91ED;
+    background: #4f91ed;
     /* Initial background color for navbar elements */
 }
 
 .navbar-hrefs:after {
     display: block;
-    content: '';
+    content: "";
     width: 100%;
     /* Ensures the underline covers the full width of the text */
-    border-bottom: solid 3px #EBF3FF;
+    border-bottom: solid 3px #ebf3ff;
     /* Color of the underline */
     transform: scaleX(0);
     transition: transform 250ms ease-in-out;
@@ -68,133 +84,221 @@ defineProps({
 </style>
 
 <template>
-    <header class="bg-whiter text-black p-1">
-        <div class="container text-textColor mx-auto max-w-screen-xl flex justify-between items-center">
-            <div class="flex space-x-12">
-                <a href="mailto:info@piffdeals.lv" class="hover:underline">
-                    <h1 class="text-sm text-textColor">info@piffdeals.lv</h1>
-                </a>
-                <a href="tel:+37129999999" class="hover:underline">
-                    <h1 class="text-sm text-textColor">+371 29 999 999</h1>
-                </a>
+    <!-- Top Header for Navigation Links and Language Options -->
+    <header class="bg-whiter text-black">
+        <div
+            class="container mx-auto flex justify-between items-center px-6 py-1"
+        >
+            <div class="flex space-x-6">
+                <a
+                    href="mailto:info@piffdeals.lv"
+                    class="text-textColor text-sm hover:underline"
+                    >info@piffdeals.lv</a
+                >
+                <a
+                    href="tel:+37129999999"
+                    class="text-textColor text-sm hover:underline"
+                    >+371 29 999 999</a
+                >
             </div>
-
-            <!-- will need reworking, potential web translators: google translate API -->
-            <div class="flex space-x-4">
-
+            <div class="space-x-6">
                 <ThemeSwitch />
-
                 <select
-                    class="py-1 pr-7 text-sm bg-whiter border-none font-semibold hover:bg-lightBlueBackground focus:ring-whiter rounded-lg">
-                    <option selected>LV</option>
+                    class="text-textColor bg-transparent border-none text-sm rounded cursor-pointer"
+                >
+                    <option>LV</option>
                     <option>RU</option>
                     <option>EN</option>
                 </select>
-
             </div>
         </div>
     </header>
 
-    <nav class="bg-primary py-4 sticky top-0 z-50 shadow-md">
-        <div class="container mx-auto max-w-screen-xl grid grid-cols-3 justify-between items-center gap-6">
-
-            <!-- Logo -->
+    <!-- Main Header with Logo -->
+    <header class="bg-whiter text-black">
+        <div class="container mx-auto flex justify-between py-4 px-6">
             <Link href="/" class="flex items-center shrink-0">
-            <img :src="getImageUrl('S-2.png')" alt="Logo" class="h-10 mr-4">
-            <img :src="getImageUrl('piffdeals_text_accent.svg')" alt="Text" class="h-10 mr-0">
+                <img
+                    :src="getImageUrl('S-3.png')"
+                    alt="Logo"
+                    class="h-10 mr-4"
+                />
+                <img
+                    :src="getImageUrl('piffdeals_text_primary.svg')"
+                    alt="Piffdeals"
+                    class="h-10 mr-0"
+                />
             </Link>
 
-            <!-- Search Bar -->
-            <div class="flex-grow">
-                <form class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="w-5 h-5 text-textColor" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                        </svg>
-                    </div>
-                    <input type="search" id="default-search"
-                        class="w-full py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-lightBlueBackground shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-                        placeholder="Meklēt" required>
-                </form>
+            <Link href="/login">
+                <button
+                    v-if="!isAuthenticated"
+                    class="relative h-12 w-40 overflow-hidden border border-primary text-primary shadow-2xl transition-all duration-200 before:absolute rounded-lg before:bottom-0 before:left-0 before:right-0 before:top-0 before:m-auto before:h-0 before:w-0 before:rounded-sm before:bg-primary before:duration-300 before:ease-out hover:text-white hover:shadow-primary hover:before:h-40 hover:before:w-40 hover:before:opacity-80"
+                >
+                    <span class="relative z-10 uppercase">Pieslēgties</span>
+                </button>
+            </Link>
+        </div>
+    </header>
+
+    <nav class="bg-primary py-4 sticky top-0 z-50 shadow-lg">
+        <div
+            class="container mx-auto max-w-screen-2xl px-6 flex justify-between items-center"
+        >
+            <!-- Good Categories on the left -->
+            <div class="flex space-x-8">
+                <!-- component -->
+
+                <Link
+                    v-for="category in activeCategories"
+                    :key="category.id"
+                    :href="`/category/${category.id}`"
+                    class="relative inline-flex uppercase items-center justify-center leading-normal no-underline pb-1 text-white font-sans font-bold text-base uppercase hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-neutral-500 transition group"
+                >
+                    {{ category.name }}
+                    <span
+                        class="absolute bottom-0 left-0 w-full h-0.5 bg-neutral-700 origin-bottom-right transform transition duration-200 ease-out scale-x-0 group-hover:scale-x-100 group-hover:origin-bottom-left"
+                    ></span>
+                </Link>
             </div>
 
-            <!-- Navigation Links -->
-            <ul class="flex space-x-4 items-center justify-evenly">
-                <!-- Always show Profile link -->
+            <!-- Search Bar and Navigation Links on the right -->
+            <div class="flex items-center">
+                <!-- Search Bar -->
+                <div class="flex w-80">
+                    <form class="relative">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                        >
+                            <svg
+                                class="w-5 h-5 text-textColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                />
+                            </svg>
+                        </div>
+                        <input
+                            type="search"
+                            id="default-search"
+                            class="w-72 py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                            placeholder="Meklēt starp *skaits* precēm"
+                            required
+                        />
+                    </form>
+                </div>
 
-                <!-- Show Grozs and Vēlmes only for guests (no user logged in) or users with role_id = 1 -->
-                <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
-                    class="text-white uppercase text-base">
-                    <Link href="/cart" class="navbar-hrefs"><i
-                        class="fas fa-sharp fa-cart-shopping text-xl fa-fw"></i><span></span></Link>
-                </li>
-                <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1"
-                    class="text-white uppercase text-base">
-                    <Link href="/wishlist" class="navbar-hrefs"><i
-                        class="far fa-sharp fa-heart text-xl fa-fw"></i><span></span></Link>
-                </li>
+                <!-- Navigation Links -->
 
-                <!-- Show Admin only for users with role_id = 2 -->
-                <li v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2"
-                    class="text-white uppercase text-base">
-                    <Link href="/admin-dashboard" class="navbar-hrefs"><i class="fa fa-tools text-xl fa-fw"></i><span></span>
-                    </Link>
-                </li>
+                <ul class="flex items-center space-x-3">
+                    <!-- Always show Profile link -->
 
-                <li class="text-white uppercase text-base">
-                    <!-- Conditionally render Dropdown if user is authenticated -->
-                    <div v-if="$page.props.auth.user">
-                        <Dropdown align="right" width="60">
-                            <template #trigger>
-                                <button type="button"
-                                    class="inline-flex items-center px-3 py-2 border border-transparent navbar-hrefs text-sm leading-4 font-medium rounded-xl text-gray-500">
-                                    <i class="far fa-circle-user text-xl fa-fw text-white"></i>
-                                    <svg class="ms-2 -me-0.5 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </template>
-                            <template #userinfo>
-                                <div>{{ $page.props.auth.user.name }}</div>
-                                <div class="font-medium truncate">{{ $page.props.auth.user.email }}</div>
-                            </template>
-                            <template #links>
-                                <DropdownLink :href="route('profile.edit')" class="uppercase">IEPIRKUMU GROZS</DropdownLink>
-                                <DropdownLink :href="route('profile.edit')" class="uppercase">VĒLMJU SARAKSTS</DropdownLink>
-                                <DropdownLink :href="route('profile.edit')" class="uppercase">PROFILS</DropdownLink>
-                            </template>
-                            <template #actions>
-                                <DropdownLink href="/admin-dashboard" v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2" class="uppercase">ADMIN</DropdownLink>
-                                <DropdownLink :href="route('logout')" method="post" as="button" class="uppercase">
-                                    ATSLĒGTIES
-                                </DropdownLink>
-                            </template>
-                        </Dropdown>
-                    </div>
+                    <!-- Show Grozs and Vēlmes only for guests (no user logged in) or users with role_id = 1 -->
+                    <li v-if="!isAdmin" class="text-white uppercase text-base">
+                        <Link href="/cart" class="navbar-hrefs"
+                            ><i
+                                class="fas fa-sharp fa-cart-shopping text-xl fa-fw"
+                            ></i
+                            ><span></span
+                        ></Link>
+                    </li>
+                    <li v-if="!isAdmin" class="text-white uppercase text-base">
+                        <Link href="/wishlist" class="navbar-hrefs"
+                            ><i class="far fa-sharp fa-heart text-xl fa-fw"></i
+                            ><span></span
+                        ></Link>
+                    </li>
 
-                    <!-- Show Link to /login if user is not authenticated -->
-                    <Link v-else href="/login" class="navbar-hrefs">
-                    <i class="far fa-circle-user text-xl fa-fw"></i>
-                    </Link>
-                </li>
-            </ul>
+                    <!-- Show Admin only for users with role_id = 2 -->
+                    <li v-if="isAdmin" class="text-white uppercase text-base">
+                        <Link href="/admin-dashboard" class="navbar-hrefs"
+                            ><i class="fa fa-tools text-xl fa-fw"></i
+                            ><span></span>
+                        </Link>
+                    </li>
+
+                    <li class="text-white uppercase text-base">
+                        <!-- Conditionally render Dropdown if user is authenticated -->
+                        <div v-if="isAuthenticated">
+                            <Dropdown align="right" width="60">
+                                <template #trigger>
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center px-3 py-2 border border-transparent navbar-hrefs text-sm leading-4 font-medium rounded-xl text-gray-500"
+                                    >
+                                        <i
+                                            class="far fa-circle-user text-xl fa-fw text-white"
+                                        ></i>
+                                        <svg
+                                            class="ms-2 -me-0.5 h-4 w-4 text-white"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                    </button>
+                                </template>
+                                <template #userinfo>
+                                    <div>{{ $page.props.auth.user.name }}</div>
+                                    <div class="font-medium truncate">
+                                        {{ $page.props.auth.user.email }}
+                                    </div>
+                                </template>
+                                <template #links>
+                                    <DropdownLink
+                                        :href="route('profile.edit')"
+                                        class="uppercase"
+                                        >IEPIRKUMU GROZS</DropdownLink
+                                    >
+                                    <DropdownLink
+                                        :href="route('profile.edit')"
+                                        class="uppercase"
+                                        >VĒLMJU SARAKSTS</DropdownLink
+                                    >
+                                    <DropdownLink
+                                        :href="route('profile.edit')"
+                                        class="uppercase"
+                                        >PROFILS</DropdownLink
+                                    >
+                                </template>
+                                <template #actions>
+                                    <DropdownLink
+                                        href="/admin-dashboard"
+                                        v-if="
+                                            $page.props.auth.user &&
+                                            $page.props.auth.user.role_id === 2
+                                        "
+                                        class="uppercase"
+                                        >ADMIN</DropdownLink
+                                    >
+                                    <DropdownLink
+                                        :href="route('logout')"
+                                        method="post"
+                                        as="button"
+                                        class="uppercase"
+                                    >
+                                        ATSLĒGTIES
+                                    </DropdownLink>
+                                </template>
+                            </Dropdown>
+                        </div>
+
+                        <!-- Show Link to /login if user is not authenticated -->
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
-
-    <div class="flex justify-center items-center bg-slate-600 tracking-wider uppercase text-white py-1">
-        <h1 class="font-semibold text-whiter">Atrodi visu nepieciešamo ar Piffdeals</h1>
-    </div>
 </template>
-
-<script>
-import { ref } from 'vue';
-
-const getImageUrl = (filename) => {
-    return `/storage/images/${filename}`;
-};
-</script>

@@ -30,13 +30,13 @@ import { Link } from '@inertiajs/vue3';
 <template>
     <img :src="getImageUrl('footer_wave_svg.svg')" alt="footerWave" draggable="false" class="select-none w-full mt-12">
     <footer class="p-4 bg-primary">
-        <div class="mx-auto max-w-screen-xl">
+        <div class="mx-auto max-w-screen-2xl px-6">
             <div class="flex justify-between">
                 <div class="mb-6">
-                    <a href="/" class="flex items-center">
+                    <Link href="/" class="flex items-center">
                         <img :src="getImageUrl('piffdeals_logo_text_accent.svg')" draggable="false" alt="footerLogo"
                             class="select-none w-8/12">
-                    </a>
+                    </Link>
                 </div>
                 <div class="grid grid-cols-4 gap-8">
                     <div>

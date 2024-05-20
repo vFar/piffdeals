@@ -3,7 +3,7 @@
     <button @click="toggleDropdown" class="hover:bg-zinc-700 rounded-lg text-md p-2.5 relative">
       <i class="fas fa-bell fa-fw"></i>
       <!-- Notification badge -->
-      <span v-if="notificationCount > 0" class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+      <span v-if="notificationCount > 0" class="absolute top-1 right-1 transform translate-x-1/2 -translate-y-1/2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
         {{ notificationCount }}
       </span>
     </button>
