@@ -83,7 +83,7 @@ aside {
             <div
                 class="px-3 py-3 lg:px-5 lg:pl-3 flex justify-between items-center"
             >
-                <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-6 w-3/4">
                     <Link
                         href="/admin-dashboard"
                         class="flex items-center select-none"
@@ -95,7 +95,7 @@ aside {
                             class="h-10 mr-2"
                         />
                     </Link>
-                    <AdminSearchbar placeholderSearch="Mega meklēt"/>
+                    <AdminSearchbar class="w-1/4" placeholderSearch="Mega meklēt"/>
                 </div>
 
                 <div class="flex items-center mr-4 text-white text-xl">
