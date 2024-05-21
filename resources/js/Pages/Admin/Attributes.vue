@@ -41,13 +41,13 @@ import Checkbox from '@/Components/Checkbox.vue';
                     <div class="flex items-center">
                         <button @click="addGoodModal"
                             class="flex items-center p-3 rounded-lg text-white bg-accent uppercase font-semibold hover:bg-secondary group navbarElement">
-                            Pievienot atribūtu
+                            Pievienot atribūtu precei
                         </button>
 
                         <Modal :show="addGoodShow" @close="closeGoodsModal">
                             <div class="pt-6">
                                 <div class="flex items-center justify-between border-b mb-4">
-                                    <h3 class="text-xl p-4 uppercase">Pievienot jaunu preci</h3>
+                                    <h3 class="text-xl p-4 uppercase">Pievienot jaunu atribūtu</h3>
                                     <button @click="closeGoodsModal"
                                         class="m-4 bg-transparent hover:bg-gray-300 text-white p-2 rounded-xl">
                                         <i class="fas fa-xmark fa-fw text-textColor hover:text-white"></i>

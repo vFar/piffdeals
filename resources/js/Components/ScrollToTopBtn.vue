@@ -1,7 +1,7 @@
 <template>
     <button
       @click="scrollToTop"
-      class="fixed bottom-5 right-5 bg-primary hover:bg-accent text-white font-bold py-3 px-5 rounded-full"
+      class="fixed bottom-5 right-5 bg-secondary hover:bg-accent text-white font-bold py-3 px-5 rounded-full"
       v-show="visible"
     >
       <i class="fa-solid fa-arrow-up"></i>

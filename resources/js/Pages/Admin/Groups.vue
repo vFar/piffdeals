@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link } from "@inertiajs/vue3";
-import { ref, onMounted, nextTick, reactive, watch } from "vue";
+import { ref, onMounted, nextTick, reactive, watch, computed } from "vue";
 import { usePage, useForm } from "@inertiajs/vue3";
 import Modal from "@/Components/Modal.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -15,6 +15,7 @@ import AdminPaginator from "@/Components/AdminPaginator.vue";
 import Tooltip from "@/Components/Tooltip.vue";
 import dayjs from "dayjs"; // Import Day.js
 import { router } from "@inertiajs/vue3";
+import { Alert } from "ant-design-vue";
 
 const props = defineProps({
     groups: Object,
@@ -132,40 +133,47 @@ function handleCategoryChange(newValue) {
     // This will handle changes and apply them to the URL directly
     const params = new URLSearchParams(window.location.search);
     if (newValue) {
-        params.set('category_id', newValue);
+        params.set("category_id", newValue);
     } else {
-        params.delete('category_id');
+        params.delete("category_id");
     }
-    router.replace({ path: window.location.pathname, query: params.toString() });
+    router.replace({
+        path: window.location.pathname,
+        query: params.toString(),
+    });
     fetchGroups(); // Optionally refetch groups based on new filters
 }
 
-
 function handlePageChange(url) {
-    const baseUrl = url.split('?')[0];
-    const params = new URLSearchParams(url.split('?')[1]);
+    const baseUrl = url.split("?")[0];
+    const params = new URLSearchParams(url.split("?")[1]);
 
     if (search.value) {
-        params.set('search', search.value);
+        params.set("search", search.value);
     } else {
-        params.delete('search');
+        params.delete("search");
     }
 
     if (selectedCategoryId.value) {
-        params.set('category_id', selectedCategoryId.value);
+        params.set("category_id", selectedCategoryId.value);
     } else {
-        params.delete('category_id');
+        params.delete("category_id");
     }
 
-    router.visit(baseUrl + (params.toString() ? '?' + params.toString() : ''));
+    router.visit(baseUrl + (params.toString() ? "?" + params.toString() : ""));
 }
 
 onMounted(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    search.value = urlParams.get('search') || '';
-    selectedCategoryId.value = urlParams.get('category_id') || null;
+    search.value = urlParams.get("search") || "";
+    selectedCategoryId.value = urlParams.get("category_id") || null;
 });
 
+const showUnlinkedGroupsAlert = ref(true);
+
+const unlinkedGroups = computed(() => {
+    return groups.filter((group) => !group.category_id);
+});
 </script>
 
 <style scoped>
@@ -250,7 +258,7 @@ onMounted(() => {
                                     />
 
                                     <SelectInput
-                                    :includeNav="false"
+                                        :includeNav="false"
                                         v-model="createGroupForm.category_id"
                                         :options="
                                             activeCategories.map(
@@ -294,6 +302,23 @@ onMounted(() => {
             </section>
 
             <section
+                v-if="unlinkedGroups.length > 0 && showUnlinkedGroupsAlert"
+                class="max-w-full mx-6 border border-gray-200 rounded-xl shadow-md py-3 px-3 pl-6 mb-8"
+            >
+                <div class="flex justify-between items-center py-2">
+                    <Alert
+                        message="Brīdinājums!"
+                        :description="`Sarakstā atrodas ${unlinkedGroups.length} preču grupa(-as), kas nav piesaistītas kategorijām!`"
+                        type="warning"
+                        show-icon
+                        closable
+                        :style="{ width: '100%' }"
+                        @close="showUnlinkedGroupsAlert = false"
+                    />
+                </div>
+            </section>
+
+            <section
                 class="max-w-full mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 mb-8"
             >
                 <div class="mx-auto max-w-full">
@@ -306,7 +331,6 @@ onMounted(() => {
                                 <div class="flex space-x-6 items-center">
                                     <AdminSearchbar
                                         placeholderSearch="Meklēt"
-
                                         :initialQuery="props.filters.search"
                                         @update:searchQuery="search = $event"
                                         @search="fetchGroups"
@@ -329,13 +353,20 @@ onMounted(() => {
                                     />
 
                                     <SelectInput
-        class="w-60 text-textColor"
-        placeholder="Izvēlies kategoriju"
-        :options="activeCategories.map(category => ({ value: category.id, text: category.name }))"
-        v-model="selectedCategoryId"
-        :includeNav="true"
-        @change="handleCategoryChange"
-    />
+                                        class="w-60 text-textColor"
+                                        placeholder="Izvēlies kategoriju"
+                                        :options="
+                                            activeCategories.map(
+                                                (category) => ({
+                                                    value: category.id,
+                                                    text: category.name,
+                                                })
+                                            )
+                                        "
+                                        v-model="selectedCategoryId"
+                                        :includeNav="true"
+                                        @change="handleCategoryChange"
+                                    />
                                     <button
                                         @click="resetFilter"
                                         class="flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -411,23 +442,14 @@ onMounted(() => {
                                             class="mt-6"
                                         />
                                         <SelectInput
-                                        :includeNav="true"
+                                            :includeNav="true"
                                             v-model="editGroupForm.category_id"
                                             class="w-full"
                                             :options="
-                                                [
-                                                    {
-                                                        value: null,
-                                                        text: 'NAV',
-                                                    },
-                                                ].concat(
-                                                    activeCategories.map(
-                                                        (c) => ({
-                                                            value: c.id,
-                                                            text: c.name,
-                                                        })
-                                                    )
-                                                )
+                                                activeCategories.map((c) => ({
+                                                    value: c.id,
+                                                    text: c.name,
+                                                }))
                                             "
                                             placeholder="Izvēlies kategoriju"
                                         />
@@ -441,7 +463,7 @@ onMounted(() => {
                                             class="mt-6"
                                         />
                                         <SelectInput
-                                        :includeNav="false"
+                                            :includeNav="false"
                                             v-model="editGroupForm.status"
                                             :options="statusOptions"
                                             placeholder="Izvēlies statusu"

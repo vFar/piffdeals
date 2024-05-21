@@ -127,9 +127,9 @@ Route::get('/admin-administrators', function () {
 Route::get('/navigation-data', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data');
 
 Route::prefix('admin-attributes')->middleware(['auth', 'can:admin-access'])->group(function () {
-    // Route::get('/', [AttributesGoodsController::class, 'index'])->name('admin.groups.index');
-    // Route::post('/store', [AttributesGoodsController::class, 'store'])->name('admin.groups.store');
-    // Route::patch('/admin-groups/{id}', [AttributesGoodsController::class, 'update'])->name('admin.groups.update');
+    Route::get('/', [AttributesGoodsController::class, 'index'])->name('admin.attributes.index');
+    Route::post('/store', [AttributesGoodsController::class, 'store'])->name('admin.attributes.store');
+    Route::patch('/admin-attributes/{id}', [AttributesGoodsController::class, 'update'])->name('admin.attributes.update');
 });
 
 Route::prefix('admin-groups')->middleware(['auth', 'can:admin-access'])->group(function () {
