@@ -1,15 +1,29 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { usePage } from "@inertiajs/vue3";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import { usePage, router } from "@inertiajs/vue3";
 import { Link } from "@inertiajs/vue3";
 import ThemeSwitch from "../Components/ThemeSwitch.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
-import { router } from "@inertiajs/vue3";
+import { Drawer, Button } from "ant-design-vue";
 
 const getImageUrl = (filename) => {
     return `/storage/images/${filename}`;
 };
+
+const drawerOpen = ref(false);
+const toggleDrawer = () => {
+    drawerOpen.value = !drawerOpen.value;
+};
+
+watch(drawerOpen, (newValue) => {
+    const body = document.body;
+    if (newValue) {
+        body.style.overflow = "hidden";
+    } else {
+        body.style.overflow = "";
+    }
+});
 
 const props = defineProps({
     canLogin: {
@@ -21,13 +35,52 @@ const props = defineProps({
 });
 
 const page = usePage();
+
+// const pageProps = usePage().props;
+// const authUser = computed(() => pageProps.auth.user);
+
+// const isAuthenticated = computed(() => !!authUser.value);
+// const isAdmin = computed(() => authUser.value?.role_id === 2);
+
+const { auth } = usePage().props;
+
 const activeCategories = computed(() => page.props.activeCategories);
 
-const pageProps = usePage().props;
-const authUser = computed(() => pageProps.auth.user);
 
-const isAuthenticated = computed(() => !!authUser.value);
-const isAdmin = computed(() => authUser.value?.role_id === 2);
+// Computed property to safely access user information
+const user = computed(() => auth.user || {});
+
+// Computed properties for authentication state
+const isAuthenticated = computed(() => !!auth.user);
+const isAdmin = computed(() => user.value.role_id === 2);
+
+const hasScrolled = ref(false);
+function handleScroll() {
+    // This checks if the page is scrolled more than 10 pixels
+    hasScrolled.value = window.scrollY > 10;
+}
+
+onMounted(() => {
+    window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+});
+
+const handleLogout = () => {
+    router.post(route('logout'), {}, {
+        preserveScroll: true,
+        preserveState: false,
+        onSuccess: () => {
+            // This will handle any additional logic you want after logout
+            // For example, a redirect if not handled by backend:
+            window.location.href = '/';
+        }
+    });
+};
+
+// Function to handle logout
 </script>
 
 <style>
@@ -81,6 +134,28 @@ const isAdmin = computed(() => authUser.value?.role_id === 2);
     vertical-align: middle;
     /* Aligns elements vertically */
 }
+
+.ant-drawer-content-wrapper {
+    transform: translateY(
+        var(--drawer-top-offset, 208px)
+    ) !important; 
+    border-top: 1px solid #FFF; 
+    transition: none !important;
+    height: 208px !important;
+}
+
+
+::v-deep .ant-drawer-mask {
+    top: 208px !important; 
+}
+
+::v-deep .ant-drawer-content-wrapper {
+    transition: none !important;
+    transform: none !important;
+}
+
+
+
 </style>
 
 <template>
@@ -115,7 +190,7 @@ const isAdmin = computed(() => authUser.value?.role_id === 2);
     </header>
 
     <!-- Main Header with Logo -->
-    <header class="bg-whiter text-black">
+    <header :class="['bg-white text-black sticky top-0 z-50 w-full', hasScrolled ? 'shadow-lg' : '']">
         <div class="container mx-auto flex justify-between py-4 px-6">
             <Link href="/" class="flex items-center shrink-0">
                 <img
@@ -141,25 +216,26 @@ const isAdmin = computed(() => authUser.value?.role_id === 2);
         </div>
     </header>
 
-    <nav class="bg-primary py-4 sticky top-0 z-50 shadow-lg">
+    <nav class="bg-primary py-4 top-0 z-50">
         <div
             class="container mx-auto max-w-screen-2xl px-6 flex justify-between items-center"
         >
             <!-- Good Categories on the left -->
             <div class="flex space-x-8">
                 <!-- component -->
+                <!-- :href="`/category/${category.id}`" -->
 
-                <Link
+                <button
                     v-for="category in activeCategories"
                     :key="category.id"
-                    :href="`/category/${category.id}`"
-                    class="relative inline-flex uppercase items-center justify-center leading-normal no-underline pb-1 text-white font-sans font-bold text-base uppercase hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-neutral-500 transition group"
+                    @click.stop="toggleDrawer"
+                    class="relative inline-flex uppercase items-center justify-center leading-normal no-underline pb-1 text-white font-sans font-bold text-base uppercase hover:text-gray-300 transition group"
                 >
                     {{ category.name }}
                     <span
                         class="absolute bottom-0 left-0 w-full h-0.5 bg-neutral-700 origin-bottom-right transform transition duration-200 ease-out scale-x-0 group-hover:scale-x-100 group-hover:origin-bottom-left"
                     ></span>
-                </Link>
+                </button>
             </div>
 
             <!-- Search Bar and Navigation Links on the right -->
@@ -284,8 +360,8 @@ const isAdmin = computed(() => authUser.value?.role_id === 2);
                                         >ADMIN</DropdownLink
                                     >
                                     <DropdownLink
-                                        :href="route('logout')"
-                                        method="post"
+                                    @click="handleLogout"
+
                                         as="button"
                                         class="uppercase"
                                     >
@@ -301,4 +377,37 @@ const isAdmin = computed(() => authUser.value?.role_id === 2);
             </div>
         </div>
     </nav>
+
+    <!-- <div id="drawer-top-example" class="fixed top-0 left-0 right-0 z-40 w-full p-4 bg-white dark:bg-gray-800"
+         :class="{'translate-y-0': drawerOpen, '-translate-y-full': !drawerOpen}"
+         transition="transform ease 0.3s"
+         aria-labelledby="drawer-top-label">
+        <h5 id="drawer-top-label" class="text-base font-semibold text-gray-500 dark:text-gray-400">
+            Category Details
+        </h5>
+        <p class="max-w-lg mb-6 text-sm text-gray-500 dark:text-gray-400">
+            Here you can include more detailed information about the selected category, 
+            like linked groups and attributes.
+        </p>
+        <a href="#" class="px-4 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+            Learn more
+        </a>
+    </div> -->
+
+    <Drawer
+        v-model:visible="drawerOpen"
+        placement="top"
+        :closable="false"
+        :style="{ backgroundColor: '#0068FF' }"
+        :maskStyle="{ top: '208px' }"
+        @close="() => (drawerOpen = false)"
+        
+    >
+        <div class="container mx-auto max-w-screen-2xl flex justify-between items-center">
+            <p class="text-whiter font-semibold">
+                Here you can include more detailed information about the selected
+                category, like linked groups and attributes.
+            </p>
+        </div>
+    </Drawer>
 </template>

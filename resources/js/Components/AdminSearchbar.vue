@@ -7,7 +7,7 @@
     </div>
     <input type="search"
            class="w-full py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-           placeholder="Meklēt"
+           :placeholder=props.placeholderSearch
            v-model="searchQuery"
            @input="updateSearch"
            @keypress.enter.prevent="onSearch"/>
@@ -18,7 +18,8 @@
 import { ref, watch } from 'vue';
 
 const props = defineProps({
-  initialQuery: String
+  initialQuery: String,
+  placeholderSearch: String,
 });
 
 const emit = defineEmits(['update:searchQuery', 'search']);

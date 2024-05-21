@@ -157,4 +157,3 @@ Nepieciešamie darbības soļi, lai lokāli uzsāktu projektu.
 [TailwindCSS-url]: https://tailwindcss.com/
 
 [Ziggy-url]: https://github.com/tighten/ziggy
-

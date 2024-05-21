@@ -48,7 +48,7 @@ const formatDate = (date) => {
     <Head title="KLIENTI" />
     <div class="cross-patternSVGLight bg-whiter">
         <AdminNavbar currentPage="users" />
-        <main class="flex-1 bg-whiter ml-64">
+        <main class="flex-1 ml-64">
             <section
                 class="max-w-full mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6 mb-8"
             >

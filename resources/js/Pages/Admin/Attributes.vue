@@ -15,41 +15,6 @@ import TextInput from '@/Components/TextInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 
-const getImageUrl = (filename) => {
-    return `/storage/images/${filename}`;
-};
-const flashMessage = ref('');
-const addGoodShow = ref(false);
-
-const drawerOpen = ref(false);  // State to control the visibility of the drawer
-
-const toggleDrawer = () => {
-    drawerOpen.value = !drawerOpen.value;  // Toggle the state of the drawer
-};
-
-const categories = ref([
-    { text: 'Kategorija 1', value: '1' },
-    { text: 'Kategorija 2', value: '2' },
-    // Add more categories as needed
-]);
-
-const selectedCategory = ref('');
-
-const closeDrawer = () => {
-    drawerOpen.value = false;
-};
-
-const addGoodModal = () => {
-    addGoodShow.value = true;
-    // nextTick(() => passwordInput.value.focus());
-};
-
-const closeGoodsModal = () => {
-    addGoodShow.value = false;
-
-    // form.reset();
-};
-
 </script>
 
 <style scoped>

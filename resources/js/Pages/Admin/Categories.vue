@@ -13,6 +13,7 @@ import TextInput from "@/Components/TextInput.vue";
 import AdminSearchbar from "@/Components/AdminSearchbar.vue";
 import AdminFilterDrawer from "@/Components/AdminFilterDrawer.vue";
 import SelectInput from "@/Components/SelectInput.vue";
+import InputLabel from "@/Components/InputLabel.vue";
 import Tooltip from "@/Components/Tooltip.vue";
 import dayjs from "dayjs"; // Import Day.js
 import { router } from "@inertiajs/vue3";
@@ -107,14 +108,14 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
 </style>
 
 <template>
-    <Head title="KATEGORIJAS" />
+    <Head title="KATEGORIJAS"/>
     <div class="cross-patternSVGLight bg-whiter">
         <AdminNavbar currentPage="categories" />
 
         <!-- <section class="container mx-auto max-w-full border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
         </section> -->
 
-        <main class="flex-1 bg-whiter ml-64">
+        <main class="flex-1 ml-64">
             <!-- ml-64 to offset the width of the sidebar -->
             <section
                 class="max-w-full mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6 mb-8"
@@ -273,6 +274,7 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                         :initialQuery="props.filters.search"
                                         @update:searchQuery="search = $event"
                                         @search="fetchCategories"
+                                        placeholderSearch="Meklēt"
                                     />
 
                                     <p>
@@ -322,6 +324,7 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                 </div>
                                 <div class="mb-16 px-6">
                                     <div class="mt-12">
+                                        <InputLabel for="text" value="Nosaukums" class="mb-1" />
                                         <TextInput
                                             type="text"
                                             class="w-full"
@@ -337,11 +340,15 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                     </div>
 
                                     <!-- use SelectInput component here -->
+                                    <InputLabel for="text" value="Statuss" class="mt-6" />
+
                                     <SelectInput
                                         v-model="editCategoryForm.status"
                                         :options="statusOptions"
-                                        class="mt-4 w-full"
+                                        class="w-full"
                                     />
+
+                                    <InputError class="mt-2" :message="errors.status"/>
                                 </div>
                                 <div
                                     class="mx-6 py-6 border-t flex justify-end"

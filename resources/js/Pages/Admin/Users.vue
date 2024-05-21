@@ -148,6 +148,10 @@ const inputType = ref("password");
 const togglePasswordVisibility = () => {
     inputType.value = inputType.value === "password" ? "text" : "password";
 };
+
+function handlePageChange(url) {
+    router.visit(url);  // Or fetch data based on the new page URL
+}
 </script>
 
 <style scoped>
@@ -165,7 +169,7 @@ const togglePasswordVisibility = () => {
         <!-- <section class="container mx-auto max-w-full border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
         </section> -->
 
-        <main class="flex-1 bg-whiter ml-64">
+        <main class="flex-1 ml-64">
             <!-- ml-64 to offset the width of the sidebar -->
             <section
                 class="max-w-full mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6 mb-8"
@@ -326,6 +330,7 @@ const togglePasswordVisibility = () => {
                                         :initialQuery="props.filters.search"
                                         @update:searchQuery="search = $event"
                                         @search="fetchUsers"
+                                        placeholderSearch = "Meklēt"
                                     />
 
                                     <p>
@@ -348,7 +353,7 @@ const togglePasswordVisibility = () => {
                                     <!-- PAGINATOR -->
 
                                     <div class="flex items-center space-x-6">
-                                        <AdminPaginator :links="users.links" />
+                                        <AdminPaginator :links="users.links" @page-change="handlePageChange" />
                                     </div>
 
                                     <!-- <button

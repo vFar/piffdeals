@@ -83,6 +83,13 @@ class CategoryGoodsController extends Controller
         ]);    
     }
 
+    
+    public function getActiveCategories()
+    {
+        $categories = Category::where('status', 'Aktīvs')->get();
+        return $categories;
+    }
+
     public function activeCategories()
     {
         $categories = Category::where('status', 'Aktīvs')->get();

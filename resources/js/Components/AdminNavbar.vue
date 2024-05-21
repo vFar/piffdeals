@@ -3,6 +3,7 @@ import { Link, usePage, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 import AdminThemeSwitch from "./AdminThemeSwitch.vue";
 import AdminNotifications from "./AdminNotifications.vue";
+import AdminSearchbar from "./AdminSearchbar.vue";
 
 const catalogDropdownOpen = ref(false); // Reactive property to toggle dropdown
 const settingsDropdownOpen = ref(false); // Reactive property to toggle settings dropdown
@@ -82,7 +83,7 @@ aside {
             <div
                 class="px-3 py-3 lg:px-5 lg:pl-3 flex justify-between items-center"
             >
-                <div class="flex items-center">
+                <div class="flex items-center space-x-6">
                     <Link
                         href="/admin-dashboard"
                         class="flex items-center select-none"
@@ -94,6 +95,7 @@ aside {
                             class="h-10 mr-2"
                         />
                     </Link>
+                    <AdminSearchbar placeholderSearch="Mega meklēt"/>
                 </div>
 
                 <div class="flex items-center mr-4 text-white text-xl">
@@ -248,6 +250,15 @@ aside {
                                         class="block p-2 rounded text-white uppercase ms-9"
                                     >
                                         Žurnālfaili
+                                    </Link>
+                                </li>
+
+                                <li>
+                                    <Link
+                                        href="/admin-banners"
+                                        class="block p-2 rounded text-white uppercase ms-9"
+                                    >
+                                        Reklāmu baneri
                                     </Link>
                                 </li>
 

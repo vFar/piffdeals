@@ -68,7 +68,7 @@ const closeGoodsModal = () => {
         <!-- <section class="container mx-auto max-w-full border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
         </section> -->
 
-        <main class="flex-1 bg-whiter ml-64"> <!-- ml-64 to offset the width of the sidebar -->
+        <main class="flex-1 ml-64"> <!-- ml-64 to offset the width of the sidebar -->
             <section class="max-w-full mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6 mb-8">
                 <div class="flex justify-between items-center py-2">
                     <h1 class="uppercase font-semibold text-xl text-textColor">Visas Preces</h1>

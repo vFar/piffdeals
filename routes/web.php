@@ -6,6 +6,7 @@ use App\Http\Controllers\NavigationDataController;
 use App\Http\Controllers\Admin\ClientAccountController;
 use App\Http\Controllers\Admin\CategoryGoodsController;
 use App\Http\Controllers\Admin\GroupGoodsController;
+use App\Http\Controllers\Admin\AttributesGoodsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -125,11 +126,18 @@ Route::get('/admin-administrators', function () {
 
 Route::get('/navigation-data', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data');
 
+Route::prefix('admin-attributes')->middleware(['auth', 'can:admin-access'])->group(function () {
+    // Route::get('/', [AttributesGoodsController::class, 'index'])->name('admin.groups.index');
+    // Route::post('/store', [AttributesGoodsController::class, 'store'])->name('admin.groups.store');
+    // Route::patch('/admin-groups/{id}', [AttributesGoodsController::class, 'update'])->name('admin.groups.update');
+});
+
 Route::prefix('admin-groups')->middleware(['auth', 'can:admin-access'])->group(function () {
     Route::get('/', [GroupGoodsController::class, 'index'])->name('admin.groups.index');
     Route::post('/store', [GroupGoodsController::class, 'store'])->name('admin.groups.store');
     Route::patch('/admin-groups/{id}', [GroupGoodsController::class, 'update'])->name('admin.groups.update');
 });
+
 
 Route::prefix('admin-categories')->middleware(['auth', 'can:admin-access'])->group(function () {
     Route::get('/', [CategoryGoodsController::class, 'index'])->name('admin.categories.list');

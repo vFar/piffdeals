@@ -12,4 +12,9 @@ class Category extends Model
     {
         return $this->hasMany(Group::class);
     }
+
+    public static function getActiveCategories()
+    {
+        return self::where('status', 'Aktīvs')->get();
+    }
 }
