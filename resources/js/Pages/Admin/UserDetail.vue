@@ -2,7 +2,6 @@
 import { Head, Link } from "@inertiajs/vue3";
 import AdminNavbar from "@/Components/AdminNavbar.vue";
 import dayjs from "dayjs"; // Import Day.js
-import { defineProps } from "vue";
 import { ref } from "vue";
 import Modal from "@/Components/Modal.vue"; // Assuming this is your modal component
 import PrimaryButton from "@/Components/PrimaryButton.vue"; // Assuming this is your modal component

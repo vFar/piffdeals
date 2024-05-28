@@ -10,10 +10,10 @@ class Attribute extends Model
 
     public function group()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class, 'group_id');
     }
 
-    public function products()
+    public function goods()
     {
         return $this->hasMany(Good::class);
     }

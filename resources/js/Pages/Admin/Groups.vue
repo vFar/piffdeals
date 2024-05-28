@@ -22,6 +22,7 @@ const props = defineProps({
     totalGroups: Number,
     filters: Object,
     activeCategories: Array,
+    totalUnlinkedGroups: Number, // New prop for the count of unlinked groups
     required: Boolean,
 });
 
@@ -302,13 +303,13 @@ const unlinkedGroups = computed(() => {
             </section>
 
             <section
-                v-if="unlinkedGroups.length > 0 && showUnlinkedGroupsAlert"
-                class="max-w-full mx-6 border border-gray-200 rounded-xl shadow-md py-3 px-3 pl-6 mb-8"
+                v-if="props.totalUnlinkedGroups > 0 && showUnlinkedGroupsAlert"
+                class="max-w-full mx-6 border border-gray-200 rounded-xl shadow-md bg-whiter py-3 px-3 pl-6 mb-8"
             >
                 <div class="flex justify-between items-center py-2">
                     <Alert
                         message="Brīdinājums!"
-                        :description="`Sarakstā atrodas ${unlinkedGroups.length} preču grupa(-as), kas nav piesaistītas kategorijām!`"
+                        :description="`Kopumā ir ${props.totalUnlinkedGroups} nesaistītas preču grupas pa visu tabulu.`"
                         type="warning"
                         show-icon
                         closable
@@ -364,7 +365,7 @@ const unlinkedGroups = computed(() => {
                                             )
                                         "
                                         v-model="selectedCategoryId"
-                                        :includeNav="true"
+                                        :includeNav="false"
                                         @change="handleCategoryChange"
                                     />
                                     <button
@@ -444,7 +445,7 @@ const unlinkedGroups = computed(() => {
                                         <SelectInput
                                             :includeNav="true"
                                             v-model="editGroupForm.category_id"
-                                            class="w-full"
+                                            class="w-full text-textColor"
                                             :options="
                                                 activeCategories.map((c) => ({
                                                     value: c.id,
@@ -467,7 +468,7 @@ const unlinkedGroups = computed(() => {
                                             v-model="editGroupForm.status"
                                             :options="statusOptions"
                                             placeholder="Izvēlies statusu"
-                                            class="w-full"
+                                            class="w-full text-textColor"
                                         />
                                         <InputError
                                             class="mt-2"
@@ -507,10 +508,10 @@ const unlinkedGroups = computed(() => {
                                             Statuss / Kategorija
                                         </th>
                                         <th scope="col" class="px-4 py-3">
-                                            Izveidots / Modificēts
-                                        </th>
-                                        <th scope="col" class="px-4 py-3">
                                             Preču skaits
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 flex justify-end">
+                                            Izveidots / Modificēts
                                         </th>
                                         <th scope="col" class="px-4 py-3">
                                             <span class="sr-only"
@@ -559,25 +560,21 @@ const unlinkedGroups = computed(() => {
                                                 </span>
                                             </div>
                                         </td>
+                                        <td class="px-4 py-3">Preču skaits</td>
                                         <td class="px-4 py-3">
-                                            <div class="pt-2">
-                                                <span class="p-2 rounded-lg">
+                                            <div class="pt-2 flex justify-end">
                                                     {{
                                                         formatDate(
                                                             group.created_at
                                                         )
-                                                    }} </span
-                                                ><br />
-                                                <span class="p-2 flex">
+                                                    }}<br>
                                                     {{
                                                         formatDate(
                                                             group.updated_at
                                                         )
                                                     }}
-                                                </span>
                                             </div>
                                         </td>
-                                        <td class="px-4 py-3">Preču skaits</td>
                                         <td class="px-4 py-3">
                                             <div
                                                 class="space-x-3 flex justify-center"

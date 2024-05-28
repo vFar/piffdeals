@@ -13,10 +13,10 @@ export default defineConfig({
         Components({
             resolvers: [
               AntDesignVueResolver({
-                importStyle: false, // css in js
+                importStyle: false,
               }),
             ],
-          }),
+        }),
         vue({
             template: {
                 transformAssetUrls: {
@@ -26,4 +26,7 @@ export default defineConfig({
             },
         }),
     ],
+    optimizeDeps: {
+        include: ['@tinymce/tinymce-vue']
+    }
 });

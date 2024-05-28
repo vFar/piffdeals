@@ -328,7 +328,7 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                         <TextInput
                                             type="text"
                                             class="w-full"
-                                            placeholder="Category Name"
+                                            placeholder="Nosaukums"
                                             v-model="editCategoryForm.name"
                                             required
                                             autofocus
@@ -385,10 +385,10 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                             Statuss
                                         </th>
                                         <th scope="col" class="px-4 py-3">
-                                            Izveidots / Modificēts
-                                        </th>
-                                        <th scope="col" class="px-4 py-3">
                                             Preču skaits
+                                        </th>
+                                        <th scope="col" class="px-4 py-3 flex justify-end">
+                                            Izveidots / Modificēts
                                         </th>
                                         <th scope="col" class="px-4 py-3">
                                             <span class="sr-only"
@@ -428,7 +428,9 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                                 {{ category.status }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3">
+
+                                        <td class="px-4 py-3">Preču skaits</td>
+                                        <td class="px-4 py-3 flex justify-end">
                                             {{
                                                 formatDate(category.created_at)
                                             }}
@@ -437,7 +439,6 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                                 formatDate(category.updated_at)
                                             }}
                                         </td>
-                                        <td class="px-4 py-3">Preču skaits</td>
                                         <td class="px-4 py-3">
                                             <div
                                                 class="space-x-3 flex justify-center"

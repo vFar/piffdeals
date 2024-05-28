@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
@@ -11,6 +12,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+        <script src="https://cdn.tiny.cloud/1/qwewvh1gx06maulj4833kcb1pazkze8x298en2kbrfsk8ziy/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
         <!-- Scripts -->
         @routes

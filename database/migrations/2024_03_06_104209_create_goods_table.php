@@ -10,19 +10,20 @@ return new class extends Migration
     {
         Schema::create('goods', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('sku')->unique();
+            $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->unsignedBigInteger('stock_quantity');
+            $table->decimal('price', 10, 2)->nullable();
+            $table->unsignedBigInteger('stock_quantity')->nullable();
+            $table->string('image')->nullable();
             $table->string('status')->default('Deaktivizēts');
             $table->unsignedBigInteger('group_id')->nullable();
             $table->unsignedBigInteger('attribute_id')->nullable();
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('set null');
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('set null');
             $table->timestamps();
-
-            
         });
+        
     }
 
     public function down()

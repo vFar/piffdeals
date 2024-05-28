@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ClientAccountController;
 use App\Http\Controllers\Admin\CategoryGoodsController;
 use App\Http\Controllers\Admin\GroupGoodsController;
 use App\Http\Controllers\Admin\AttributesGoodsController;
+use App\Http\Controllers\Admin\GoodsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -87,18 +88,6 @@ Route::get('/admin-orders', function () {
     }
 })->middleware(['auth', 'verified'])->name('admin.orders');
 
-Route::get('/admin-goods', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/Goods');
-    } else {
-        abort(404);
-    }
-
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.goods');
-
 
 Route::get('/admin-logfiles', function () {
     if (Auth::user()->role_id === 2) {
@@ -125,6 +114,19 @@ Route::get('/admin-administrators', function () {
 })->middleware(['auth', 'verified'])->name('admin.administrators');
 
 Route::get('/navigation-data', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data');
+
+// Define routes under the "admin-goods" prefix
+Route::prefix('admin-goods')->middleware(['auth', 'can:admin-access'])->group(function () {
+    Route::get('/', [GoodsController::class, 'index'])->name('admin.goods.index');
+    Route::post('/store', [GoodsController::class, 'store'])->name('admin.goods.store');
+    Route::get('/{id}/edit', [GoodsController::class, 'edit'])->name('admin.goods.edit');
+    Route::patch('/{id}', [GoodsController::class, 'update'])->name('admin.goods.update');
+    Route::get('/{id}', [GoodsController::class, 'show'])->name('admin.goods.show');
+    Route::post('/upload-image', [GoodsController::class, 'uploadImage'])->name('admin.goods.upload-image');
+});
+
+
+
 
 Route::prefix('admin-attributes')->middleware(['auth', 'can:admin-access'])->group(function () {
     Route::get('/', [AttributesGoodsController::class, 'index'])->name('admin.attributes.index');

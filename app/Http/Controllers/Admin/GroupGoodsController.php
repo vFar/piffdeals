@@ -20,6 +20,8 @@ class GroupGoodsController extends Controller
 
         $query = Group::with('category');
 
+        $totalUnlinkedGroups = Group::whereNull('category_id')->count();
+
         if (!empty($search)) {
             $query->where('name', 'like', "%{$search}%");
         }
@@ -36,7 +38,8 @@ class GroupGoodsController extends Controller
             'groups' => $groups,
             'filters' => $request->only('search', 'category_id'),
             'totalGroups' => $groups->total(),
-            'activeCategories' => $activeCategories
+            'activeCategories' => $activeCategories,
+            'totalUnlinkedGroups' => $totalUnlinkedGroups,
         ]);
     }
 
