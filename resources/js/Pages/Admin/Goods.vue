@@ -26,6 +26,8 @@ const props = defineProps({
     activeAttributes: Array,
 });
 
+console.log(props.goods)
+
 const { errors } = usePage().props;
 const addGoodShow = ref(false);
 
@@ -354,6 +356,7 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                             }}
                                         </td>
                                         <td class="px-4 py-3 flex">
+                                            {{ console.log(good.image) }}
                                             <img
                                                 :src="
                                                     good.image ||

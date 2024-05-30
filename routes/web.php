@@ -123,6 +123,7 @@ Route::prefix('admin-goods')->middleware(['auth', 'can:admin-access'])->group(fu
     Route::patch('/{id}', [GoodsController::class, 'update'])->name('admin.goods.update');
     Route::get('/{id}', [GoodsController::class, 'show'])->name('admin.goods.show');
     Route::post('/upload-image', [GoodsController::class, 'uploadImage'])->name('admin.goods.upload-image');
+    Route::delete('/{id}', [GoodsController::class, 'destroy'])->name('admin.goods.destroy');
 });
 
 

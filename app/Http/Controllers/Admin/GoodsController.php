@@ -9,6 +9,7 @@ use App\Models\Group;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class GoodsController extends Controller
@@ -52,9 +53,6 @@ class GoodsController extends Controller
         ], $activeData));
     }
     
-    
-    
-    
 
     public function store(Request $request)
     {
@@ -81,18 +79,12 @@ class GoodsController extends Controller
     public function edit($id)
     {
         $good = Good::with(['group.category', 'attribute'])->findOrFail($id);
-        $good = Good::with(['group.category', 'attribute'])->findOrFail($id);
         $activeData = $this->getActiveData();
     
         return Inertia::render('Admin/GoodDetail', array_merge([
             'good' => $good,
         ], $activeData));
     }
-    
-
-    
-    
-    
     
 
     public function show($id)
@@ -116,6 +108,7 @@ class GoodsController extends Controller
 
     public function update(Request $request, $id)
     {
+        Log::info('Incoming request data in update method: ', $request->all());        
         $good = Good::findOrFail($id);
 
         $validated = $request->validate([
@@ -123,7 +116,10 @@ class GoodsController extends Controller
             'description' => 'required|string',
             'image' => 'sometimes|required|string',
             'stock_quantity' => 'required|integer',
-            'status' => 'required|in:Aktīvs,Deaktivizēts'
+            'status' => 'required|in:Aktīvs,Deaktivizēts',
+            'price' => 'required|numeric', // Ensure price is validated as numeric
+            'group_id' => 'nullable|exists:groups,id', // Allow updating group_id
+            'attribute_id' => 'nullable|exists:attributes,id', // Allow updating attribute_id
         ]);
 
         $good->update($validated);
@@ -144,6 +140,14 @@ class GoodsController extends Controller
         // Return only the path relative to the storage directory
         // This assumes you have linked the storage directory to 'public/storage' using the 'php artisan storage:link' command
         return response()->json(['url' => "storage/$path"], 200);
+    }
+
+    public function destroy($id)
+    {
+        $good = Good::findOrFail($id);
+        $good->delete();
+
+        return redirect()->route('admin.goods.index')->with('message', 'Prece veiksmīgi dzēsta!');
     }
     
     

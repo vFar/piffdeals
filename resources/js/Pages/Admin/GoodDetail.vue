@@ -1,60 +1,3 @@
-<!-- <script setup>
-import { ref, computed } from 'vue';
-import { usePage, useForm } from "@inertiajs/vue3";
-
-
-const { flash, errors } = usePage().props;
-const form = useForm({
-    id: null,
-    sku: '',
-    name: '',
-    description: '',
-    image: '',
-    stock_quantity: 0,
-    status: 'Deaktivizēts',
-    // Assume initial values or fetch from an API
-});
-
-// Computed property to check if all required fields are present
-const canActivateProduct = computed(() => {
-    return form.name && form.description && form.image && form.stock_quantity;
-});
-
-const saveProduct = () => {
-    form.post(route('admin.goods.update', form.id), {
-        onSuccess: () => {
-            // Handle success, such as displaying a notification or redirecting
-        },
-        onError: () => {
-            // Handle errors, possibly show notification
-        }
-    });
-};
-</script>
-
-<template>
-    <div class="edit-product-container">
-        <h1>Edit Product</h1>
-        <form @submit.prevent="saveProduct">
-            <TextInput label="Product Name" v-model="form.name" :error="errors.name" />
-            <TextInput label="Description" v-model="form.description" :error="errors.description" />
-            <TextInput label="Image URL" v-model="form.image" :error="errors.image" />
-            <NumberInput label="Stock Quantity" v-model="form.stock_quantity" :error="errors.stock_quantity" />
-            
-            <SelectInput
-                label="Status"
-                v-model="form.status"
-                :options="[{ value: 'Aktīvs', text: 'Aktīvs' }, { value: 'Deaktivizēts', text: 'Deaktivizēts' }]"
-                :disabled="!canActivateProduct"
-            />
-
-            <button type="submit" :disabled="!canActivateProduct">
-                Update Product
-            </button>
-        </form>
-    </div>
-</template> -->
-
 <script setup>
 import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import AdminNavbar from "@/Components/AdminNavbar.vue";
@@ -65,14 +8,20 @@ import PrimaryButton from "@/Components/PrimaryButton.vue"; // Assuming this is 
 import SecondaryButton from "@/Components/SecondaryButton.vue"; // Assuming this is your modal component
 import InputLabel from "@/Components/InputLabel.vue"; // Assuming this is your modal component
 import TextInput from "@/Components/TextInput.vue"; // Assuming this is your modal component
-import { InputNumber, Tooltip } from "ant-design-vue";
+import { InputNumber, Tooltip, Image, Popconfirm } from "ant-design-vue";
 import Editor from "@tinymce/tinymce-vue";
 import { InboxOutlined } from "@ant-design/icons-vue";
 import { message, Upload } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
+import DangerButton from "@/Components/DangerButton.vue";
 
-const getImageUrl = (filename) => `/storage/images/${filename}`;
+const getImageUrl = (filename) => {
+    if (filename && filename !== "/images/S-1.png") {
+        return filename; // No need to add the prefix
+    }
+    return "";
+};
 
 const props = defineProps({
     good: Object,
@@ -87,9 +36,22 @@ const form = useForm({
     name: props.good.name,
     description: props.good.description,
     image: props.good.image,
-    stock_quantity: props.good.stock_quantity,
-    status: props.good.status
+    price: props.good.price, // Convert to number
+    stock_quantity: props.good.stock_quantity, // Convert to number
+    status: props.good.status,
+    group_id: props.good.group_id || null, // Set initial value
+    attribute_id: props.good.attribute_id || null, // Set initial value
 });
+
+console.log(form);
+
+const updatePrice = (value) => {
+    form.price = value;
+};
+
+const updateStockQuantity = (value) => {
+    form.stock_quantity = value;
+};
 
 // Check if all form fields are filled
 const canActivateProduct = computed(() => {
@@ -104,7 +66,9 @@ const canActivateProduct = computed(() => {
 
 // Handle form submission
 const saveProduct = () => {
-    form.patch(`/admin-goods/${form.id}`, { // Using 'put' for the update operation
+    console.log("Form Data:", form); // This will log the form data before sending
+    form.patch(`/admin-goods/${form.id}`, {
+        // Using 'put' for the update operation
         preserveScroll: true,
         onSuccess: () => message.success("Product updated successfully!"),
         onError: () => message.error("Failed to update product."),
@@ -160,6 +124,44 @@ const token = ref(
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content")
 );
+
+const selectedGroupId = ref(null);
+
+// Computed property for categories based on selected group
+const categoryNameForSelectedGroup = computed(() => {
+    if (selectedGroupId.value || form.group_id) {
+        const selectedGroup = props.activeGroups.find(
+            (group) =>
+                group.id === selectedGroupId.value || group.id === form.group_id
+        );
+        if (selectedGroup && selectedGroup.category) {
+            // Directly set form.category_id from selectedGroup.category_id
+            form.category_id = selectedGroup.category_id;
+            return selectedGroup.category.name;
+        }
+    }
+    return "";
+});
+
+// Update category input based on the initial group on component mount
+onMounted(() => {
+    form.reset(props.good);
+    if (props.good.group_id) {
+        selectedGroupId.value = props.good.group_id; // Set initial group ID
+        form.group_id = props.good.group_id; // Update form.group_id to match the initial group
+    }
+});
+
+const confirmDeleteVisible = ref(false); // Track popconfirm visibility
+
+const deleteGood = (id) => {
+    router.delete(`/admin-goods/${id}`, {
+        preserveScroll: true,
+        onSuccess: () => message.success("Prece veiksmīgi dzēsta!"),
+        onError: () => message.error("Neizdevās dzēst preci."),
+    });
+    confirmDeleteVisible.value = false; // Close the popconfirm
+};
 </script>
 
 <style scoped>
@@ -184,23 +186,6 @@ const token = ref(
                         >
                             Rediģēt preci
                         </h1>
-                        <!-- <h1
-                            class="uppercase font-semibold text-xl text-textColor"
-                        >
-                            {{ user.email }}
-                            <span
-                                :class="{
-                                    'text-green-500 text-base bg-green-100':
-                                        user.status === 'Aktīvs',
-                                    'text-red-500 text-base bg-red-100':
-                                        user.status === 'Deaktivizēts',
-                                }"
-                                class="p-2 rounded-lg mx-2"
-                            >
-                                {{ user.status }}
-                            </span>
-                        </h1>
-                        <p>{{ user.name }}</p> -->
                     </div>
 
                     <div class="flex items-center space-x-6">
@@ -265,7 +250,8 @@ const token = ref(
                                         />
                                         <InputNumber
                                             :controls="false"
-                                            v-model="form.price"
+                                            :value="form.price"
+                                            @update:value="updatePrice"
                                             addonBefore="€"
                                             size="large"
                                             class="w-2/4 border border-gray-300 rounded-xl shadow-sm bg-slate-100 text-xl"
@@ -282,7 +268,8 @@ const token = ref(
                                             :controls="false"
                                             size="large"
                                             class="w-2/4 border border-gray-300 rounded-xl shadow-sm"
-                                            v-model="form.stock_quantity"
+                                            :value="form.stock_quantity"
+                                            @update:value="updateStockQuantity"
                                         />
                                     </div>
 
@@ -333,6 +320,23 @@ const token = ref(
                                             value="Attēls"
                                             class="mb-1"
                                         />
+                                        <!-- Image preview -->
+                                        <div class="w-full mb-4">
+                                            <Image
+                                                :src="getImageUrl(form.image)"
+                                                :preview="
+                                                    getImageUrl(form.image)
+                                                "
+                                                alt="Product Image"
+                                                v-if="
+                                                    form.image &&
+                                                    form.image !==
+                                                        'http://localhost:8000/images/S-1.png'
+                                                "
+                                                width="100px"
+                                                height="100px"
+                                            />
+                                        </div>
                                         <div class="w-full">
                                             <Upload
                                                 class="upload-dragger"
@@ -340,8 +344,8 @@ const token = ref(
                                                 name="image"
                                                 action="/admin-goods/upload-image"
                                                 :headers="headers"
-
                                                 @change="handleUploadChange"
+                                                :beforeUpload="beforeUpload"
                                             >
                                                 <div
                                                     class="flex flex-col justify-center items-center"
@@ -352,16 +356,23 @@ const token = ref(
                                                         <InboxOutlined />
                                                     </p>
                                                     <p class="ant-upload-text">
-                                                        Klikšķini vai velc attēla failu uz šo lauku, lai augšupielādētu
+                                                        Klikšķini vai velc
+                                                        attēla failu uz šo
+                                                        lauku, lai
+                                                        augšupielādētu
                                                     </p>
                                                     <p class="ant-upload-hint">
-                                                        Atļauts augšupielādēt <span class="text-red-500">tikai 1 attēlu!</span>. Attēlu formāti: jpeg, png un webp.
+                                                        Atļauts augšupielādēt
+                                                        <span
+                                                            class="text-red-500"
+                                                            >tikai 1
+                                                            attēlu!</span
+                                                        >. Attēlu formāti: jpeg,
+                                                        png un webp.
                                                     </p>
                                                 </div>
                                             </Upload>
                                         </div>
-                                        <!-- Image preview -->
-                                        
                                     </div>
                                 </div>
                             </form>
@@ -369,81 +380,81 @@ const token = ref(
                     </div>
                 </section>
 
-                <section
-                    class="w-1/4 h-1/4 mx-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3"
-                >
-                    <div class="mx-auto max-w-full">
-                        <div class="relative overflow-hidden">
-                            <div
-                                class="relative overflow-hidden flex justify-between mx-6 mb-10"
-                            >
-                                <h1
-                                    class="uppercase font-semibold text-xl text-textColor"
+                <div class="flex flex-col w-1/4 mx-6">
+                    <section
+                        class="w-full h-1/4 mb-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3"
+                    >
+                        <div class="mx-auto max-w-full">
+                            <div class="relative overflow-hidden">
+                                <div
+                                    class="relative overflow-hidden flex justify-between mx-6 mb-10"
                                 >
-                                    Preces kārtošana kategorijā
-                                </h1>
-                            </div>
-
-                            <div class="overflow-x-auto space-y-6 mx-6">
-                                <div>
-                                    <InputLabel
-                                        for="category"
-                                        value="Kategorija"
-                                        class="mb-1"
-                                    />
-                                    <SelectInput
-                                        class="w-full"
-                                        v-model="good.category_id"
-                                        :options="
-                                            activeCategories.map(
-                                                (category) => ({
-                                                    value: category.id,
-                                                    text: category.name,
-                                                })
-                                            )
-                                        "
-                                    />
+                                    <h1
+                                        class="uppercase font-semibold text-xl text-textColor"
+                                    >
+                                        Preces kārtošana kategorijā
+                                    </h1>
                                 </div>
-                                <div>
-                                    <InputLabel
-                                        for="group"
-                                        value="Grupa"
-                                        class="mb-1"
-                                    />
-                                    <SelectInput
-                                        class="w-full"
-                                        v-model="good.group_id"
-                                        :options="
-                                            activeGroups.map((group) => ({
-                                                value: group.id,
-                                                text: group.name,
-                                            }))
-                                        "
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        for="attribute"
-                                        value="Atribūts"
-                                        class="mb-1"
-                                    />
-                                    <SelectInput
-                                        class="w-full"
-                                        v-model="good.attribute_id"
-                                        :options="
-                                            activeAttributes.map(
-                                                (attribute) => ({
-                                                    value: attribute.id,
-                                                    text: attribute.name,
-                                                })
-                                            )
-                                        "
-                                    />
+                                <div class="overflow-x-auto space-y-6 mx-6">
+                                    <div>
+                                        <InputLabel
+                                            for="attribute"
+                                            value="Atribūts"
+                                            class="mb-1"
+                                        />
+                                        <SelectInput
+                                            class="w-full"
+                                            v-model="form.attribute_id"
+                                            :options="
+                                                activeAttributes.map(
+                                                    (attribute) => ({
+                                                        value: attribute.id,
+                                                        text: attribute.name,
+                                                    })
+                                                )
+                                            "
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            for="group"
+                                            value="Grupa"
+                                            class="mb-1"
+                                        />
+                                        <SelectInput
+                                            class="w-full"
+                                            v-model="selectedGroupId"
+                                            @change="
+                                                (value) =>
+                                                    (form.group_id = value)
+                                            "
+                                            :options="
+                                                activeGroups.map((group) => ({
+                                                    value: group.id,
+                                                    text: group.name,
+                                                }))
+                                            "
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                    <Popconfirm
+                        v-model:visible="confirmDeleteVisible"
+                        title="Vai tiešām vēlies dzēst preci? Šī darbība ir neatgriezeniska."
+                        @confirm="deleteGood(good.id)"
+                        ok-text="Dzēst"
+                        cancel-text="Atcelt"
+                    >
+                            <DangerButton
+                                class="uppercase flex justify-center shadow-md"
+                                :class="{ 'opacity-25': form.processing }"
+                            >
+                                <span class="text-md">Dzēst preci</span>
+                            </DangerButton>
+                    </Popconfirm>
+                </div>
             </div>
         </main>
     </div>
