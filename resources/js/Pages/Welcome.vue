@@ -9,10 +9,9 @@ import { Carousel } from "ant-design-vue";
 
 // const getImageUrl = (filename) => `/storage/images/${filename}`;
 
-const baseImagePath = "/storage/images/bannerAds/";
-
-// Utility function to generate full image URLs
-const getImageUrl = (filename) => `${baseImagePath}${filename}`;
+const getImageUrl = (filename) => {
+    return `/storage/images/media/${filename}`;
+};
 
 const flashMessage = ref("");
 
@@ -46,12 +45,12 @@ const carouselImages = ref([
     <ScrollTopBtn />
     <div class="cross-patternSVGLight bg-whiter">
         <Carousel
+            class="select-none"
             autoplay
             effect="fade"
             dotPosition="bottom"
             style="border: none"
             :autoplaySpeed="3000"
-            
         >
             <div
                 v-for="(img, index) in carouselImages"
@@ -61,67 +60,53 @@ const carouselImages = ref([
                 <img :src="img" alt="Carousel image" class="carousel-image" />
             </div>
         </Carousel>
-        <div class="container flex items-center mx-auto max-w-screen-3xl px-6 mt-96">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quos unde
-            reprehenderit accusamus, sequi incidunt repellat veritatis nihil
-            ipsam. Quos laborum excepturi et illo ipsam sunt error earum modi
-            sapiente magnam ducimus tempora fugiat voluptatum assumenda fugit
-            rerum architecto culpa ab doloribus tempore, possimus id labore. In
-            earum dolores recusandae veritatis exercitationem sed laborum
-            eveniet alias, vitae beatae ea commodi deserunt repellat esse. Nemo
-            corporis similique laborum voluptatibus! In dolorum maxime inventore
-            doloribus tempore dolores veniam suscipit, quos magnam totam a
-            voluptatum cupiditate soluta, ducimus nihil ratione deserunt
-            voluptatibus amet veritatis exercitationem dolorem, eveniet
-            corporis! Quidem recusandae laudantium, accusantium deleniti
-            repellat, praesentium dignissimos ullam voluptate voluptatibus error
-            exercitationem explicabo delectus qui sequi cupiditate accusamus
-            iste vel quo voluptates voluptatum expedita mollitia, nesciunt eos
-            minima. Deleniti nobis tempore ducimus ipsum blanditiis veritatis
-            sunt, cupiditate explicabo ea sed consequatur officia recusandae
-            veniam voluptatem quaerat alias hic eligendi sapiente cumque
-            doloremque dolorem facilis dolor aperiam! Dolorum, tempore libero
-            qui itaque corporis numquam a. A id distinctio, ea suscipit, autem
-            quaerat exercitationem possimus nemo sint doloribus molestias eius,
-            in amet facilis earum. Quis atque vitae eveniet debitis itaque
-            assumenda consequatur! Dolore nobis qui, cupiditate non sapiente
-            nihil perferendis natus incidunt sint laborum voluptatibus ipsa
-            nesciunt quasi minus distinctio, possimus sunt aliquid? Excepturi
-            hic aliquam culpa, provident assumenda commodi quidem soluta
-            voluptates in cumque saepe accusantium facilis enim voluptas nemo
-            deleniti voluptatum laboriosam, veritatis sint, quod dolorum! Minima
-            natus nam corporis esse corrupti nemo voluptate doloremque sit odio,
-            fuga quas dignissimos animi aliquam ex. Doloremque, corrupti modi
-            maiores facere aut dolorem hic est ad libero consequuntur quo. Natus
-            molestias laudantium aperiam quis quae id sequi reprehenderit porro
-            ab nam est eveniet doloribus, beatae illo quasi. Ullam expedita
-            nulla sunt modi officia, porro totam reiciendis necessitatibus quae
-            accusantium officiis! Et a dolorem voluptatum, alias, nihil commodi
-            sapiente nam voluptates obcaecati, voluptate atque! Aspernatur quod
-            necessitatibus vero asperiores eligendi excepturi quaerat et quasi
-            ea aut qui cum, ratione quos ullam saepe tempore labore maxime
-            beatae doloribus deleniti perferendis. Libero praesentium ex
-            deleniti corrupti placeat numquam accusantium suscipit ipsa sunt
-            rerum soluta harum unde voluptatibus non sit totam esse asperiores
-            eaque, a voluptates vitae? Velit consequatur, nobis animi magnam
-            deserunt nihil nesciunt atque earum voluptatum modi dolores
-            repellendus maxime mollitia aspernatur possimus odio distinctio
-            ipsum placeat quo! Ipsum ut repellendus aperiam sit laboriosam
-            nostrum corporis sint omnis similique blanditiis, illo perferendis
-            dignissimos asperiores dolores! Consequuntur, nisi. Reprehenderit
-            expedita architecto deleniti neque modi? Repellendus totam dolorum
-            odit illum hic nobis, dolores deserunt, dignissimos animi dolor
-            aliquam. Tenetur totam laudantium reiciendis atque dolorum quisquam
-            exercitationem, sapiente repellat perspiciatis sint, modi, dolore
-            magni delectus numquam doloremque distinctio vitae? Eius accusantium
-            incidunt tempora sequi architecto id, facere est placeat neque? Hic
-            perferendis velit corrupti dolorum ullam assumenda dolore eos autem
-            numquam voluptatum, sequi soluta fuga error libero facilis, beatae
-            omnis iste illo optio illum doloremque harum odio. Optio minima
-            alias nemo suscipit eius officiis enim quas esse aperiam unde
-            aliquid ratione, autem commodi, tenetur numquam earum nobis placeat
-            eum delectus corrupti eveniet est?
+        <div
+            class="container max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6"
+        >
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="bg-primary text-white rounded-full p-4 mb-2">
+                        <i class="fas fa-headphones text-4xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold pb-4">Tehniskais atbalsts</h3>
+                    <p class="text-gray-600">
+                        Piedāvājam 24/7 atbalstu, lai nodrošinātu jums nevainojamu pieredzi.
+                    </p>
+                </div>
+                <div
+                    class="flex flex-col items-center border-x border-gray-300"
+                >
+                    <div class="bg-primary text-white rounded-full p-4 mb-2">
+                        <i class="fas fa-store text-4xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold pb-4">Plašs preču klāsts</h3>
+                    <p class="text-gray-600 px-6">
+                        Plaša produktu izvēle pie konkurētspējīgām cenām.
+                    </p>
+                </div>
+                <div
+                    class="flex flex-col items-center border-r border-gray-300"
+                >
+                    <div class="bg-primary text-white rounded-full p-4 mb-2">
+                        <i class="fas fa-shipping-fast text-4xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold pb-4">Ātra piegāde</h3>
+                    <p class="text-gray-600">
+                        Ātra un uzticama piegāde līdz jūsu durvīm.
+                    </p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-primary text-white rounded-full p-4 mb-2">
+                        <i class="fas fa-shield-alt text-4xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold pb-4">Droši maksājumi</h3>
+                    <p class="text-gray-600 pb-4">
+                        Jūsu darījumi ir droši ar mūsu drošajiem maksājumu risinājumiem.
+                    </p>
+                </div>
+            </div>
         </div>
+
         <ScrollTopBtn />
         <Footer />
     </div>
@@ -426,13 +411,3 @@ const carouselImages = ref([
         </div>
     </div> -->
 </template>
-
-<script>
-export default {
-    methods: {
-        getImageUrl(filename) {
-            return `/storage/images/${filename}`;
-        },
-    },
-};
-</script>

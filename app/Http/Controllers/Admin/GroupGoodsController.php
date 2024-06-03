@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Group;
+use App\Models\Good;
 use App\Models\Category;
+use App\Models\Attribute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -18,7 +20,9 @@ class GroupGoodsController extends Controller
         $search = $request->input('search', '');
         $categoryId = $request->input('category_id');
 
-        $query = Group::with('category');
+        $query = Group::with('category')->withCount(['goods' => function ($query) {
+            $query->where('status', 'Aktīvs'); // Assuming the 'status' field indicates if a good is active
+        }]);
 
         $totalUnlinkedGroups = Group::whereNull('category_id')->count();
 
@@ -112,4 +116,28 @@ class GroupGoodsController extends Controller
             'activeGroups' => $groups
         ]);
     }
+
+    public function destroy($id)
+    {
+        try {
+            $group = Group::findOrFail($id);
+    
+            // Unlink related attributes and goods
+            Attribute::where('group_id', $id)->update(['group_id' => null]);
+            Good::where('group_id', $id)->update(['group_id' => null]);
+    
+            // Ensure the group is unlinked from the category
+            $group->category_id = null;
+            $group->save();
+    
+            // Delete the group
+            $group->delete();
+    
+            return response()->json(['message' => 'Grupa veiksmīgi dzēsta'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Kļūda dzēšot grupu'], 500);
+        }
+    }
+    
+
 }

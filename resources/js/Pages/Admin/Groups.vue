@@ -15,7 +15,7 @@ import AdminPaginator from "@/Components/AdminPaginator.vue";
 import Tooltip from "@/Components/Tooltip.vue";
 import dayjs from "dayjs"; // Import Day.js
 import { router } from "@inertiajs/vue3";
-import { Alert } from "ant-design-vue";
+import { Alert, message, Popconfirm } from "ant-design-vue";
 
 const props = defineProps({
     groups: Object,
@@ -72,7 +72,6 @@ function closeAddGroupModal() {
 }
 
 function saveGroup() {
-    console.log("Category ID:", createGroupForm.category_id); // Log the category ID
     createGroupForm.post(route("admin.groups.store"), {
         onSuccess: () => {
             fetchGroups();
@@ -175,6 +174,16 @@ const showUnlinkedGroupsAlert = ref(true);
 const unlinkedGroups = computed(() => {
     return groups.filter((group) => !group.category_id);
 });
+
+const handleDeleteGroup = async (groupId) => {
+    try {
+        await router.delete(route("admin.groups.destroy", { id: groupId }));
+        message.success('Grupa veiksmīgi dzēsta');
+        fetchGroups();
+    } catch (error) {
+        message.error('Kļūda dzēšot grupu');
+    }
+};
 </script>
 
 <style scoped>
@@ -560,7 +569,7 @@ const unlinkedGroups = computed(() => {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td class="px-4 py-3">Preču skaits</td>
+                                        <td class="px-4 py-3">{{ group.goods_count }}</td>
                                         <td class="px-4 py-3">
                                             <div class="pt-2 flex justify-end">
                                                     {{
@@ -592,16 +601,20 @@ const unlinkedGroups = computed(() => {
                                                     ></i>
                                                 </button>
 
-                                                <button
-                                                    @click="
-                                                        deleteGroup(group.id)
-                                                    "
-                                                    class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                                <Popconfirm
+                                                    title="Vai tiešām vēlaties dzēst šo grupu?"
+                                                    okText="Jā"
+                                                    cancelText="Nē"
+                                                    @confirm="() => handleDeleteGroup(group.id)"
                                                 >
-                                                    <i
-                                                        class="fas fa-trash fa-fw"
-                                                    ></i>
-                                                </button>
+                                                    <button
+                                                        class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                                    >
+                                                        <i
+                                                            class="fas fa-trash fa-fw"
+                                                        ></i>
+                                                    </button>
+                                                </Popconfirm>
                                             </div>
                                         </td>
                                     </tr>

@@ -113,10 +113,13 @@ Route::get('/admin-administrators', function () {
     }
 })->middleware(['auth', 'verified'])->name('admin.administrators');
 
-Route::get('/navigation-data', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data');
+Route::get('/navigation-data/categories', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data.categories');
+Route::get('/navigation-data/goods-count', [NavigationDataController::class, 'getActiveGoodsCount'])->name('navigation.data.goodsCount');
+
+
 
 // Define routes under the "admin-goods" prefix
-Route::prefix('admin-goods')->middleware(['auth', 'can:admin-access'])->group(function () {
+Route::prefix('admin-goods')->middleware(['auth', 'checkAdminRole'])->group(function () {
     Route::get('/', [GoodsController::class, 'index'])->name('admin.goods.index');
     Route::post('/store', [GoodsController::class, 'store'])->name('admin.goods.store');
     Route::get('/{id}/edit', [GoodsController::class, 'edit'])->name('admin.goods.edit');
@@ -129,32 +132,34 @@ Route::prefix('admin-goods')->middleware(['auth', 'can:admin-access'])->group(fu
 
 
 
-Route::prefix('admin-attributes')->middleware(['auth', 'can:admin-access'])->group(function () {
+Route::prefix('admin-attributes')->middleware(['auth', 'checkAdminRole'])->group(function () {
     Route::get('/', [AttributesGoodsController::class, 'index'])->name('admin.attributes.index');
     Route::post('/store', [AttributesGoodsController::class, 'store'])->name('admin.attributes.store');
     Route::patch('/admin-attributes/{id}', [AttributesGoodsController::class, 'update'])->name('admin.attributes.update');
 });
 
-Route::prefix('admin-groups')->middleware(['auth', 'can:admin-access'])->group(function () {
+Route::prefix('admin-groups')->middleware(['auth', 'checkAdminRole'])->group(function () {
     Route::get('/', [GroupGoodsController::class, 'index'])->name('admin.groups.index');
     Route::post('/store', [GroupGoodsController::class, 'store'])->name('admin.groups.store');
     Route::patch('/admin-groups/{id}', [GroupGoodsController::class, 'update'])->name('admin.groups.update');
+    Route::delete('/{id}', [GroupGoodsController::class, 'destroy'])->name('admin.groups.destroy');
 });
 
 
-Route::prefix('admin-categories')->middleware(['auth', 'can:admin-access'])->group(function () {
+Route::prefix('admin-categories')->middleware(['auth', 'checkAdminRole'])->group(function () {
     Route::get('/', [CategoryGoodsController::class, 'index'])->name('admin.categories.list');
     Route::post('/store', [CategoryGoodsController::class, 'store'])->name('admin.goods.storeCategory');
     Route::patch('/admin-categories/{id}', [CategoryGoodsController::class, 'update'])->name('admin.goods.updateCategory');
+    Route::delete('/admin-categories/{id}', [CategoryGoodsController::class, 'destroy'])->name('admin.goods.destroyCategory');
 });
 
 Route::prefix('admin-users')->name('admin-users.')->group(function () {
-    Route::get('/', [ClientAccountController::class, 'index'])->name('index')->middleware('can:admin-access');
-    Route::post('/store', [ClientAccountController::class, 'storeAdmin'])->name('storeAdmin')->middleware('can:admin-access');
-    Route::get('/{id}', [ClientAccountController::class, 'show'])->name('show')->middleware('can:admin-access');
-    Route::post('/password/email', [ClientAccountController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('can:admin-access');
-    Route::patch('/update-status', [ClientAccountController::class, 'updateStatus'])->name('updateStatus')->middleware('can:admin-access');
-    Route::delete('/delete', [ClientAccountController::class, 'deleteUsers'])->name('delete')->middleware('can:admin-access');
+    Route::get('/', [ClientAccountController::class, 'index'])->name('index')->middleware('checkAdminRole');
+    Route::post('/store', [ClientAccountController::class, 'storeAdmin'])->name('storeAdmin')->middleware('checkAdminRole');
+    Route::get('/{id}', [ClientAccountController::class, 'show'])->name('show')->middleware('checkAdminRole');
+    Route::post('/password/email', [ClientAccountController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('checkAdminRole');
+    Route::patch('/update-status', [ClientAccountController::class, 'updateStatus'])->name('updateStatus')->middleware('checkAdminRole');
+    Route::delete('/delete', [ClientAccountController::class, 'deleteUsers'])->name('delete')->middleware('checkAdminRole');
 });
 
 

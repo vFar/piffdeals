@@ -27,7 +27,7 @@ function updateValue(event) {
             :required="required"
             class="border-gray-300 focus:ring-primary focus:border-primary rounded-xl shadow-sm">
         <option selected disabled value="" v-if="placeholder">{{ placeholder }}</option>
-        <option v-for="option in options" :key="option.value" :value="option.value">
+        <option v-for="option in options" :key="option.value" :value="option.value" class="capitalize">
             {{ option.text }}
         </option>
         <option v-if="includeNav" value="">{{ 'NAV' }}</option>

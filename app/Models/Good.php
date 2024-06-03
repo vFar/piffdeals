@@ -10,10 +10,7 @@ class Good extends Model
 
     public function getImageAttribute($value)
     {
-        if (!$value) {
-            return url('/images/S-1.png'); // Ensure this path is correct
-        }
-        return url($value);
+        return $value ? asset("storage/images/goods/$value") : asset('images/S-1.png');
     }
 
     public function attribute()

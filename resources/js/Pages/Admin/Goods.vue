@@ -14,7 +14,9 @@ import AdminSearchbar from "@/Components/AdminSearchbar.vue";
 import AdminPaginator from "@/Components/AdminPaginator.vue";
 import Tooltip from "@/Components/Tooltip.vue";
 import dayjs from "dayjs"; // Import Day.js
+import { message, Popconfirm, Image } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
+
 
 // Define properties and reactive data specific to goods
 const props = defineProps({
@@ -26,7 +28,6 @@ const props = defineProps({
     activeAttributes: Array,
 });
 
-console.log(props.goods)
 
 const { errors } = usePage().props;
 const addGoodShow = ref(false);
@@ -78,6 +79,23 @@ function closeAddGoodModal() {
 }
 
 const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
+
+const deleteGood = async (id) => {
+    try {
+        await router.delete(route("admin.goods.destroy", { id }), {
+            onSuccess: () => {
+                message.success("Prece veiksmīgi dzēsta!");
+            },
+            onError: (error) => {
+                message.error("Neizdevās dzēst preci.");
+            },
+        });
+    } catch (error) {
+        message.error("Neizdevās dzēst preci.");
+    }
+};
+
+
 </script>
 
 <style scoped>
@@ -356,18 +374,13 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                             }}
                                         </td>
                                         <td class="px-4 py-3 flex">
-                                            {{ console.log(good.image) }}
-                                            <img
-                                                :src="
-                                                    good.image ||
-                                                    '/images/fallback-image.png'
-                                                "
+                                            <Image
+                                                :src="good.image || '/images/S-1.png'"
+                                                fallback="/images/S-1.png"
                                                 alt="Good image"
+                                                style="width: 60px; height: 60px;"
+                                                :preview="false"
                                                 class="mr-3"
-                                                style="
-                                                    width: 60px;
-                                                    height: 60px;
-                                                "
                                             />
                                             € {{ good.price }} <br />
                                             Skaits - {{ good.stock_quantity }}
@@ -418,13 +431,22 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                                     class="fa-solid fa-magnifying-glass fa-fw"
                                                 ></i>
                                             </button>
-                                            <button
-                                                class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                            <Popconfirm
+                                                title="Vai tiešām vēlaties dzēst šo preci?"
+                                                okText="Jā"
+                                                cancelText="Nē"
+                                                @confirm="() => deleteGood(good.id)"
                                             >
-                                                <i
-                                                    class="fa-solid fa-trash fa-fw"
-                                                ></i>
-                                            </button>
+                                                <button
+                                                    class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                                >
+                                                    <i
+                                                        class="fa-solid fa-trash fa-fw"
+                                                    ></i>
+                                                </button>
+                                            </Popconfirm>
+
+                                            
                                             <button
                                                 @click="editGood(good.id)"
                                                 class="text-xl hover:bg-slate-200 rounded-lg p-2"
@@ -433,6 +455,8 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                                     class="fas fa-caret-right fa-fw"
                                                 ></i>
                                             </button>
+
+                                            
                                         </td>
                                     </tr>
                                 </tbody>

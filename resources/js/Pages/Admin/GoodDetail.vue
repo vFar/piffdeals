@@ -11,7 +11,7 @@ import TextInput from "@/Components/TextInput.vue"; // Assuming this is your mod
 import { InputNumber, Tooltip, Image, Popconfirm } from "ant-design-vue";
 import Editor from "@tinymce/tinymce-vue";
 import { InboxOutlined } from "@ant-design/icons-vue";
-import { message, Upload } from "ant-design-vue";
+import { message, Upload, Select } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import DangerButton from "@/Components/DangerButton.vue";
@@ -39,11 +39,9 @@ const form = useForm({
     price: props.good.price, // Convert to number
     stock_quantity: props.good.stock_quantity, // Convert to number
     status: props.good.status,
-    group_id: props.good.group_id || null, // Set initial value
-    attribute_id: props.good.attribute_id || null, // Set initial value
+    group_id: props.good.group_id, // Set initial value
+    attribute_id: props.good.attribute_id, // Set initial value
 });
-
-console.log(form);
 
 const updatePrice = (value) => {
     form.price = value;
@@ -66,13 +64,16 @@ const canActivateProduct = computed(() => {
 
 // Handle form submission
 const saveProduct = () => {
-    console.log("Form Data:", form); // This will log the form data before sending
     form.patch(`/admin-goods/${form.id}`, {
         // Using 'put' for the update operation
         preserveScroll: true,
-        onSuccess: () => message.success("Product updated successfully!"),
-        onError: () => message.error("Failed to update product."),
+        onSuccess: () => message.success("Prece veiksmīgi atjaunināta!"),
+        onError: () => message.error("Visi lauki nav aizpildīti!"),
     });
+};
+
+const handleChange = (value, key) => {
+    form[key] = value || null; // Set the value to null if cleared
 };
 
 // File upload setup
@@ -88,26 +89,53 @@ const beforeUpload = (file) => {
         file.type === "image/png" ||
         file.type === "image/webp";
     if (!isJpgPngWebp) {
-        message.error("You can only upload JPG/PNG/WEBP file!");
+        message.error(
+            "Atļauts augšupielādēt tikai JPEG, PNG un WEBP attēla formātus!"
+        );
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-        message.error("Image must smaller than 2MB!");
+        message.error("Attēls nedrīkst būt lielāks par 2MB!");
     }
     return isJpgPngWebp && isLt2M;
 };
 
 const handleUploadChange = (info) => {
-    console.log("Upload event:", info);
     if (info.file.status === "done") {
-        form.image = info.file.response.url;
-        message.success("Image uploaded successfully");
-        console.log("Image uploaded successfully:", info.file.response.url);
+        const filename = info.file.response.url.split("/").pop();
+        form.image = filename;
+        message.success("Attēls veiksmīgi augšupielādēts");
     } else if (info.file.status === "error") {
         message.error(`Image upload failed: ${info.file.error.message}`);
-        console.error("Image upload failed:", info.file.error.message);
     }
 };
+
+// const handleUploadChange = (info) => {
+//     console.log("Upload event:", info);
+//     if (info.file.status === "done") {
+//         form.image = info.file.response.url;
+//         message.success("Image uploaded successfully");
+//         console.log("Image uploaded successfully:", info.file.response.url);
+//     } else if (info.file.status === "error") {
+//         message.error(`Image upload failed: ${info.file.error.message}`);
+//         console.error("Image upload failed:", info.file.error.message);
+//     }
+// };
+
+// const handleUploadChange = (info) => {
+//     if (info.file.status === "done") {
+//         // Extract only the filename from the response.url
+//         const filename = info.file.response.url.split("/").pop();
+
+//         // Update the form.image value
+//         form.image = filename; // Store ONLY the filename
+
+//         message.success("Attēls veiksmīgi augšupielādēts");
+//     } else if (info.file.status === "error") {
+//         message.error(`Image upload failed: ${info.file.error.message}`);
+//         console.error("Image upload failed:", info.file.error.message);
+//     }
+// };
 
 const statusOptions = reactive([
     { value: "Aktīvs", text: "Aktīvs" },
@@ -125,29 +153,10 @@ const token = ref(
         .getAttribute("content")
 );
 
-const selectedGroupId = ref(null);
-
-// Computed property for categories based on selected group
-const categoryNameForSelectedGroup = computed(() => {
-    if (selectedGroupId.value || form.group_id) {
-        const selectedGroup = props.activeGroups.find(
-            (group) =>
-                group.id === selectedGroupId.value || group.id === form.group_id
-        );
-        if (selectedGroup && selectedGroup.category) {
-            // Directly set form.category_id from selectedGroup.category_id
-            form.category_id = selectedGroup.category_id;
-            return selectedGroup.category.name;
-        }
-    }
-    return "";
-});
-
 // Update category input based on the initial group on component mount
 onMounted(() => {
     form.reset(props.good);
     if (props.good.group_id) {
-        selectedGroupId.value = props.good.group_id; // Set initial group ID
         form.group_id = props.good.group_id; // Update form.group_id to match the initial group
     }
 });
@@ -157,7 +166,10 @@ const confirmDeleteVisible = ref(false); // Track popconfirm visibility
 const deleteGood = (id) => {
     router.delete(`/admin-goods/${id}`, {
         preserveScroll: true,
-        onSuccess: () => message.success("Prece veiksmīgi dzēsta!"),
+        onSuccess: () => {
+            message.success("Prece veiksmīgi dzēsta!");
+            // Optionally refresh the goods list here
+        },
         onError: () => message.error("Neizdevās dzēst preci."),
     });
     confirmDeleteVisible.value = false; // Close the popconfirm
@@ -323,16 +335,10 @@ const deleteGood = (id) => {
                                         <!-- Image preview -->
                                         <div class="w-full mb-4">
                                             <Image
-                                                :src="getImageUrl(form.image)"
-                                                :preview="
-                                                    getImageUrl(form.image)
-                                                "
+                                                :src="form.image"
+                                                fallback="/images/S-1.png"
                                                 alt="Product Image"
-                                                v-if="
-                                                    form.image &&
-                                                    form.image !==
-                                                        'http://localhost:8000/images/S-1.png'
-                                                "
+                                                v-if="form.image"
                                                 width="100px"
                                                 height="100px"
                                             />
@@ -343,6 +349,8 @@ const deleteGood = (id) => {
                                                 type="drag"
                                                 name="image"
                                                 action="/admin-goods/upload-image"
+                                                :maxCount="1"
+                                                accept="image/jpeg, image/png, image/webp"
                                                 :headers="headers"
                                                 @change="handleUploadChange"
                                                 :beforeUpload="beforeUpload"
@@ -382,7 +390,7 @@ const deleteGood = (id) => {
 
                 <div class="flex flex-col w-1/4 mx-6">
                     <section
-                        class="w-full h-1/4 mb-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3"
+                        class="w-full mb-6 border border-gray-200 rounded-xl bg-whiter shadow-md py-3 pb-10"
                     >
                         <div class="mx-auto max-w-full">
                             <div class="relative overflow-hidden">
@@ -402,16 +410,27 @@ const deleteGood = (id) => {
                                             value="Atribūts"
                                             class="mb-1"
                                         />
-                                        <SelectInput
+                                        <Select
                                             class="w-full"
                                             v-model="form.attribute_id"
                                             :options="
                                                 activeAttributes.map(
                                                     (attribute) => ({
                                                         value: attribute.id,
-                                                        text: attribute.name,
+                                                        label: attribute.name,
                                                     })
                                                 )
+                                            "
+                                            allowClear
+                                            @change="
+                                                (value) =>
+                                                    handleChange(
+                                                        value,
+                                                        'attribute_id'
+                                                    )
+                                            "
+                                            :defaultValue="
+                                                props.good.attribute_id
                                             "
                                         />
                                     </div>
@@ -421,19 +440,24 @@ const deleteGood = (id) => {
                                             value="Grupa"
                                             class="mb-1"
                                         />
-                                        <SelectInput
+                                        <Select
                                             class="w-full"
-                                            v-model="selectedGroupId"
-                                            @change="
-                                                (value) =>
-                                                    (form.group_id = value)
-                                            "
+                                            v-model="form.group_id"
                                             :options="
                                                 activeGroups.map((group) => ({
                                                     value: group.id,
-                                                    text: group.name,
+                                                    label: group.name,
                                                 }))
                                             "
+                                            @change="
+                                                (value) =>
+                                                    handleChange(
+                                                        value,
+                                                        'group_id'
+                                                    )
+                                            "
+                                            allowClear
+                                            :defaultValue="props.good.group_id"
                                         />
                                     </div>
                                 </div>
@@ -441,18 +465,18 @@ const deleteGood = (id) => {
                         </div>
                     </section>
                     <Popconfirm
-                        v-model:visible="confirmDeleteVisible"
+                        v-model:open="confirmDeleteVisible"
                         title="Vai tiešām vēlies dzēst preci? Šī darbība ir neatgriezeniska."
                         @confirm="deleteGood(good.id)"
                         ok-text="Dzēst"
                         cancel-text="Atcelt"
                     >
-                            <DangerButton
-                                class="uppercase flex justify-center shadow-md"
-                                :class="{ 'opacity-25': form.processing }"
-                            >
-                                <span class="text-md">Dzēst preci</span>
-                            </DangerButton>
+                        <DangerButton
+                            class="uppercase flex justify-center shadow-md"
+                            :class="{ 'opacity-25': form.processing }"
+                        >
+                            <span class="text-md">Dzēst preci</span>
+                        </DangerButton>
                     </Popconfirm>
                 </div>
             </div>

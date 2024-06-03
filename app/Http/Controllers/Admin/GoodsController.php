@@ -10,6 +10,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class GoodsController extends Controller
@@ -108,7 +109,6 @@ class GoodsController extends Controller
 
     public function update(Request $request, $id)
     {
-        Log::info('Incoming request data in update method: ', $request->all());        
         $good = Good::findOrFail($id);
 
         $validated = $request->validate([
@@ -117,10 +117,15 @@ class GoodsController extends Controller
             'image' => 'sometimes|required|string',
             'stock_quantity' => 'required|integer',
             'status' => 'required|in:Aktīvs,Deaktivizēts',
-            'price' => 'required|numeric', // Ensure price is validated as numeric
-            'group_id' => 'nullable|exists:groups,id', // Allow updating group_id
-            'attribute_id' => 'nullable|exists:attributes,id', // Allow updating attribute_id
+            'group_id' => 'nullable',
+            'attribute_id' => 'nullable',
         ]);
+
+        if ($request->has('image') && $request->image !== $good->image) {
+            $validated['image'] = $request->input('image'); // Use the new image filename
+        } else {
+            unset($validated['image']); // Keep the existing image if no new image was uploaded
+        }
 
         $good->update($validated);
 
@@ -131,22 +136,39 @@ class GoodsController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpg,png,webp|max:2048', // 2MB max and specified formats
+            'image' => 'required|image|mimes:jpg,png,webp|max:2048', 
         ]);
     
-        // Storing the image in the 'public' disk's 'images/goods' directory
-        $path = $request->file('image')->store('images/goods', 'public');
+        $filename = $request->file('image')->getClientOriginalName(); // Get filename only
+        $path = $request->file('image')->storeAs('images/goods', $filename, 'public'); // Save to 'public' disk
     
-        // Return only the path relative to the storage directory
-        // This assumes you have linked the storage directory to 'public/storage' using the 'php artisan storage:link' command
-        return response()->json(['url' => "storage/$path"], 200);
+        // Store ONLY the filename in the database
+        return response()->json(['url' => $filename], 200); // Return only the filename
     }
 
     public function destroy($id)
     {
         $good = Good::findOrFail($id);
+    
+        // Retrieve the image URL and extract the filename
+        $imageUrl = $good->image; // Get the full URL from the database
+        $imageName = basename($imageUrl); // Extract the filename
+    
+        // Delete the record
         $good->delete();
-
+    
+        // Delete the image file from the disk (if it existed)
+        if ($imageName) {
+            $imagePath = "images/goods/{$imageName}"; // Relative path
+            // Log::info("Image Name: " . $imageName);
+            // Log::info("Image Path: " . $imagePath);
+    
+            if (Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+                // Log::info('Deleting image', ['path' => $imagePath]);
+            }
+        }
+    
         return redirect()->route('admin.goods.index')->with('message', 'Prece veiksmīgi dzēsta!');
     }
     

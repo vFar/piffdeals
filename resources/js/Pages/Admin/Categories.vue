@@ -18,6 +18,8 @@ import Tooltip from "@/Components/Tooltip.vue";
 import dayjs from "dayjs"; // Import Day.js
 import { router } from "@inertiajs/vue3";
 
+import { message, Popconfirm } from "ant-design-vue";
+
 const addCategoryShow = ref(false);
 const props = defineProps({
     categories: Object,
@@ -95,6 +97,22 @@ const createCategorySubmitForm = () => {
 // Function to fetch categories
 const fetchCategories = () => {
     router.get(route("admin.categories.list"), { search: search.value });
+};
+
+const handleDeleteCategory = async (categoryId) => {
+    try {
+        await router.delete(route("admin.goods.destroyCategory", { id: categoryId }), {
+            onSuccess: () => {
+                message.success('Kategorija veiksmīgi dzēsta');
+                fetchCategories(); // Refresh the list
+            },
+            onError: () => {
+                message.error('Kļūda dzēšot kategoriju');
+            }
+        });
+    } catch (error) {
+        message.error('Kļūda dzēšot kategoriju');
+    }
 };
 
 const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
@@ -294,7 +312,6 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                 <div
                                     class="flex items-center space-x-3 w-full md:w-auto"
                                 >
-                                    <AdminFilterDrawer />
                                 </div>
                             </div>
                         </div>
@@ -428,8 +445,8 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                                 {{ category.status }}
                                             </span>
                                         </td>
-
-                                        <td class="px-4 py-3">Preču skaits</td>
+                                        {{ console.log(category.goods_count ) }}
+                                        <td class="px-4 py-3">{{ category.goods_count ?? 0 }}</td>
                                         <td class="px-4 py-3 flex justify-end">
                                             {{
                                                 formatDate(category.created_at)
@@ -456,13 +473,20 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                                     ></i>
                                                 </button>
 
-                                                <button
-                                                    class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                                <Popconfirm
+                                                    title="Vai tiešām vēlaties dzēst šo kategoriju?"
+                                                    okText="Jā"
+                                                    cancelText="Nē"
+                                                    @confirm="() => handleDeleteCategory(category.id)"
                                                 >
-                                                    <i
-                                                        class="fas fa-trash fa-fw"
-                                                    ></i>
-                                                </button>
+                                                    <button
+                                                        class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                                    >
+                                                        <i
+                                                            class="fas fa-trash fa-fw"
+                                                        ></i>
+                                                    </button>
+                                                </Popconfirm>
                                             </div>
                                         </td>
                                     </tr>

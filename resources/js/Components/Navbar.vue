@@ -11,28 +11,66 @@ const getImageUrl = (filename) => {
     return `/storage/images/${filename}`;
 };
 
+const props = defineProps({
+    canLogin: Boolean,
+    canRegister: Boolean,
+});
+
+const activeCategories = ref([]);
+const selectedCategory = ref(null); // To store the selected category for the drawer
+const activeGoodsCount = ref(0);
+
+// Function to fetch active categories data
+const fetchCategoryData = async () => {
+    try {
+        const response = await fetch("/navigation-data/categories");
+        const data = await response.json();
+        activeCategories.value = data.activeCategories;
+        console.log(activeCategories.value); // Log to confirm
+        if (activeCategories.value.length > 0) {
+            selectedCategory.value = activeCategories.value[0]; // Select the first category by default
+        }
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+};
+
+const fetchActiveGoodsCount = async () => {
+    try {
+        const response = await fetch("/navigation-data/goods-count");
+        const data = await response.json();
+        activeGoodsCount.value = data.activeGoodsCount ?? 0; // Ensure fallback to 0 if undefined
+        console.log(activeGoodsCount.value); // Log to confirm
+    } catch (error) {
+        console.error("Error fetching active goods count:", error);
+        activeGoodsCount.value = 0; // Set to 0 if there's an error
+    }
+};
+
+onMounted(async () => {
+    await fetchCategoryData(); // Fetch the data when the component is mounted
+    await fetchActiveGoodsCount(); // Fetch the active goods count when the component is mounted
+});
+
+console.log(activeGoodsCount)
+
 const drawerOpen = ref(false);
+
 const toggleDrawer = () => {
     drawerOpen.value = !drawerOpen.value;
 };
 
-watch(drawerOpen, (newValue) => {
-    const body = document.body;
-    if (newValue) {
-        body.style.overflow = "hidden";
-    } else {
-        body.style.overflow = "";
-    }
-});
+const openDrawer = () => {
+    drawerOpen.value = true;
+};
 
-const props = defineProps({
-    canLogin: {
-        type: Boolean,
-    },
-    canRegister: {
-        type: Boolean,
-    },
-});
+const closeDrawer = () => {
+    drawerOpen.value = false;
+};
+
+const selectCategory = (category) => {
+    selectedCategory.value = category;
+};
 
 const page = usePage();
 
@@ -43,9 +81,6 @@ const page = usePage();
 // const isAdmin = computed(() => authUser.value?.role_id === 2);
 
 const { auth } = usePage().props;
-
-const activeCategories = computed(() => page.props.activeCategories);
-
 
 // Computed property to safely access user information
 const user = computed(() => auth.user || {});
@@ -58,26 +93,37 @@ const hasScrolled = ref(false);
 function handleScroll() {
     // This checks if the page is scrolled more than 10 pixels
     hasScrolled.value = window.scrollY > 10;
+    closeDrawer();
 }
 
+const handleMouseLeave = (event) => {
+    if (!event.relatedTarget || !event.relatedTarget.closest(".navbar")) {
+        closeDrawer();
+    }
+};
+
 onMounted(() => {
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 });
 
 onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener("scroll", handleScroll);
 });
 
 const handleLogout = () => {
-    router.post(route('logout'), {}, {
-        preserveScroll: true,
-        preserveState: false,
-        onSuccess: () => {
-            // This will handle any additional logic you want after logout
-            // For example, a redirect if not handled by backend:
-            window.location.href = '/';
+    router.post(
+        route("logout"),
+        {},
+        {
+            preserveScroll: true,
+            preserveState: false,
+            onSuccess: () => {
+                // This will handle any additional logic you want after logout
+                // For example, a redirect if not handled by backend:
+                window.location.href = "/";
+            },
         }
-    });
+    );
 };
 
 // Function to handle logout
@@ -136,26 +182,20 @@ const handleLogout = () => {
 }
 
 .ant-drawer-content-wrapper {
-    transform: translateY(
-        var(--drawer-top-offset, 208px)
-    ) !important; 
-    border-top: 1px solid #FFF; 
+    transform: translateY(var(--drawer-top-offset, 208px)) !important;
+    border-top: 1px solid #fff;
     transition: none !important;
-    height: 208px !important;
+    height: 400px !important;
 }
 
-
 ::v-deep .ant-drawer-mask {
-    top: 208px !important; 
+    top: 208px !important;
 }
 
 ::v-deep .ant-drawer-content-wrapper {
     transition: none !important;
     transform: none !important;
 }
-
-
-
 </style>
 
 <template>
@@ -190,7 +230,13 @@ const handleLogout = () => {
     </header>
 
     <!-- Main Header with Logo -->
-    <header :class="['bg-white text-black sticky top-0 z-50 w-full', hasScrolled ? 'shadow-lg' : '']">
+    <header
+        :class="[
+            'bg-white text-black sticky top-0 z-50 w-full',
+            hasScrolled ? 'shadow-lg' : '',
+        ]"
+        @mouseover="closeDrawer"
+    >
         <div class="container mx-auto flex justify-between py-4 px-6">
             <Link href="/" class="flex items-center shrink-0">
                 <img
@@ -221,14 +267,11 @@ const handleLogout = () => {
             class="container mx-auto max-w-screen-2xl px-6 flex justify-between items-center"
         >
             <!-- Good Categories on the left -->
-            <div class="flex space-x-8">
-                <!-- component -->
-                <!-- :href="`/category/${category.id}`" -->
-
+            <div class="flex space-x-8" @mouseover="openDrawer">
                 <button
                     v-for="category in activeCategories"
                     :key="category.id"
-                    @click.stop="toggleDrawer"
+                    @mouseover="selectCategory(category)"
                     class="relative inline-flex uppercase items-center justify-center leading-normal no-underline pb-1 text-white font-sans font-bold text-base uppercase hover:text-gray-300 transition group"
                 >
                     {{ category.name }}
@@ -265,7 +308,7 @@ const handleLogout = () => {
                             type="search"
                             id="default-search"
                             class="w-72 py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-                            placeholder="Meklēt starp *skaits* precēm"
+                            :placeholder="`Meklēt starp ${activeGoodsCount} precēm`"
                             required
                         />
                     </form>
@@ -303,9 +346,14 @@ const handleLogout = () => {
                     <li class="text-white uppercase text-base">
                         <!-- Conditionally render Dropdown if user is authenticated -->
                         <div v-if="isAuthenticated">
-                            <Dropdown align="right" width="60">
+                            <Dropdown
+                                align="right"
+                                width="60"
+                                class="relative z-50"
+                            >
                                 <template #trigger>
                                     <button
+                                        @click="closeDrawer"
                                         type="button"
                                         class="inline-flex items-center px-3 py-2 border border-transparent navbar-hrefs text-sm leading-4 font-medium rounded-xl text-gray-500"
                                     >
@@ -360,8 +408,7 @@ const handleLogout = () => {
                                         >ADMIN</DropdownLink
                                     >
                                     <DropdownLink
-                                    @click="handleLogout"
-
+                                        @click="handleLogout"
                                         as="button"
                                         class="uppercase"
                                     >
@@ -395,19 +442,42 @@ const handleLogout = () => {
     </div> -->
 
     <Drawer
-        v-model:visible="drawerOpen"
+        v-model:open="drawerOpen"
         placement="top"
+        :keyboard="true"
         :closable="false"
+        :mask="true"
+        :maskClosable="true"
         :style="{ backgroundColor: '#0068FF' }"
         :maskStyle="{ top: '208px' }"
-        @close="() => (drawerOpen = false)"
-        
     >
-        <div class="container mx-auto max-w-screen-2xl flex justify-between items-center">
-            <p class="text-whiter font-semibold">
-                Here you can include more detailed information about the selected
-                category, like linked groups and attributes.
-            </p>
+        <div class="mx-auto max-w-2xl">
+            <div v-if="selectedCategory">
+                <ul class="grid grid-cols-4 gap-12">
+                    <li
+                        v-for="group in selectedCategory.groups"
+                        :key="group.id"
+                    >
+                        <p
+                            class="text-white text-md font-bold uppercase select-none mb-2"
+                        >
+                            {{ group.name }}
+                        </p>
+                        <ul>
+                            <li
+                                v-for="attribute in group.attributes"
+                                :key="attribute.id"
+                            >
+                                <p
+                                    class="text-white text-sm capitalize select-none"
+                                >
+                                    {{ attribute.name }}
+                                </p>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </Drawer>
 </template>

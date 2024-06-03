@@ -15,10 +15,20 @@ class Group extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class);
     }
 
     public function products()
+    {
+        return $this->hasMany(Good::class);
+    }
+
+    public function attributes()
+    {
+        return $this->hasMany(Attribute::class);
+    }
+
+    public function goods()
     {
         return $this->hasMany(Good::class);
     }

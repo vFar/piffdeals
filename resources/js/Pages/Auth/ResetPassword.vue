@@ -64,6 +64,7 @@ const getImageUrl = (filename) => {
                 <form @submit.prevent="submit">
                     <div>
                         <input id="email" type="email" placeholder="E-pasts"
+                        disabled
                             class="p-2 rounded-xl border border-gray-200 w-full text-textColor focus:ring-primary focus:border-primary"
                             v-model="form.email" required autofocus autocomplete="username" />
                         <InputError class="mt-2" :message="form.errors.email" />
