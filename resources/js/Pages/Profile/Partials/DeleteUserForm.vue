@@ -40,10 +40,9 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-lg font-medium text-textColor">Dzēst kontu</h2>
 
             <p class="mt-1 text-sm text-textColor">
-                Dzēšot savu lietotāja kontu, visi dati datubāzē tiks pārģenerēti uz nejaušiem burtiem un skaitļiem. Kontu atgūt nebūs iespējams!
+                Dzēšot savu lietotāja kontu, visi dati datubāzē tiks anonimizēti uz nejaušiem burtiem un skaitļiem. Kontu atgūt nebūs iespējams!
             </p>
         </header>
 
