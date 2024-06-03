@@ -32,7 +32,7 @@ defineProps({
             </div>
 
             <div
-                class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
+                class="container mx-auto max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
                 <div class="py-4 sm:py-8">
                     <UpdateProfileInformationForm :must-verify-email="mustVerifyEmail" :status="status"
                         class="max-w-full" />
@@ -40,14 +40,14 @@ defineProps({
             </div>
 
             <div
-                class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
+                class="container mx-auto max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
                 <div class="py-4 sm:py-8">
                     <UpdatePasswordForm class="max-w-full " />
                 </div>
             </div>
 
             <div
-                class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
+                class="container mx-auto max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md mb-8 px-3 pl-6">
                 <div class="py-4 sm:py-8">
                     <DeleteUserForm class="max-w-full" />
 

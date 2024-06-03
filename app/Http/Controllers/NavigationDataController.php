@@ -41,5 +41,14 @@ class NavigationDataController extends Controller
             'activeGoodsCount' => $activeGoodsCount,
         ]);
     }
+
+    public function getActiveGoods()
+    {
+        $activeGoods = Good::where('status', 'Aktīvs')->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'goods' => $activeGoods,
+        ]);
+    }
 }
 

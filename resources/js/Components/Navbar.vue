@@ -102,6 +102,8 @@ const handleMouseLeave = (event) => {
     }
 };
 
+
+
 onMounted(() => {
     window.addEventListener("scroll", handleScroll);
 });

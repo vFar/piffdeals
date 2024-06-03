@@ -415,11 +415,7 @@ function handlePageChange(url) {
                                             </p>
                                         </div>
                                     </div> -->
-                                    <AdminFilterDrawer
-                                        v-model:open="drawerOpen"
-                                    >
-                                        <!-- Additional filters can be added here -->
-                                    </AdminFilterDrawer>
+                                   
                                 </div>
                             </div>
                         </div>

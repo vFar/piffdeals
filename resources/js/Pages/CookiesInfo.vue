@@ -14,7 +14,7 @@ import Breadcrumbs from '../Components/Breadcrumbs.vue';
         </div>
 
         <section
-            class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
+            class="container mx-auto max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
             <br>
             <p>Šī sīkdatņu politika informē par privātuma praksi un personas datu apstrādes principiem
                 saistībā ar <span class="text-primary">[uzņēmuma nosaukums]</span> mājas lapu un pakalpojumiem. Lai

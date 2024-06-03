@@ -30,7 +30,7 @@ const submitForm = () => {
             <Breadcrumbs currentPage="Kontakti" />
         </div>
         <section
-            class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
+            class="container mx-auto max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
             <section>
                 <div class="py-8 lg:py-16 px-4 mx-auto max-w-screen-md">
                     <h1 class="mb-4 text-4xl tracking-tight text-center">Sazinies ar mums</h1>

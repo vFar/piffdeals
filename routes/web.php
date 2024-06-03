@@ -115,6 +115,7 @@ Route::get('/admin-administrators', function () {
 
 Route::get('/navigation-data/categories', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data.categories');
 Route::get('/navigation-data/goods-count', [NavigationDataController::class, 'getActiveGoodsCount'])->name('navigation.data.goodsCount');
+Route::get('/navigation-data/active-goods', [NavigationDataController::class, 'getActiveGoods'])->name('navigation.data.activeGoods');
 
 
 

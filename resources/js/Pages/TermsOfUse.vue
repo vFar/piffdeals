@@ -15,7 +15,7 @@ import ScrollTopBtn from '../Components/ScrollToTopBtn.vue';
         </div>
 
         <section
-            class="container mx-auto max-w-screen-xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
+            class="container mx-auto max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6">
                 <br>
                 <h1>1. Vispārēji noteikumi</h1><br>
                 <p>1.1. Šie noteikumi (turpmāk – <strong>Noteikumi</strong>) paredz internetveikala

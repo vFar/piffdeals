@@ -116,6 +116,7 @@ class GoodsController extends Controller
             'description' => 'required|string',
             'image' => 'sometimes|required|string',
             'stock_quantity' => 'required|integer',
+            'price' => 'required|numeric', // Include price validation
             'status' => 'required|in:Aktīvs,Deaktivizēts',
             'group_id' => 'nullable',
             'attribute_id' => 'nullable',

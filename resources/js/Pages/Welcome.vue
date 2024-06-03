@@ -5,7 +5,7 @@ import Footer from "../Components/Footer.vue";
 import ScrollTopBtn from "../Components/ScrollToTopBtn.vue";
 import { ref, onMounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
-import { Carousel } from "ant-design-vue";
+import { Carousel, Image, Button } from "ant-design-vue";
 
 // const getImageUrl = (filename) => `/storage/images/${filename}`;
 
@@ -23,6 +23,33 @@ const carouselImages = ref([
     getImageUrl("5.png"),
     getImageUrl("6.png"),
 ]);
+
+const activeGoods = ref([]);
+
+const fetchActiveGoods = async () => {
+    try {
+        const response = await fetch("/navigation-data/active-goods");
+        if (response.ok) {
+            const data = await response.json();
+            activeGoods.value = data.goods.map((good) => ({
+                id: good.id,
+                name: good.name,
+                description: good.description,
+                price: good.price,
+                image: good.image, // Assuming `image` is the attribute name in your Good model
+            }));
+            console.log(activeGoods);
+        } else {
+            console.error("Failed to fetch goods data:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error fetching goods data:", error);
+    }
+};
+
+onMounted(async () => {
+    await fetchActiveGoods(); // Fetch the active goods when the component is mounted
+});
 </script>
 
 <style scoped>
@@ -44,65 +71,121 @@ const carouselImages = ref([
     <Navbar />
     <ScrollTopBtn />
     <div class="cross-patternSVGLight bg-whiter">
-        <Carousel
-            class="select-none"
-            autoplay
-            effect="fade"
-            dotPosition="bottom"
-            style="border: none"
-            :autoplaySpeed="3000"
-        >
-            <div
-                v-for="(img, index) in carouselImages"
-                :key="index"
-                class="carousel-item"
+        <div class="space-y-12">
+            <Carousel
+                class="select-none"
+                autoplay
+                effect="fade"
+                dotPosition="bottom"
+                style="border: none"
+                :autoplaySpeed="3000"
             >
-                <img :src="img" alt="Carousel image" class="carousel-image" />
+                <div
+                    v-for="(img, index) in carouselImages"
+                    :key="index"
+                    class="carousel-item"
+                >
+                    <Image
+                        :src="img"
+                        alt="Carousel image"
+                        class="carousel-image"
+                        :preview="false"
+                    />
+                </div>
+            </Carousel>
+            <div
+                class="container max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6"
+            >
+                <h1 class="text-textColor font-semibold">Jaunākās preces</h1>
+                <div
+                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4"
+                >
+                    <div
+                        v-for="item in activeGoods"
+                        :key="item.id"
+                        class="border border-gray-200 rounded-lg shadow-md p-4"
+                    >
+                    <div class="flex justify-center items-center h-[300px] overflow-hidden rounded-lg pointer">
+                            <Image
+                                :src="item.image"
+                                alt="goods-image"
+                                class="object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
+                                width="320px"
+                                height="300px"
+                                fallback="/images/S-1.png"
+                                :preview="false"
+                            />
+                        </div>
+                        <h2 class="text-md mt-2 text-textColor">
+                            {{ item.name }}
+                        </h2>
+                        <p class="text-textColor text-2xl font-semibold">
+                            € {{ item.price }}
+                        </p>
+                    </div>
+                </div>
             </div>
-        </Carousel>
-        <div
-            class="container max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6"
-        >
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
-                <div class="flex flex-col items-center">
-                    <div class="bg-primary text-white rounded-full p-4 mb-2">
-                        <i class="fas fa-headphones text-4xl"></i>
+            
+            <div
+                class="container max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6"
+            >
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+                    <div class="flex flex-col items-center py-6">
+                        <div
+                            class="bg-primary text-white rounded-full p-4 mb-2"
+                        >
+                            <i class="fas fa-headphones text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold pb-4">
+                            Tehniskais atbalsts
+                        </h3>
+                        <p class="text-gray-600 text-center">
+                            Piedāvājam tehnisko atbalstu, lai nodrošinātu jums
+                            nevainojamu pieredzi.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-semibold pb-4">Tehniskais atbalsts</h3>
-                    <p class="text-gray-600">
-                        Piedāvājam 24/7 atbalstu, lai nodrošinātu jums nevainojamu pieredzi.
-                    </p>
-                </div>
-                <div
-                    class="flex flex-col items-center border-x border-gray-300"
-                >
-                    <div class="bg-primary text-white rounded-full p-4 mb-2">
-                        <i class="fas fa-store text-4xl"></i>
+                    <div
+                        class="flex flex-col items-center border-x border-gray-300 py-6"
+                    >
+                        <div
+                            class="bg-primary text-white rounded-full p-4 mb-2"
+                        >
+                            <i class="fas fa-store text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold pb-4">
+                            Plašs preču klāsts
+                        </h3>
+                        <p class="text-gray-600 px-6 text-center">
+                            Plaša produktu izvēle pie konkurētspējīgām cenām.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-semibold pb-4">Plašs preču klāsts</h3>
-                    <p class="text-gray-600 px-6">
-                        Plaša produktu izvēle pie konkurētspējīgām cenām.
-                    </p>
-                </div>
-                <div
-                    class="flex flex-col items-center border-r border-gray-300"
-                >
-                    <div class="bg-primary text-white rounded-full p-4 mb-2">
-                        <i class="fas fa-shipping-fast text-4xl"></i>
+                    <div
+                        class="flex flex-col items-center border-r border-gray-300 py-6"
+                    >
+                        <div
+                            class="bg-primary text-white rounded-full p-4 mb-2"
+                        >
+                            <i class="fas fa-shipping-fast text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold pb-4">Ātra piegāde</h3>
+                        <p class="text-gray-600 text-center">
+                            Ātra un uzticama piegāde līdz jūsu durvīm.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-semibold pb-4">Ātra piegāde</h3>
-                    <p class="text-gray-600">
-                        Ātra un uzticama piegāde līdz jūsu durvīm.
-                    </p>
-                </div>
-                <div class="flex flex-col items-center">
-                    <div class="bg-primary text-white rounded-full p-4 mb-2">
-                        <i class="fas fa-shield-alt text-4xl"></i>
+                    <div class="flex flex-col items-center py-6">
+                        <div
+                            class="bg-primary text-white rounded-full p-4 mb-2"
+                        >
+                            <i class="fas fa-shield-alt text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold pb-4">
+                            Droši maksājumi
+                        </h3>
+                        <p class="text-gray-600 pb-4 text-center">
+                            Jūsu darījumi ir droši ar mūsu drošajiem maksājumu
+                            risinājumiem.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-semibold pb-4">Droši maksājumi</h3>
-                    <p class="text-gray-600 pb-4">
-                        Jūsu darījumi ir droši ar mūsu drošajiem maksājumu risinājumiem.
-                    </p>
                 </div>
             </div>
         </div>
