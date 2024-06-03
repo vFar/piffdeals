@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('media', function (Blueprint $table) {
-            $table->id();
-            $table->string('filename'); // Add filename column
-            $table->timestamps(); // Created and updated timestamps
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('google_id')->nullable()->after('email'); // Adds the google_id column
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('media');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -88,8 +88,9 @@ onMounted(async () => {
                     <Image
                         :src="img"
                         alt="Carousel image"
-                        class="carousel-image"
+                        class="carousel-image shadow-md"
                         :preview="false"
+                        width="100%"
                     />
                 </div>
             </Carousel>
@@ -98,30 +99,30 @@ onMounted(async () => {
             >
                 <h1 class="text-textColor font-semibold">Jaunākās preces</h1>
                 <div
-                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4"
+                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 py-4"
                 >
                     <div
                         v-for="item in activeGoods"
                         :key="item.id"
-                        class="border border-gray-200 rounded-lg shadow-md p-4"
+                        class="border border-gray-200 rounded-lg shadow-xs p-4 cursor-pointer"
                     >
                     <div class="flex justify-center items-center h-[300px] overflow-hidden rounded-lg pointer">
                             <Image
                                 :src="item.image"
                                 alt="goods-image"
-                                class="object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
-                                width="320px"
-                                height="300px"
+                                class="w-full h-[300px] object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
                                 fallback="/images/S-1.png"
                                 :preview="false"
                             />
                         </div>
-                        <h2 class="text-md mt-2 text-textColor">
-                            {{ item.name }}
-                        </h2>
-                        <p class="text-textColor text-2xl font-semibold">
-                            € {{ item.price }}
-                        </p>
+                        <div>
+                            <h2 class="text-md mt-2 text-textColor">
+                                {{ item.name }}
+                            </h2>
+                            <p class="text-textColor text-2xl font-semibold">
+                                <span class="hover:text-primary transform transition-transform duration-300 hover:scale-110">€ {{ item.price }}</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

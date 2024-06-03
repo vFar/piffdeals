@@ -244,24 +244,9 @@ aside {
                                         Administratori</Link
                                     >
                                 </li>
-                                <li>
-                                    <Link
-                                        href="/admin-logfiles"
-                                        class="block p-2 rounded text-white uppercase ms-9"
-                                    >
-                                        Žurnālfaili
-                                    </Link>
-                                </li>
+                               
 
-                                <li>
-                                    <Link
-                                        href="/admin-banners"
-                                        class="block p-2 rounded text-white uppercase ms-9"
-                                    >
-                                        Reklāmu baneri
-                                    </Link>
-                                </li>
-
+                               
                                 <li>
                                     <Link
                                         href="/profile"
