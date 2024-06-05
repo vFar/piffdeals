@@ -128,8 +128,7 @@ Nepieciešamie darbības soļi, lai lokāli uzsāktu projektu.
     ```
 
     ```
-        php artisan serve
-
+     php artisan serve
     ```
 
 <p align="right">(<a href="#readme-top">Augšup</a>)</p>
