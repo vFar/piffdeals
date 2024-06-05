@@ -588,8 +588,7 @@ const unlinkedAttributes = computed(() => {
                                             </span>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <!-- {{ attribute.products.length }} -->
-                                            preču skaits
+                                            {{ attribute.goods.length }}
                                         </td>
                                         <td class="px-4 py-3 text-right">
                                             {{ formatDate(attribute.created_at)

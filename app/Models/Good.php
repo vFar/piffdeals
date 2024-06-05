@@ -22,5 +22,10 @@ class Good extends Model
     {
         return $this->belongsTo(Group::class)->withDefault();
     }
+
+    public function carts()
+    {
+        return $this->belongsToMany(Cart::class, 'carts_items');
+    }
 }
 

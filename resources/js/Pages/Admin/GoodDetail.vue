@@ -107,7 +107,7 @@ const handleUploadChange = (info) => {
         form.image = filename;
         message.success("Attēls veiksmīgi augšupielādēts");
     } else if (info.file.status === "error") {
-        message.error(`Image upload failed: ${info.file.error.message}`);
+        message.error(`Attēlu augšupielādēt neizdevusies: ${info.file.error.message}`);
     }
 };
 

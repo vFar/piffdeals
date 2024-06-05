@@ -5,7 +5,9 @@ import Footer from "../Components/Footer.vue";
 import ScrollTopBtn from "../Components/ScrollToTopBtn.vue";
 import { ref, onMounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
-import { Carousel, Image, Button } from "ant-design-vue";
+import { Carousel, Image, Button, Card } from "ant-design-vue";
+import { router } from "@inertiajs/vue3";
+
 
 // const getImageUrl = (filename) => `/storage/images/${filename}`;
 
@@ -50,6 +52,10 @@ const fetchActiveGoods = async () => {
 onMounted(async () => {
     await fetchActiveGoods(); // Fetch the active goods when the component is mounted
 });
+
+const previewGood = (goodId) => {
+    router.visit(route('goods.show', { id: goodId })); // Redirect to the preview page
+};
 </script>
 
 <style scoped>
@@ -63,6 +69,20 @@ onMounted(async () => {
     .carousel-image {
         height: 30vh;
     }
+}
+
+.ant-card-cover {
+  position: relative;
+  padding-bottom: 75%; /* Adjust percentage for desired aspect ratio */
+}
+
+.ant-card-cover img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>
 
@@ -99,20 +119,41 @@ onMounted(async () => {
             >
                 <h1 class="text-textColor font-semibold">Jaunākās preces</h1>
                 <div
-                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 py-4"
+                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4"
                 >
                     <div
                         v-for="item in activeGoods"
                         :key="item.id"
-                        class="border border-gray-200 rounded-lg shadow-xs p-4 cursor-pointer"
+                        class="p-4 cursor-pointer border border-gray-200 shadow-md"
+                        @click="previewGood(item.id)" 
                     >
-                    <div class="flex justify-center items-center h-[300px] overflow-hidden rounded-lg pointer">
+                        <!-- <Card :hoverable="true">
+                            <template #cover>
+                                <Image
+                                    :src="item.image"
+                                    alt="goods-image"
+                                    fallback="/images/S-1.png"
+                                    class="w-full h-60 object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
+                                    :preview="false"
+
+                                />
+                            </template>
+                            <a-card-meta :title="item.name">
+                                <template #description>
+                                    € {{ item.price }}
+                                </template>
+                            </a-card-meta>
+                        </Card> -->
+                        <div class="flex justify-center items-center overflow-hidden rounded-lg pointer">
+                            
                             <Image
                                 :src="item.image"
                                 alt="goods-image"
-                                class="w-full h-[300px] object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
+                                class="object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
                                 fallback="/images/S-1.png"
                                 :preview="false"
+                                height="200px"
+                                width="200px"
                             />
                         </div>
                         <div>
@@ -126,7 +167,7 @@ onMounted(async () => {
                     </div>
                 </div>
             </div>
-            
+
             <div
                 class="container max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6"
             >
@@ -170,7 +211,7 @@ onMounted(async () => {
                         </div>
                         <h3 class="text-lg font-semibold pb-4">Ātra piegāde</h3>
                         <p class="text-gray-600 text-center">
-                            Ātra un uzticama piegāde līdz jūsu durvīm.
+                            Ātra un uzticama piegāde līdz Jūsu durvīm.
                         </p>
                     </div>
                     <div class="flex flex-col items-center py-6">

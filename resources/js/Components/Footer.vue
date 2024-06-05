@@ -77,14 +77,14 @@ import { Link } from '@inertiajs/vue3';
                             <li class="mb-4">
                                 <Link href="/profile" class="border-grow hover:text-whiter footer-hrefs">Profils</Link>
                             </li>
-                            <!-- Show Vēlmju saraksts for guests and users with role_id = 1 -->
-                            <li v-if="!$page.props.auth.user || $page.props.auth.user.role_id === 1" class="mb-4">
-                                <a href="/wishlist" class="border-grow hover:text-whiter footer-hrefs">Vēlmju
-                                    saraksts</a>
+
+                            <li v-if="$page.props.auth.user && $page.props.auth.user.role_id === 1" class="mb-4">
+                                <Link href="/cart" class="border-grow hover:text-whiter footer-hrefs">Iepirkumu grozs</Link>
                             </li>
+                            <!-- Show Vēlmju saraksts for guests and users with role_id = 1 -->
                             <!-- Show ADMIN for users with role_id = 2 -->
-                            <li v-else class="mb-4">
-                                <Link href="/admin-dashboard" class="border-grow hover:text-whiter footer-hrefs">ADMIN
+                            <li v-if="$page.props.auth.user && $page.props.auth.user.role_id === 2" class="mb-4">
+                                <Link href="/admin-orders" class="border-grow hover:text-whiter footer-hrefs">ADMIN
                                 </Link>
                             </li>
                         </ul>

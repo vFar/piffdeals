@@ -18,6 +18,7 @@ const props = defineProps({
         type: String,
     },
     googleLoginUrl: String, // receive Google login URL as a prop
+    facebookLoginUrl: String, // receive Facebook login URL as a prop
 });
 
 const form = useForm({
@@ -41,6 +42,10 @@ const togglePasswordVisibility = () => {
 
 const redirectToGoogle = () => {
     window.location.href = props.googleLoginUrl; // Use props.googleLoginUrl directly
+};
+
+const redirectToFacebook = () => {
+    window.location.href = props.facebookLoginUrl; // Use props.facebookLoginUrl directly
 };
 </script>
 
@@ -200,7 +205,8 @@ const redirectToGoogle = () => {
                         Google
                     </button>
 
-                    <button
+                    <!-- <button
+                    @click="redirectToFacebook"
                         class="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 hover:text-primary duration-300 text-textColor"
                     >
                         <svg
@@ -234,7 +240,7 @@ const redirectToGoogle = () => {
                             </g>
                         </svg>
                         Facebook
-                    </button>
+                    </button> -->
 
                     <div
                         class="mt-5 text-xs border-b border-textColor py-4 text-textColor"

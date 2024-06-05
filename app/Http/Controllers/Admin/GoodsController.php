@@ -136,15 +136,29 @@ class GoodsController extends Controller
 
     public function uploadImage(Request $request)
     {
-        $request->validate([
-            'image' => 'required|image|mimes:jpg,png,webp|max:2048', 
-        ]);
+        try {
+            $request->validate([
+                'image' => 'required|image|mimes:jpg,png,webp|max:2048', 
+            ]);
     
-        $filename = $request->file('image')->getClientOriginalName(); // Get filename only
-        $path = $request->file('image')->storeAs('images/goods', $filename, 'public'); // Save to 'public' disk
+            $filename = $request->file('image')->getClientOriginalName(); 
+            $path = $request->file('image')->storeAs('images/goods', $filename, 'public'); 
     
-        // Store ONLY the filename in the database
-        return response()->json(['url' => $filename], 200); // Return only the filename
+            Log::info("Image uploaded successfully", [
+                'filename' => $filename,
+                'path' => $path,
+            ]);
+
+            return response()->json(['url' => $filename], 200);
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error("Image upload error: " . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+    
+            // Return an error response to the frontend 
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy($id)

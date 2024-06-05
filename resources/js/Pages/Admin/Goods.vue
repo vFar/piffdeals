@@ -17,7 +17,6 @@ import dayjs from "dayjs"; // Import Day.js
 import { message, Popconfirm, Image } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
 
-
 // Define properties and reactive data specific to goods
 const props = defineProps({
     goods: Object, // Assumed data structure for goods
@@ -27,7 +26,6 @@ const props = defineProps({
     activeGroups: Array, // Assuming categories replace groups
     activeAttributes: Array,
 });
-
 
 const { errors } = usePage().props;
 const addGoodShow = ref(false);
@@ -53,15 +51,15 @@ function saveGood() {
     });
 }
 
-let search = ref(props.filters.search || '');
+let search = ref(props.filters.search || "");
 
 watch(search, (newValue) => {
-  router.visit(route('admin.goods.index'), {
-    method: 'get',
-    data: { search: newValue },
-    preserveState: true,
-    replace: true
-  });
+    router.visit(route("admin.goods.index"), {
+        method: "get",
+        data: { search: newValue },
+        preserveState: true,
+        replace: true,
+    });
 });
 
 function editGood(id) {
@@ -95,7 +93,9 @@ const deleteGood = async (id) => {
     }
 };
 
-
+const previewGood = (goodId) => {
+    router.visit(route("goods.show", { id: goodId }));
+};
 </script>
 
 <style scoped>
@@ -256,7 +256,7 @@ const deleteGood = async (id) => {
                                     <AdminSearchbar
                                         :initialQuery="props.filters.search"
                                         @update:searchQuery="search = $event"
-                                        placeholderSearch = "Meklēt"
+                                        placeholderSearch="Meklēt"
                                     />
 
                                     <p>
@@ -273,7 +273,6 @@ const deleteGood = async (id) => {
                                     <AdminPaginator
                                         :links="props.goods.links"
                                     />
-
                                 </div>
                             </div>
 
@@ -375,10 +374,16 @@ const deleteGood = async (id) => {
                                         </td>
                                         <td class="px-4 py-3 flex">
                                             <Image
-                                                :src="good.image || '/images/S-1.png'"
+                                                :src="
+                                                    good.image ||
+                                                    '/images/S-1.png'
+                                                "
                                                 fallback="/images/S-1.png"
                                                 alt="Good image"
-                                                style="width: 60px; height: 60px;"
+                                                style="
+                                                    width: 60px;
+                                                    height: 60px;
+                                                "
                                                 :preview="false"
                                                 class="mr-3"
                                             />
@@ -425,6 +430,7 @@ const deleteGood = async (id) => {
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <button
+                                                @click="previewGood(good.id)"
                                                 class="text-xl hover:bg-slate-200 rounded-lg p-2"
                                             >
                                                 <i
@@ -435,7 +441,9 @@ const deleteGood = async (id) => {
                                                 title="Vai tiešām vēlaties dzēst šo preci?"
                                                 okText="Jā"
                                                 cancelText="Nē"
-                                                @confirm="() => deleteGood(good.id)"
+                                                @confirm="
+                                                    () => deleteGood(good.id)
+                                                "
                                             >
                                                 <button
                                                     class="text-xl hover:bg-slate-200 rounded-lg p-2"
@@ -446,7 +454,6 @@ const deleteGood = async (id) => {
                                                 </button>
                                             </Popconfirm>
 
-                                            
                                             <button
                                                 @click="editGood(good.id)"
                                                 class="text-xl hover:bg-slate-200 rounded-lg p-2"
@@ -455,8 +462,6 @@ const deleteGood = async (id) => {
                                                     class="fas fa-caret-right fa-fw"
                                                 ></i>
                                             </button>
-
-                                            
                                         </td>
                                     </tr>
                                 </tbody>

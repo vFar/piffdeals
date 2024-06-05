@@ -52,7 +52,7 @@ onMounted(async () => {
     await fetchActiveGoodsCount(); // Fetch the active goods count when the component is mounted
 });
 
-console.log(activeGoodsCount)
+console.log(activeGoodsCount);
 
 const drawerOpen = ref(false);
 
@@ -101,8 +101,6 @@ const handleMouseLeave = (event) => {
         closeDrawer();
     }
 };
-
-
 
 onMounted(() => {
     window.addEventListener("scroll", handleScroll);
@@ -184,7 +182,7 @@ const handleLogout = () => {
 }
 
 .ant-drawer-content-wrapper {
-    transform: translateY(var(--drawer-top-offset, 208px)) !important;
+    transform: translateY(var(--drawer-top-offset, 190px)) !important;
     border-top: 1px solid #fff;
     transition: none !important;
     height: 400px !important;
@@ -218,7 +216,7 @@ const handleLogout = () => {
                     >+371 29 999 999</a
                 >
             </div>
-            <div class="space-x-6">
+            <!-- <div class="space-x-6">
                 <ThemeSwitch />
                 <select
                     class="text-textColor bg-transparent border-none text-sm rounded cursor-pointer"
@@ -227,7 +225,7 @@ const handleLogout = () => {
                     <option>RU</option>
                     <option>EN</option>
                 </select>
-            </div>
+            </div> -->
         </div>
     </header>
 
@@ -330,16 +328,10 @@ const handleLogout = () => {
                             ><span></span
                         ></Link>
                     </li>
-                    <li v-if="!isAdmin" class="text-white uppercase text-base">
-                        <Link href="/wishlist" class="navbar-hrefs"
-                            ><i class="far fa-sharp fa-heart text-xl fa-fw"></i
-                            ><span></span
-                        ></Link>
-                    </li>
 
                     <!-- Show Admin only for users with role_id = 2 -->
                     <li v-if="isAdmin" class="text-white uppercase text-base">
-                        <Link href="/admin-dashboard" class="navbar-hrefs"
+                        <Link href="/admin-orders" class="navbar-hrefs"
                             ><i class="fa fa-tools text-xl fa-fw"></i
                             ><span></span>
                         </Link>
@@ -391,17 +383,12 @@ const handleLogout = () => {
                                     <DropdownLink
                                         :href="route('profile.edit')"
                                         class="uppercase"
-                                        >VĒLMJU SARAKSTS</DropdownLink
-                                    >
-                                    <DropdownLink
-                                        :href="route('profile.edit')"
-                                        class="uppercase"
                                         >PROFILS</DropdownLink
                                     >
                                 </template>
                                 <template #actions>
                                     <DropdownLink
-                                        href="/admin-dashboard"
+                                        href="/admin-orders"
                                         v-if="
                                             $page.props.auth.user &&
                                             $page.props.auth.user.role_id === 2
@@ -460,21 +447,23 @@ const handleLogout = () => {
                         v-for="group in selectedCategory.groups"
                         :key="group.id"
                     >
-                        <p
+                        <Link
+                            :href="`/goods?group_id=${group.id}`"
                             class="text-white text-md font-bold uppercase select-none mb-2"
                         >
                             {{ group.name }}
-                        </p>
+                        </Link>
                         <ul>
                             <li
                                 v-for="attribute in group.attributes"
                                 :key="attribute.id"
                             >
-                                <p
+                                <Link
+                                    :href="`/goods?attribute_id=${attribute.id}`"
                                     class="text-white text-sm capitalize select-none"
                                 >
                                     {{ attribute.name }}
-                                </p>
+                                </Link>
                             </li>
                         </ul>
                     </li>

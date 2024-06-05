@@ -63,12 +63,10 @@
 -   [![Vue][Vue.js]][Vue-url]
 -   [![Laravel][Laravel.com]][Laravel-url]
 -   [![NodeJS][Nodejs.org]][NodeJS-url]
--   [![Composer][getcomposer.org]][Composer-url]
 -   [![ViteJS][vitejs.dev]][ViteJS-url]
 -   [![TailwindCSS][tailwindcss.com]][TailwindCSS-url]
--   [![MySQL][mysql.com]][MySQL-url]
--   [![InertiaJS][inertiajs.com]][InertiaJS-url]
 -   [![Ziggy][https://github.com/tighten/ziggy]][Ziggy-url]
+-   Nepieciešams php composer, MySQL
 
 <p align="right">(<a href="#readme-top">Augšup</a>)</p>
 
@@ -106,18 +104,29 @@ Nepieciešamie darbības soļi, lai lokāli uzsāktu projektu.
 
 4. Kopēt .env.example failu uz .env root faila mapē.
 
-    ```sh
-        php artisan key:generate;
+5. Atvērt .env failu un izveidot savienojumu ar datubāzi.
+
+    ```
+         DB_CONNECTION=mysql
+         DB_HOST=127.0.0.1
+         DB_PORT=3306
+         DB_DATABASE=piffdeals
+         DB_USERNAME=root
+         DB_PASSWORD=
     ```
 
-5. Atvērt .env failu un izveidot savienojumu ar datubāzi.
-   ```
-        DB_CONNECTION=mysql
-        DB_HOST=127.0.0.1
-        DB_PORT=3306
-        DB_DATABASE=piffdeals
-        DB_USERNAME=root
-        DB_PASSWORD=
+6. Pēc veiksmīgas datubāzes savienošanas, jāizveido tabulas
+    ```
+     php artisan migrate
+    ```
+
+7. Nepieciešami 2 aktīvi termināļi, lai startētu projektu
+    ```
+     npm run dev
+    ```
+
+        ```
+     php artisan serve
     ```
 
 <p align="right">(<a href="#readme-top">Augšup</a>)</p>
@@ -146,14 +155,10 @@ Nepieciešamie darbības soļi, lai lokāli uzsāktu projektu.
 [Vue-url]: https://vuejs.org/
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [Laravel-url]: https://laravel.com
-
 [NodeJS.org]: https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white
 [NodeJS-url]: https://nodejs.org/en
-
 [vitejs.dev]: https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white
 [viteJS-url]: https://vitejs.dev
-
 [tailwindcss.com]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
 [TailwindCSS-url]: https://tailwindcss.com/
-
 [Ziggy-url]: https://github.com/tighten/ziggy
