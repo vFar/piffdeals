@@ -7,10 +7,12 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
+import { message } from "ant-design-vue";
 
 
 const props = defineProps({
-    recaptchaSiteKey: String
+    recaptchaSiteKey: String,
+    errors: Object // Make sure to define the errors prop
 });
 
 
@@ -44,8 +46,26 @@ onMounted(() => {
 });
 
 const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+    form.post(route("register"), {
+        onFinish: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+        },
+        onError: () => {
+            if (props.errors) {
+                Object.entries(props.errors).forEach(([key, value]) => {
+                    // Check if the value is an array
+                    if (Array.isArray(value)) {
+                        value.forEach(errorMessage => {
+                            message.error(errorMessage);
+                        });
+                    } else { 
+                        // Handle single string errors
+                        message.error(value); 
+                    }
+                });
+            }
+        },
     });
 };
 
@@ -100,14 +120,12 @@ const togglePasswordVisibility = (field) => {
                             class="p-2 mt-8 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
                             id="name" type="text" placeholder="Vārds, uzvārds" v-model="form.name" required autofocus
                             autocomplete="name">
-                        <InputError class="mt-2" :message="form.errors.name" />
 
                         <input
                             class="p-2 rounded-xl border border-gray-200 text-textColor focus:ring-primary focus:border-primary"
                             id="email" type="email" placeholder="E-pasts" v-model="form.email" required
                             autocomplete="username">
 
-                        <InputError class="mt-2" :message="form.errors.email" />
 
                         <div class="relative">
                             <input
@@ -115,7 +133,6 @@ const togglePasswordVisibility = (field) => {
                                 id="password" placeholder="Parole" v-model="form.password" required
                                 autocomplete="new-password" :type="passwordType">
 
-                            <InputError class="mt-2" :message="form.errors.password" />
 
                             <button @click="togglePasswordVisibility('password')" class="absolute top-1/2 right-3 -translate-y-1/2"
                                 type="button" tabindex="-1">
@@ -129,7 +146,6 @@ const togglePasswordVisibility = (field) => {
                                 id="password_confirmation" v-model="form.password_confirmation" required
                                 autocomplete="new-password" placeholder="Parole atkārtoti" :type="confirmPasswordType">
 
-                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
 
                             <button @click="togglePasswordVisibility('confirmPassword')" class="absolute top-1/2 right-3 -translate-y-1/2"
                                 type="button" tabindex="-1">

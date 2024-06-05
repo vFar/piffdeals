@@ -2,7 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\GoodsPreviewController;
 use App\Http\Controllers\NavigationDataController;
+use App\Http\Controllers\FilterGoodsController;
+use App\Http\Controllers\Cart;
+
+use App\Http\Middleware\checkCustomerRole; // Import your middleware
+
 use App\Http\Controllers\Admin\ClientAccountController;
 use App\Http\Controllers\Admin\CategoryGoodsController;
 use App\Http\Controllers\Admin\GroupGoodsController;
@@ -33,6 +39,9 @@ Route::get('/', function () {
 
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::get('login/facebook', [FacebookController::class, 'redirectToFacebook'])->name('login.facebook');
+Route::get('login/facebook/callback', [FacebookController::class, 'handleFacebookCallback']);
 
 
 // Route::get('/dashboard', function () {
@@ -69,17 +78,32 @@ Route::get('/about-us', function () {
     return Inertia::render('AboutUs');
 });
 
-Route::get('/admin-dashboard', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/Statistics');
-    } else {
-        abort(404);
-    }
+// Route::get('/admin-dashboard', function () {
+//     if (Auth::user()->role_id === 2) {
+//         return Inertia::render('Admin/Statistics');
+//     } else {
+//         abort(404);
+//     }
 
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.dashboard');
+//     if (!Auth::check()){
+//         abort(404);
+//     }
+// })->middleware(['auth', 'verified'])->name('admin.dashboard');
+
+Route::prefix('cart')->middleware(['auth'])->group(function () {
+    Route::post('/add', [CartController::class, 'add'])->name('cart.add');
+    Route::get('/', function () {
+        return Inertia::render('Cart');
+    })->name('cart.index');
+});
+
+// Route::prefix('cart')->middleware(['auth', 'checkCustomerRole'])->group(function () {
+//     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
+
+//     Route::get('/', function () {
+//         return Inertia::render('Cart');
+//     })->name('cart.index');
+// });
 
 Route::get('/admin-orders', function () {
     if (Auth::user()->role_id === 2) {
@@ -123,6 +147,8 @@ Route::get('/navigation-data/goods-count', [NavigationDataController::class, 'ge
 Route::get('/navigation-data/active-goods', [NavigationDataController::class, 'getActiveGoods'])->name('navigation.data.activeGoods');
 
 
+Route::get('/goods/{id}', [GoodsPreviewController::class, 'show'])->name('goods.show');
+Route::get('/goods', [FilterGoodsController::class, 'index'])->name('goods.filter');
 
 // Define routes under the "admin-goods" prefix
 Route::prefix('admin-goods')->middleware(['auth', 'checkAdminRole'])->group(function () {

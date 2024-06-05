@@ -85,7 +85,7 @@ aside {
             >
                 <div class="flex items-center space-x-6 w-3/4">
                     <Link
-                        href="/admin-dashboard"
+                        href="/admin-orders"
                         class="flex items-center select-none"
                     >
                         <img
@@ -114,9 +114,9 @@ aside {
             <div class="h-full px-3 py-4 overflow-y-auto bg-primary">
                 <ul class="space-y-2 font-medium">
                     <ul class="space-y-2 font-medium">
-                        <li>
+                        <!-- <li>
                             <Link
-                                href="/admin-dashboard"
+                                href="/admin-orders"
                                 :class="{
                                     'navbar-element':
                                         props.currentPage === 'statistics',
@@ -128,7 +128,7 @@ aside {
                                 ></i>
                                 <span class="ms-3 uppercase">Statistika</span>
                             </Link>
-                        </li>
+                        </li> -->
                         <li>
                             <Link
                                 href="/admin-orders"

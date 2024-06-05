@@ -16,8 +16,7 @@ class AttributesGoodsController extends Controller
         $search = $request->input('search', '');
         $groupId = $request->input('group_id');
 
-        $query = Attribute::with(['group.category', 'goods']); // Include the category of the group
-
+        $query = Attribute::with(['group.category', 'goods']);
         if (!empty($search)) {
             $query->where('name', 'like', "%{$search}%");
         }
@@ -29,6 +28,7 @@ class AttributesGoodsController extends Controller
         $attributes = $query->orderBy('created_at', 'desc')->paginate(15);
         $activeGroups = Group::where('status', 'Aktīvs')->with('category')->get();
         $totalUnlinkedAttributes = Attribute::whereNull('group_id')->count();
+        
 
         return Inertia::render('Admin/Attributes', [
             'attributes' => $attributes,
