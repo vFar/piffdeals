@@ -87,24 +87,24 @@ Nepieciešamie darbības soļi, lai lokāli uzsāktu projektu.
 
 ### Uzstādīšana
 
-1. Klonēt repozitoriju
+1.  Klonēt repozitoriju
     ```sh
     git clone https://github.com/vFar/piffdeals
     ```
-2. Lejupielādēt nepieciešamās NPM un Composer pakotnes
+2.  Lejupielādēt nepieciešamās NPM un Composer pakotnes
     ```sh
     composer install
     npm install
     ```
-3. Izveidot jaunu Laravel API atslēgu
+3.  Izveidot jaunu Laravel API atslēgu
 
     ```sh
         php artisan key:generate;
     ```
 
-4. Kopēt .env.example failu uz .env root faila mapē.
+4.  Kopēt .env.example failu uz .env root faila mapē.
 
-5. Atvērt .env failu un izveidot savienojumu ar datubāzi.
+5.  Atvērt .env failu un izveidot savienojumu ar datubāzi.
 
     ```
          DB_CONNECTION=mysql
@@ -115,18 +115,21 @@ Nepieciešamie darbības soļi, lai lokāli uzsāktu projektu.
          DB_PASSWORD=
     ```
 
-6. Pēc veiksmīgas datubāzes savienošanas, jāizveido tabulas
+6.  Pēc veiksmīgas datubāzes savienošanas, jāizveido tabulas
+
     ```
      php artisan migrate
     ```
 
-7. Nepieciešami 2 aktīvi termināļi, lai startētu projektu
+7.  Nepieciešami 2 aktīvi termināļi, lai startētu projektu
+
     ```
      npm run dev
     ```
 
-        ```
-     php artisan serve
+    ```
+        php artisan serve
+
     ```
 
 <p align="right">(<a href="#readme-top">Augšup</a>)</p>
