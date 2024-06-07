@@ -4,18 +4,52 @@ import Navbar from '../Components/Navbar.vue';
 import Footer from '../Components/Footer.vue';
 import Breadcrumbs from '../Components/Breadcrumbs.vue';
 import { onMounted, ref, reactive } from 'vue';
+import { message } from 'ant-design-vue'; // Importing message from antd
+import { router } from "@inertiajs/vue3";
+
+
+const props = defineProps({
+    recaptchaSiteKey: String,
+    errors: Object // Make sure to define the errors prop
+});
 
 const form = useForm({
     email: '',
     title: '',
     textMessage: '',
+    recaptcha: ''
+});
+const recaptchaWidgetId = ref(null);
+
+const onLoadCallback = () => {
+    recaptchaWidgetId.value = grecaptcha.render('recaptcha-container', {
+        'sitekey': props.recaptchaSiteKey, // Replace with your site key
+        'callback': verifyCallback,
+    });
+};
+
+const verifyCallback = (response) => {
+    form.recaptcha = response; // Assign the response token to the form data
+};
+
+onMounted(() => {
+    if (window.grecaptcha && window.grecaptcha.render) {
+        onLoadCallback();
+    } else {
+        window.onloadCallback = onLoadCallback;
+    }
 });
 
 const submitForm = () => {
     form.post('/contact', {
         onSuccess: () => {
             form.reset();  // Reset the form only on success
+            message.success('Ziņojums veiksmīgi nosūtīts! Drīz ar Jums sazināsimies');
+            router.visit('/');
         },
+        onError: () => {
+            message.error('Neizdevās nosūtīt ziņojumu. Lūdzu, mēģiniet vēlāk.');
+        }
     });
 };
 </script>
@@ -61,6 +95,10 @@ const submitForm = () => {
                                 class="placeholder-gray-300 resize-none block p-2.5 w-full text-sm text-gray-900 bg-whiter rounded-lg shadow-sm border border-gray-300 focus:ring-primary focus:border-primary"
                                 placeholder="Paskaidro situāciju šeit" required></textarea>
                         </div>
+                        <div id="recaptcha-container" class="w-full px-2 md:px-0">
+                            <!-- reCAPTCHA widget will render here -->
+                        </div>
+
 
 
                         <button type="submit"

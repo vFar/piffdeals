@@ -3,11 +3,10 @@ import { Head, Link } from "@inertiajs/vue3";
 import Navbar from "../Components/Navbar.vue";
 import Footer from "../Components/Footer.vue";
 import ScrollTopBtn from "../Components/ScrollToTopBtn.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, h, onBeforeUnmount } from "vue";
 import { usePage } from "@inertiajs/vue3";
-import { Carousel, Image, Button, Card } from "ant-design-vue";
+import { Carousel, Image, Button, Card, notification } from "ant-design-vue";
 import { router } from "@inertiajs/vue3";
-
 
 // const getImageUrl = (filename) => `/storage/images/${filename}`;
 
@@ -16,6 +15,8 @@ const getImageUrl = (filename) => {
 };
 
 const flashMessage = ref("");
+const page = usePage();
+const auth = page.props.auth;
 
 const carouselImages = ref([
     getImageUrl("1.png"),
@@ -49,12 +50,43 @@ const fetchActiveGoods = async () => {
     }
 };
 
+let notificationInstance = null;
+
+const showNotification = () => {
+    notificationInstance = notification.warning({
+        message: "E-pasts nav verificēts!",
+        description: "Jūsu e-pasts nav verificēts! Lūdzu, verificējiet savu e-pastu, lai varētu izmantot visas funkcijas. Ja e-pasts nav verificēts, tad Jūs nevarēsiet pievienot preces grozā.",
+        btn: () => h(
+            'button',
+            {
+                class: "before:ease relative h-10 w-36 overflow-hidden border border-secondary bg-primary text-white shadow-2xl transition-all before:absolute before:right-0 before:top-0 before:h-12 before:w-6 before:translate-x-12 before:rotate-6 before:bg-white before:opacity-10 before:duration-700 hover:shadow-primary hover:before:-translate-x-40",
+                onClick: () => router.visit(route("verification.notice"))
+            },
+            "Verificēt tagad"
+        ),
+        duration: 5, // The notification will not auto close
+        placement: "topRight",
+    });
+};
+
 onMounted(async () => {
     await fetchActiveGoods(); // Fetch the active goods when the component is mounted
+
+    if (auth && auth.user && !auth.user.email_verified_at) {
+        setTimeout(() => {
+            showNotification();
+        }, 1000); // Show notification 1 second after page load
+    }
+});
+
+onBeforeUnmount(() => {
+    if (notificationInstance) {
+        notificationInstance.close();
+    }
 });
 
 const previewGood = (goodId) => {
-    router.visit(route('goods.show', { id: goodId })); // Redirect to the preview page
+    router.visit(route("goods.show", { id: goodId })); // Redirect to the preview page
 };
 </script>
 
@@ -72,17 +104,17 @@ const previewGood = (goodId) => {
 }
 
 .ant-card-cover {
-  position: relative;
-  padding-bottom: 75%; /* Adjust percentage for desired aspect ratio */
+    position: relative;
+    padding-bottom: 75%; /* Adjust percentage for desired aspect ratio */
 }
 
 .ant-card-cover img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 </style>
 
@@ -118,6 +150,7 @@ const previewGood = (goodId) => {
                 class="container max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-3 px-3 pl-6"
             >
                 <h1 class="text-textColor font-semibold">Jaunākās preces</h1>
+
                 <div
                     class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4"
                 >
@@ -125,45 +158,38 @@ const previewGood = (goodId) => {
                         v-for="item in activeGoods"
                         :key="item.id"
                         class="p-4 cursor-pointer border border-gray-200 shadow-md"
-                        @click="previewGood(item.id)" 
                     >
-                        <!-- <Card :hoverable="true">
-                            <template #cover>
+                        <Link
+                            :href="route('goods.show', { id: item.id })"
+                            class="block"
+                        >
+                            <div
+                                class="flex justify-center items-center overflow-hidden rounded-lg pointer"
+                            >
                                 <Image
                                     :src="item.image"
                                     alt="goods-image"
+                                    class="object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
                                     fallback="/images/S-1.png"
-                                    class="w-full h-60 object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
                                     :preview="false"
-
+                                    height="200px"
+                                    width="200px"
                                 />
-                            </template>
-                            <a-card-meta :title="item.name">
-                                <template #description>
-                                    € {{ item.price }}
-                                </template>
-                            </a-card-meta>
-                        </Card> -->
-                        <div class="flex justify-center items-center overflow-hidden rounded-lg pointer">
-                            
-                            <Image
-                                :src="item.image"
-                                alt="goods-image"
-                                class="object-cover transform transition-transform duration-300 hover:scale-110 rounded-lg"
-                                fallback="/images/S-1.png"
-                                :preview="false"
-                                height="200px"
-                                width="200px"
-                            />
-                        </div>
-                        <div>
-                            <h2 class="text-md mt-2 text-textColor">
-                                {{ item.name }}
-                            </h2>
-                            <p class="text-textColor text-2xl font-semibold">
-                                <span class="hover:text-primary transform transition-transform duration-300 hover:scale-110">€ {{ item.price }}</span>
-                            </p>
-                        </div>
+                            </div>
+                            <div>
+                                <h2 class="text-md mt-2 text-textColor">
+                                    {{ item.name }}
+                                </h2>
+                                <p
+                                    class="text-textColor text-2xl font-semibold"
+                                >
+                                    <span
+                                        class="hover:text-primary transform transition-transform duration-300 hover:scale-110"
+                                        >€ {{ item.price }}</span
+                                    >
+                                </p>
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </div>

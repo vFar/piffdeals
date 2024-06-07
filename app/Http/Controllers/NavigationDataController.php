@@ -14,22 +14,32 @@ class NavigationDataController extends Controller
     {
         $activeCategories = Category::where('status', 'Aktīvs')
             ->whereHas('groups', function ($query) {
-                $query->where('status', 'Aktīvs');
+                $query->where('status', 'Aktīvs')
+                      ->whereHas('attributes', function ($subQuery) {
+                          $subQuery->where('status', 'Aktīvs')
+                                   ->whereHas('goods', function ($goodsQuery) {
+                                       $goodsQuery->where('status', 'Aktīvs');
+                                   });
+                      });
             })
             ->with(['groups' => function ($query) {
                 $query->where('status', 'Aktīvs')
                       ->with(['attributes' => function ($subQuery) {
-                          $subQuery->where('status', 'Aktīvs');
+                          $subQuery->where('status', 'Aktīvs')
+                                   ->whereHas('goods', function ($goodsQuery) {
+                                       $goodsQuery->where('status', 'Aktīvs');
+                                   });
                       }]);
             }])
             ->get();
-
-        \Log::info('Fetched Categories:', ['categories' => $activeCategories]);
-
+    
+        \Log::info('Fetched Categories with active goods:', ['categories' => $activeCategories]);
+    
         return response()->json([
             'activeCategories' => $activeCategories,
         ]);
     }
+    
 
     public function getActiveGoodsCount()
     {

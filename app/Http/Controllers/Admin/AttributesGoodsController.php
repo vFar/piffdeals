@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Attribute;
 use App\Models\Group;
+use App\Models\Good;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -39,6 +40,26 @@ class AttributesGoodsController extends Controller
         ]);
     }
 
+    public function destroy($id)
+    {
+        try {
+            $attribute = Attribute::findOrFail($id);
+            
+            // Unlink goods linked to this attribute
+            Good::where('attribute_id', $id)->update(['attribute_id' => null]);
+            
+            // Delete the attribute
+            $attribute->delete();
+            
+            return redirect()->back()->with([
+                'title' => 'Kategorijas dzēšana',
+                'message' => 'Kategorija veiksmīgi dzēsta',
+                'type' => 'success'
+            ]);        
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting attribute: ' . $e->getMessage()], 500);
+        }
+    }
     
     
     

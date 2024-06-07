@@ -45,7 +45,7 @@ const form = useForm({
 
 const updatePrice = (value) => {
     form.price = value;
-    console.log(form.price)
+    console.log(form.price);
 };
 
 const updateStockQuantity = (value) => {
@@ -107,7 +107,9 @@ const handleUploadChange = (info) => {
         form.image = filename;
         message.success("Attēls veiksmīgi augšupielādēts");
     } else if (info.file.status === "error") {
-        message.error(`Attēlu augšupielādēt neizdevusies: ${info.file.error.message}`);
+        message.error(
+            `Attēlu augšupielādēt neizdevusies: ${info.file.error.message}`
+        );
     }
 };
 
@@ -342,6 +344,9 @@ const deleteGood = (id) => {
                                                 v-if="form.image"
                                                 width="100px"
                                                 height="100px"
+                                                :preview="{ src: good.image }"
+                                                previewMask="Priekšskatījums"
+                                                class="cursor-pointer"
                                             />
                                         </div>
                                         <div class="w-full">

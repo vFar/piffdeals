@@ -12,6 +12,7 @@ import AdminNavbar from "@/Components/AdminNavbar.vue";
 import TextInput from "@/Components/TextInput.vue";
 import AdminSearchbar from "@/Components/AdminSearchbar.vue";
 import AdminFilterDrawer from "@/Components/AdminFilterDrawer.vue";
+import AdminPaginator from "@/Components/AdminPaginator.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import Tooltip from "@/Components/Tooltip.vue";

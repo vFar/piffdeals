@@ -238,17 +238,6 @@ aside {
                             >
                                 <li>
                                     <Link
-                                        href="/admin-administrators"
-                                        class="block p-2 rounded text-white uppercase ms-9"
-                                    >
-                                        Administratori</Link
-                                    >
-                                </li>
-                               
-
-                               
-                                <li>
-                                    <Link
                                         href="/profile"
                                         class="block p-2 rounded text-white uppercase ms-9"
                                     >

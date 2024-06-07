@@ -5,8 +5,11 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
+import { watch } from 'vue';
+import { message } from 'ant-design-vue'; // Make sure to import message
 
-defineProps({
+
+const props = defineProps({
     status: {
         type: String,
     },
@@ -25,6 +28,11 @@ const submit = () => {
     form.post(route('password.email'));
 };
 
+watch(() => props.status, (newStatus) => {
+    if (newStatus) {
+        message.success(newStatus);
+    }
+});
 
 </script>
 
@@ -53,9 +61,7 @@ const submit = () => {
                 <div class="mb-4 text-md text-justify text-textColor">
                     Ja esi pazaudējis pieeju savam kontam, mēs esam šeit, lai palīdzētu. Ievadi savu e-pasta adresi, un
                     mēs nosūtīsim Tev saiti, ar kuru varēsi atjaunot savu paroli. </div>
-                <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-                    {{ status }}
-                </div>
+               
                 <form @submit.prevent="submit">
                     <div>
                         <input type="email" id="email" v-model="form.email" required autofocus autocomplete="username"

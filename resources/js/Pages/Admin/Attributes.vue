@@ -15,7 +15,7 @@ import AdminPaginator from "@/Components/AdminPaginator.vue";
 import Tooltip from "@/Components/Tooltip.vue";
 import dayjs from "dayjs"; // Import Day.js
 import { router } from "@inertiajs/vue3";
-import { Alert } from "ant-design-vue";
+import { Alert, Popconfirm, message } from "ant-design-vue";
 
 const props = defineProps({
     attributes: Object,
@@ -180,6 +180,27 @@ const showUnlinkedAttributesAlert = ref(true);
 const unlinkedAttributes = computed(() => {
     return attributes.filter((attribute) => !attribute.attribute_id);
 });
+
+const handleDeleteAttribute = async (attributeId) => {
+    try {
+        // Use Inertia's router to send a DELETE request
+        router.delete(route("admin.attributes.destroy", { id: attributeId }), {
+            preserveScroll: true,
+            preserveState: false,
+            onSuccess: () => {
+                message.success("Atribūts veiksmīgi dzēsts!");
+                fetchAttributes(); // Refresh the list after deletion
+            },
+            onError: (errors) => {
+                message.error("Neizdevās izdzēst atribūtu!");
+                console.log(errors);
+            },
+        });
+    } catch (error) {
+        message.error("An error occurred while deleting the attribute.");
+        console.log(error);
+    }
+};
 </script>
 
 <style scoped>
@@ -610,16 +631,25 @@ const unlinkedAttributes = computed(() => {
                                                     class="fa-solid fa-pen-to-square"
                                                 ></i>
                                             </button>
-                                            <button
-                                                @click="
-                                                    deleteAttribute(
-                                                        attribute.id
-                                                    )
+                                            <Popconfirm
+                                                title="Vai tiešām vēlies dzēst šo preču atribūtu?"
+                                                okText="Jā"
+                                                cancelText="Nē"
+                                                @confirm="
+                                                    () =>
+                                                        handleDeleteAttribute(
+                                                            attribute.id
+                                                        )
                                                 "
-                                                class="text-xl hover:bg-slate-200 rounded-lg p-2"
                                             >
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                                <button
+                                                    class="text-xl hover:bg-slate-200 rounded-lg p-2"
+                                                >
+                                                    <i
+                                                        class="fa-solid fa-trash fa-fw"
+                                                    ></i>
+                                                </button>
+                                            </Popconfirm>
                                         </td>
                                     </tr>
                                 </tbody>

@@ -26,7 +26,6 @@ const fetchCategoryData = async () => {
         const response = await fetch("/navigation-data/categories");
         const data = await response.json();
         activeCategories.value = data.activeCategories;
-        console.log(activeCategories.value); // Log to confirm
         if (activeCategories.value.length > 0) {
             selectedCategory.value = activeCategories.value[0]; // Select the first category by default
         }
@@ -40,7 +39,6 @@ const fetchActiveGoodsCount = async () => {
         const response = await fetch("/navigation-data/goods-count");
         const data = await response.json();
         activeGoodsCount.value = data.activeGoodsCount ?? 0; // Ensure fallback to 0 if undefined
-        console.log(activeGoodsCount.value); // Log to confirm
     } catch (error) {
         console.error("Error fetching active goods count:", error);
         activeGoodsCount.value = 0; // Set to 0 if there's an error
@@ -52,7 +50,6 @@ onMounted(async () => {
     await fetchActiveGoodsCount(); // Fetch the active goods count when the component is mounted
 });
 
-console.log(activeGoodsCount);
 
 const drawerOpen = ref(false);
 
@@ -376,7 +373,7 @@ const handleLogout = () => {
                                 </template>
                                 <template #links>
                                     <DropdownLink
-                                        :href="route('profile.edit')"
+                                        href="/cart"
                                         class="uppercase"
                                         >IEPIRKUMU GROZS</DropdownLink
                                     >

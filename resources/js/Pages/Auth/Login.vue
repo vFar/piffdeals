@@ -78,9 +78,9 @@ const redirectToFacebook = () => {
         <div class="min-h-screen flex items-center justify-center">
             <Head title="Pieslēgties" />
 
-            <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+            <!-- <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
                 {{ status }}
-            </div>
+            </div> -->
 
             <div
                 class="flex justify-center max-w-4xl mx-4 p-2 sm:p-6 bg-whiter border border-gray-200 rounded-xl shadow-xl w-full"

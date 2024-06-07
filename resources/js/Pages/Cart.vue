@@ -15,9 +15,22 @@ import {
 } from "ant-design-vue";
 
 const { good } = usePage().props;
-
-
 const quantity = ref(1);
+
+const addToCart = async (itemId) => {
+    try {
+        const response = await axios.post('/cart/add', { itemId });
+        if (response.status === 200) {
+            // Item added to cart successfully, handle success
+        } else if (response.status === 302) {
+            // Redirecting to email verification notice
+            window.location.href = response.headers.location;
+        }
+    } catch (error) {
+        console.error("Error adding item to cart:", error);
+        // Handle error, possibly display a notification to the user
+    }
+};
 
 </script>
 

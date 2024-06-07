@@ -27,6 +27,9 @@ const props = defineProps({
     activeAttributes: Array,
 });
 
+const { data: goodsData, links: paginationLinks } = props.goods;
+
+
 const { errors } = usePage().props;
 const addGoodShow = ref(false);
 
@@ -96,6 +99,11 @@ const deleteGood = async (id) => {
 const previewGood = (goodId) => {
     router.visit(route("goods.show", { id: goodId }));
 };
+
+function handlePageChange(url) {
+    router.replace(url);
+}
+
 </script>
 
 <style scoped>
@@ -139,15 +147,6 @@ const previewGood = (goodId) => {
                     </div>
 
                     <div class="flex items-center">
-                        <button
-                            class="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 mx-8"
-                        >
-                            <i
-                                class="fas fa-download py-1 mr-2 fa-fw text-textColor"
-                            ></i>
-                            Eksportēt
-                        </button>
-
                         <button
                             @click="openAddGoodModal"
                             class="flex items-center p-3 rounded-lg text-white bg-accent uppercase font-semibold hover:bg-secondary group navbarElement"
@@ -270,10 +269,11 @@ const previewGood = (goodId) => {
                                 </div>
 
                                 <div class="flex space-x-6 items-center">
-                                    <AdminPaginator
-                                        :links="props.goods.links"
-                                    />
+                                    <AdminPaginator :links="paginationLinks" @page-change="handlePageChange" />
+
                                 </div>
+
+                                {{ console.log(paginationLinks)}}
                             </div>
 
                             <div
@@ -384,8 +384,9 @@ const previewGood = (goodId) => {
                                                     width: 60px;
                                                     height: 60px;
                                                 "
-                                                :preview="false"
-                                                class="mr-3"
+                                                class="mr-3 cursor-pointer"
+                                                :preview="{ src: good.image }"
+                                                previewMask="Priekšskatījums"
                                             />
                                             € {{ good.price }} <br />
                                             Skaits - {{ good.stock_quantity }}

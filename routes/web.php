@@ -7,17 +7,18 @@ use App\Http\Controllers\NavigationDataController;
 use App\Http\Controllers\FilterGoodsController;
 use App\Http\Controllers\Cart;
 
-use App\Http\Middleware\checkCustomerRole; // Import your middleware
-
 use App\Http\Controllers\Admin\ClientAccountController;
 use App\Http\Controllers\Admin\CategoryGoodsController;
 use App\Http\Controllers\Admin\GroupGoodsController;
 use App\Http\Controllers\Admin\AttributesGoodsController;
 use App\Http\Controllers\Admin\GoodsController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\NewPasswordController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,118 +36,79 @@ Route::get('/', function () {
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
     ]);
-});
+})->name('welcome');
 
+// Google login routes
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
+// Facebook login routes
 Route::get('login/facebook', [FacebookController::class, 'redirectToFacebook'])->name('login.facebook');
 Route::get('login/facebook/callback', [FacebookController::class, 'handleFacebookCallback']);
 
-
-// Route::get('/dashboard', function () {
-//     return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard', function () {
-    return redirect()->intended('/');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+// Privacy policy, cookies information, and terms of use
 Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 });
-
 Route::get('/cookies-information', function () {
     return Inertia::render('CookiesInfo');
 });
-
 Route::get('/terms-of-use', function () {
     return Inertia::render('TermsOfUse');
 });
 
-Route::get('/contact', function () {
-    return Inertia::render('Contact');
-});
-
-Route::get('/profile', function () {
-    return Inertia::render('Profile');
-});
-
-// Route::post('/contact', 'ContactController@sendMail')->name('contact.send');
+// Contact routes
+Route::get('/contact', [ContactController::class, 'create']);
 Route::post('/contact', [ContactController::class, 'sendMail'])->name('contact.send');
 
+// About Us route
 Route::get('/about-us', function () {
     return Inertia::render('AboutUs');
 });
 
-// Route::get('/admin-dashboard', function () {
-//     if (Auth::user()->role_id === 2) {
-//         return Inertia::render('Admin/Statistics');
-//     } else {
-//         abort(404);
-//     }
+// Profile routes
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/remove', [ProfileController::class, 'remove'])->name('profile.remove');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-//     if (!Auth::check()){
-//         abort(404);
-//     }
-// })->middleware(['auth', 'verified'])->name('admin.dashboard');
-
-Route::prefix('cart')->middleware(['auth'])->group(function () {
+// Cart routes
+Route::prefix('cart')->middleware(['auth', 'verified'])->group(function () {
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/', function () {
         return Inertia::render('Cart');
     })->name('cart.index');
 });
 
-// Route::prefix('cart')->middleware(['auth', 'checkCustomerRole'])->group(function () {
-//     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
+// Admin routes with authentication and role check
+Route::prefix('admin-orders')->middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        if (Auth::user()->role_id === 2) {
+            return Inertia::render('Admin/Orders');
+        } else {
+            abort(404);
+        }
+    })->name('admin.orders');
+});
 
-//     Route::get('/', function () {
-//         return Inertia::render('Cart');
-//     })->name('cart.index');
-// });
+Route::prefix('admin-administrators')->middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        if (Auth::user()->role_id === 2) {
+            return Inertia::render('Admin/Administrators');
+        } else {
+            abort(404);
+        }
+    })->name('admin.administrators');
+});
 
-Route::get('/admin-orders', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/Orders');
-    } else {
-        abort(404);
-    }
-
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.orders');
-
-
-Route::get('/admin-logfiles', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/Logfiles');
-    } else {
-        abort(404);
-    }
-
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.logfiles');
-
-Route::get('/admin-administrators', function () {
-    if (Auth::user()->role_id === 2) {
-        return Inertia::render('Admin/Administrators');
-    } else {
-        abort(404);
-    }
-
-    if (!Auth::check()){
-        abort(404);
-    }
-})->middleware(['auth', 'verified'])->name('admin.administrators');
-
+// Navigation data routes
 Route::get('/navigation-data/categories', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data.categories');
 Route::get('/navigation-data/goods-count', [NavigationDataController::class, 'getActiveGoodsCount'])->name('navigation.data.goodsCount');
 Route::get('/navigation-data/active-goods', [NavigationDataController::class, 'getActiveGoods'])->name('navigation.data.activeGoods');
 
-
+// Goods routes
 Route::get('/goods/{id}', [GoodsPreviewController::class, 'show'])->name('goods.show');
 Route::get('/goods', [FilterGoodsController::class, 'index'])->name('goods.filter');
 
@@ -161,13 +123,11 @@ Route::prefix('admin-goods')->middleware(['auth', 'checkAdminRole'])->group(func
     Route::delete('/{id}', [GoodsController::class, 'destroy'])->name('admin.goods.destroy');
 });
 
-
-
-
 Route::prefix('admin-attributes')->middleware(['auth', 'checkAdminRole'])->group(function () {
     Route::get('/', [AttributesGoodsController::class, 'index'])->name('admin.attributes.index');
     Route::post('/store', [AttributesGoodsController::class, 'store'])->name('admin.attributes.store');
     Route::patch('/admin-attributes/{id}', [AttributesGoodsController::class, 'update'])->name('admin.attributes.update');
+    Route::delete('/{id}', [AttributesGoodsController::class, 'destroy'])->name('admin.attributes.destroy');
 });
 
 Route::prefix('admin-groups')->middleware(['auth', 'checkAdminRole'])->group(function () {
@@ -176,7 +136,6 @@ Route::prefix('admin-groups')->middleware(['auth', 'checkAdminRole'])->group(fun
     Route::patch('/admin-groups/{id}', [GroupGoodsController::class, 'update'])->name('admin.groups.update');
     Route::delete('/{id}', [GroupGoodsController::class, 'destroy'])->name('admin.groups.destroy');
 });
-
 
 Route::prefix('admin-categories')->middleware(['auth', 'checkAdminRole'])->group(function () {
     Route::get('/', [CategoryGoodsController::class, 'index'])->name('admin.categories.list');
@@ -194,16 +153,5 @@ Route::prefix('admin-users')->name('admin-users.')->group(function () {
     Route::delete('/delete', [ClientAccountController::class, 'deleteUsers'])->name('delete')->middleware('checkAdminRole');
 });
 
-
-
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout')->middleware('auth');
-
-    
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
+// Auth routes
 require __DIR__.'/auth.php';

@@ -13,6 +13,7 @@
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
         <script src="https://cdn.tiny.cloud/1/qwewvh1gx06maulj4833kcb1pazkze8x298en2kbrfsk8ziy/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 
         <!-- Scripts -->
         @routes

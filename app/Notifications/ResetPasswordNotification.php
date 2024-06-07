@@ -11,44 +11,30 @@ class ResetPasswordNotification extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct()
+    public $token;
+
+    public function __construct($token)
     {
-        //
+        $this->token = $token;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail($notifiable)
     {
+        $url = route('password.reset', [
+            'token' => $this->token,
+            'email' => $notifiable->email, // Ensure this is the correct attribute for the user's email
+        ]);
+    
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject('Paroles Atiestatīšana')
+            ->line('Jūs saņēmāt šo e-pastu, jo mēs saņēmām paroles atiestatīšanas pieprasījumu jūsu kontam.')
+            ->action('Atiestatīt Paroli', $url)
+            ->line('Ja jūs nepieprasījāt paroles atiestatīšanu, turpmākas darbības nav nepieciešamas.');
     }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
-        ];
-    }
+    
 }

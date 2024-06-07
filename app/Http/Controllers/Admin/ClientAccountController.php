@@ -60,8 +60,9 @@ class ClientAccountController extends Controller
         if (!Auth::check() || Auth::user()->role_id !== 2) {
             abort(404);
         }
-    
+
         $users = User::where('role_id', 1)
+            ->whereIn('status', ['Aktīvs', 'Deaktivizēts'])
             ->when($search, function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('name', 'like', "%{$search}%")
@@ -69,10 +70,10 @@ class ClientAccountController extends Controller
                 });
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate(10); // Adjust pagination as needed
 
         $totalUsers = $users->total();
-    
+
         return [
             'users' => $users,
             'totalUsers' => $totalUsers

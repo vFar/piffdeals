@@ -21,8 +21,8 @@ const confirmUserDeletion = () => {
     nextTick(() => passwordInput.value.focus());
 };
 
-const deleteUser = () => {
-    form.delete(route('profile.destroy'), {
+const removeUser = () => {
+    form.patch(route('profile.remove'), {
         preserveScroll: true,
         onSuccess: () => closeModal(),
         onError: () => passwordInput.value.focus(),
@@ -40,17 +40,15 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-
             <p class="mt-1 text-sm text-textColor">
                 Dzēšot savu lietotāja kontu, visi dati datubāzē tiks anonimizēti uz nejaušiem burtiem un skaitļiem. Kontu atgūt nebūs iespējams!
             </p>
         </header>
 
-        
         <button type="button" @click="confirmUserDeletion"
-                    class="bg-red-600 rounded-xl hover:bg-red-500 text-white py-2 px-4 hover:scale-105 duration-200 text-md uppercase">
-                    Dzēst kontu </button>
-
+            class="bg-red-600 rounded-xl hover:bg-red-500 text-white py-2 px-4 hover:scale-105 duration-200 text-md uppercase">
+            Dzēst kontu
+        </button>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
@@ -72,7 +70,7 @@ const closeModal = () => {
                         type="password"
                         class="mt-1 block w-3/4"
                         placeholder="Parole"
-                        @keyup.enter="deleteUser"
+                        @keyup.enter="removeUser"
                     />
 
                     <InputError :message="form.errors.password" class="mt-2" />
@@ -85,12 +83,10 @@ const closeModal = () => {
                         class="ms-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
-                        @click="deleteUser"
+                        @click="removeUser"
                     >
                         Dzēst kontu
                     </DangerButton>
-                
-
                 </div>
             </div>
         </Modal>
