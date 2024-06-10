@@ -15,7 +15,7 @@ use Inertia\Inertia;
 
 class GoodsController extends Controller
 {
-    private function getActiveData() {
+    private function getActiveData() { // Funkcija, lai iegūtu aktīvos datus kategorijām, grupām un atribūtiem
         return [
             'activeCategories' => Category::where('status', 'Aktīvs')->get(),
             'activeGroups' => Group::where('status', 'Aktīvs')->get(),
@@ -23,172 +23,146 @@ class GoodsController extends Controller
         ];
     }
 
-    public function index(Request $request)
+    public function index(Request $request) // Parāda preču sarakstu
     {
-        $search = $request->input('search', '');
-        $status = $request->input('status');
+        $search = $request->input('search', ''); // Iegūst meklēšanas ievadi
+        $status = $request->input('status'); // Iegūst statusa ievadi
     
-        $query = Good::with(['group.category', 'attribute']);
+        $query = Good::with(['group.category', 'attribute']); // Veido jautājumu ar grupas un atribūta attiecībām
     
-        if (!empty($search)) {
+        if (!empty($search)) { // Ja meklēšanas lauks nav tukšs
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('sku', 'like', "%{$search}%")
+                $q->where('name', 'like', "%{$search}%") // Meklē pēc nosaukuma
+                  ->orWhere('sku', 'like', "%{$search}%") // Vai pēc SKU
                   ->orWhereHas('attribute', function ($subQuery) use ($search) {
-                      $subQuery->where('name', 'like', "%{$search}%");
+                      $subQuery->where('name', 'like', "%{$search}%"); // Vai pēc atribūta nosaukuma
                   });
             });
         }
     
-        if (!empty($status)) {
-            $query->where('status', $status);
+        if (!empty($status)) { // Ja statusa lauks nav tukšs
+            $query->where('status', $status); // Pievieno statusa filtru
         }
     
-        $goods = $query->orderBy('created_at', 'desc')->paginate(15);
-        $activeData = $this->getActiveData();
-    
+        $goods = $query->orderBy('created_at', 'desc')->paginate(15); // Sakārto pēc izveides datuma un sadala lapās
+        $activeData = $this->getActiveData(); // Iegūst aktīvos datus
         return Inertia::render('Admin/Goods', array_merge([
             'goods' => $goods,
             'filters' => $request->only('search', 'status'),
             'totalGoods' => $goods->total(),
-        ], $activeData));
+        ], $activeData)); // Atgriež skatu ar datiem
     }
-    
 
-    public function store(Request $request)
+    public function store(Request $request) // Veido jaunu preci
     {
         $validated = $request->validate([
-            'sku' => 'required|string|max:255|unique:goods,sku',
-            'status' => 'required|in:Aktīvs,Deaktivizēts',
-            'group_id' => 'nullable|exists:groups,id',
-            'attribute_id' => 'nullable|exists:attributes,id',
+            'sku' => 'required|string|max:255|unique:goods,sku', // Pārbauda, vai SKU ir unikāls
+            'status' => 'required|in:Aktīvs,Deaktivizēts', // Pārbauda, vai statuss ir derīgs
+            'group_id' => 'nullable|exists:groups,id', // Pārbauda, vai grupas ID eksistē
+            'attribute_id' => 'nullable|exists:attributes,id', // Pārbauda, vai atribūta ID eksistē
         ]);
 
-        $validated['name'] = $request->input('name', 'Nenosaukta prece');
-        $validated['description'] = $request->input('description', '');
-        $validated['image'] = $request->input('image', '');
-        $validated['stock_quantity'] = $request->input('stock_quantity', 0);
-        $validated['price'] = $request->input('price', 0.00);
+        $validated['name'] = $request->input('name', 'Nenosaukta prece'); // Ja nosaukums nav norādīts, piešķir "Nenosaukta prece"
+        $validated['description'] = $request->input('description', ''); // Apraksts
+        $validated['image'] = $request->input('image', ''); // Attēls
+        $validated['stock_quantity'] = $request->input('stock_quantity', 0); // Noliktavas daudzums
+        $validated['price'] = $request->input('price', 0.00); // Cena
 
-        $good = Good::create($validated);
+        $good = Good::create($validated); // Izveido preci ar validētajiem datiem
 
-        // Make sure this line runs and check the logs if it does not redirect
-        return redirect()->route('admin.goods.edit', $good->id);
+        return redirect()->route('admin.goods.edit', $good->id); // Pāradresē uz preces rediģēšanas lapu
     }
 
-
-    public function edit($id)
+    public function edit($id) // Parāda preces rediģēšanas skatu
     {
-        $good = Good::with(['group.category', 'attribute'])->findOrFail($id);
-        $activeData = $this->getActiveData();
+        $good = Good::with(['group.category', 'attribute'])->findOrFail($id); // Atrod preci ar attiecībām
+        $activeData = $this->getActiveData(); // Iegūst aktīvos datus
     
         return Inertia::render('Admin/GoodDetail', array_merge([
             'good' => $good,
-        ], $activeData));
+        ], $activeData)); // Atgriež skatu ar datiem
     }
-    
 
-    public function show($id)
+    public function show($id) // Parāda preces detaļas
     {
-        $good = Good::with(['group.category', 'attribute'])->findOrFail($id);
+        $good = Good::with(['group.category', 'attribute'])->findOrFail($id); // Atrod preci ar attiecībām
         
-        // Fetching active categories and groups as they might be needed in the edit form
-        $activeCategories = Category::where('status', 'Aktīvs')->get();
-        $activeGroups = Group::where('status', 'Aktīvs')->get();
+        $activeCategories = Category::where('status', 'Aktīvs')->get(); // Iegūst aktīvās kategorijas
+        $activeGroups = Group::where('status', 'Aktīvs')->get(); // Iegūst aktīvās grupas
 
         return Inertia::render('Admin/GoodDetail', [
             'good' => $good,
             'activeCategories' => $activeCategories,
             'activeGroups' => $activeGroups,
-        ]);
+        ]); // Atgriež skatu ar datiem
     }
 
-    
-
-// app/Http/Controllers/Admin/GoodsController.php
-
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) // Atjaunina preces informāciju
     {
-        $good = Good::findOrFail($id);
+        $good = Good::findOrFail($id); // Atrod preci
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'image' => 'sometimes|required|string',
-            'stock_quantity' => 'required|integer',
-            'price' => 'required|numeric', // Include price validation
-            'status' => 'required|in:Aktīvs,Deaktivizēts',
-            'group_id' => 'nullable',
-            'attribute_id' => 'nullable',
+            'name' => 'required|string|max:255', // Pārbauda nosaukumu
+            'description' => 'required|string', // Pārbauda aprakstu
+            'image' => 'sometimes|required|string', // Pārbauda attēlu, ja tas ir sniegts
+            'stock_quantity' => 'required|integer', // Pārbauda noliktavas daudzumu
+            'price' => 'required|numeric', // Pārbauda cenu
+            'status' => 'required|in:Aktīvs,Deaktivizēts', // Pārbauda statusu
+            'group_id' => 'nullable', // Grupas ID var būt tukšs
+            'attribute_id' => 'nullable', // Atribūta ID var būt tukšs
         ]);
 
         if ($request->has('image') && $request->image !== $good->image) {
-            $validated['image'] = $request->input('image'); // Use the new image filename
+            $validated['image'] = $request->input('image'); // Ja attēls ir sniegts un tas atšķiras no pašreizējā
         } else {
-            unset($validated['image']); // Keep the existing image if no new image was uploaded
+            unset($validated['image']); // Pretējā gadījumā, izņem attēlu no validētajiem datiem
         }
 
-        $good->update($validated);
-
-        return redirect()->route('admin.goods.index')->with('message', 'Product successfully updated!');
+        $good->update($validated); // Atjaunina preci ar validētajiem datiem
+        return redirect()->route('admin.goods.index')->with('message', 'Product successfully updated!'); // Pāradresē un paziņo par veiksmīgu atjaunināšanu
     }
 
-
-    public function uploadImage(Request $request)
+    public function uploadImage(Request $request) // Augšupielādē attēlu
     {
         try {
             $request->validate([
-                'image' => 'required|image|mimes:jpg,png,webp|max:2048', 
+                'image' => 'required|image|mimes:jpg,png,webp|max:2048', // Pārbauda attēlu
             ]);
     
-            $filename = $request->file('image')->getClientOriginalName(); 
-            $path = $request->file('image')->storeAs('images/goods', $filename, 'public'); 
+            $filename = $request->file('image')->getClientOriginalName(); // Iegūst faila nosaukumu
+            $path = $request->file('image')->storeAs('images/goods', $filename, 'public'); // Saglabā attēlu publiskajā diskā
     
             Log::info("Image uploaded successfully", [
                 'filename' => $filename,
                 'path' => $path,
             ]);
 
-            return response()->json(['url' => $filename], 200);
+            return response()->json(['url' => $filename], 200); // Atgriež veiksmīgu atbildi
         } catch (\Exception $e) {
-            // Log the error
             Log::error("Image upload error: " . $e->getMessage(), [
                 'exception' => $e,
             ]);
     
-            // Return an error response to the frontend 
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 500); // Atgriež kļūdas atbildi
         }
     }
 
-    public function destroy($id)
+    public function destroy($id) // Dzēš preci
     {
-        $good = Good::findOrFail($id);
+        $good = Good::findOrFail($id); // Atrod preci
     
-        // Retrieve the image URL and extract the filename
-        $imageUrl = $good->image; // Get the full URL from the database
-        $imageName = basename($imageUrl); // Extract the filename
+        $imageUrl = $good->image; // Iegūst attēla URL
+        $imageName = basename($imageUrl); // Iegūst attēla nosaukumu
     
-        // Delete the record
-        $good->delete();
+        $good->delete(); // Dzēš preci
     
-        // Delete the image file from the disk (if it existed)
         if ($imageName) {
-            $imagePath = "images/goods/{$imageName}"; // Relative path
-            // Log::info("Image Name: " . $imageName);
-            // Log::info("Image Path: " . $imagePath);
+            $imagePath = "images/goods/{$imageName}"; // Iegūst attēla ceļu
     
             if (Storage::disk('public')->exists($imagePath)) {
-                Storage::disk('public')->delete($imagePath);
-                // Log::info('Deleting image', ['path' => $imagePath]);
+                Storage::disk('public')->delete($imagePath); // Dzēš attēlu no diska
             }
         }
-    
-        return redirect()->route('admin.goods.index')->with('message', 'Prece veiksmīgi dzēsta!');
+        return redirect()->route('admin.goods.index')->with('message', 'Prece veiksmīgi dzēsta!'); // Pāradresē un paziņo par veiksmīgu dzēšanu
     }
-    
-    
-    
-
-    
 }

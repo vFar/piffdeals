@@ -446,7 +446,6 @@ const formatDate = (date) => dayjs(date).format("DD.MM.YYYY, HH:mm:ss");
                                                 {{ category.status }}
                                             </span>
                                         </td>
-                                        {{ console.log(category.goods_count ) }}
                                         <td class="px-4 py-3">{{ category.goods_count ?? 0 }}</td>
                                         <td class="px-4 py-3 flex justify-end">
                                             {{

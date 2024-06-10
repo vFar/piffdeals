@@ -17,9 +17,7 @@ return new class extends Migration
             $table->string('phone_number');
             $table->text('street');
             $table->string('city');
-            $table->string('state');
             $table->string('postal_code');
-            $table->string('country');
             $table->timestamps();
         });
     }

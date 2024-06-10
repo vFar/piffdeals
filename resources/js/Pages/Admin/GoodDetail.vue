@@ -45,7 +45,6 @@ const form = useForm({
 
 const updatePrice = (value) => {
     form.price = value;
-    console.log(form.price);
 };
 
 const updateStockQuantity = (value) => {

@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import { Head, Link, usePage } from "@inertiajs/vue3";
+import { ref, computed, watch } from "vue";
+import { Head, Link, usePage, router, useForm } from "@inertiajs/vue3";
 import Navbar from "../Components/Navbar.vue";
 import Footer from "../Components/Footer.vue";
 import Breadcrumbs from "../Components/Breadcrumbs.vue";
@@ -12,29 +12,70 @@ import {
     Card,
     InputNumber,
     Drawer,
+    notification,
 } from "ant-design-vue";
+import { h } from "vue"; // Ensure h is imported correctly
 
-const { good } = usePage().props;
-const props = defineProps({
-    currentPage: String, // Receive the prop here
+const { props } = usePage();
+const { good } = props;
+
+const auth = computed(() => props.auth.user);
+const isAuthenticated = computed(() => !!auth.value);
+const isEmailVerified = computed(
+    () => !!auth.value && !!auth.value.email_verified_at
+);
+
+// Add to Cart Function
+// Vue Component
+
+const form = useForm({
+    goodId: good.id,
+    quantity: 1,
 });
 
-const quantity = ref(1);
+const updateQuantity = (value) => {
+    form.price = value;
+};
 
 const addToCart = () => {
-    if ($page.props.auth.user) {
-        // If a user is logged in, redirect to /cart with data
-        router.visit(route("cart.add"), {
-            method: "post",
-            data: {
-                goodId: good.id, // Your good ID
-                quantity: quantity.value,
-            },
-        });
+    if (!isAuthenticated.value) {
+        router.visit("/login");
+    } else if (!isEmailVerified.value) {
+        router.visit("/verify-email");
     } else {
-        // If a guest, request authentication
-        router.visit(route("login"), {
-            replace: true,
+        form.post(route("cart.add"), {
+            onSuccess: () => {
+                notification.success({
+                    message: "Prece veiksmīgi pievienota grozam!",
+                    description: "Apskati grozi vai turpini iepirkšanos!",
+                    btn: () =>
+                        h(
+                            "div",
+                            { class: "space-x-6" },
+                            [
+                                h(
+                                    Button,
+                                    {
+                                        type: "primary",
+                                        onClick: () => {
+                                            router.visit("/cart");
+                                            notification.close();
+                                        },
+                                    },
+                                    "Skatīt grozu"
+                                ),
+                            ]
+                        ),
+                    duration: 2, // Keep open until manually closed or an action is taken
+                });
+            },
+            onError: () => {
+                notification.error({
+                    message: "Kļūda",
+                    description:
+                        "Neizdevās pievienot preci grozam. Lūdzu, mēģiniet vēlreiz.",
+                });
+            },
         });
     }
 };
@@ -43,7 +84,7 @@ const addToCart = () => {
 <style></style>
 
 <template>
-    <Head :title="currentPage" />
+    <Head :title="props.currentPage" />
 
     <!-- <div>
         <h1>{{ good.name }}</h1>
@@ -54,7 +95,7 @@ const addToCart = () => {
     <ScrollTopBtn />
     <div class="cross-patternSVGLight bg-whiter">
         <div class="py-8">
-            <Breadcrumbs :currentPage="currentPage" />
+            <Breadcrumbs :currentPage="props.currentPage" />
         </div>
 
         <div class="space-y-12">
@@ -70,7 +111,7 @@ const addToCart = () => {
                             alt="goods-image"
                             class="object-cover rounded-lg select-none cursor-pointer hover:scale-110 mt-6 select-none"
                             fallback="/images/S-1.png"
-                            :width="400"
+                            :width="full"
                             :height="400"
                             :preview="{ src: good.image }"
                             previewMask="Priekšskatījums"
@@ -117,7 +158,11 @@ const addToCart = () => {
                         </p>
 
                         <div class="flex items-center">
-                            <InputNumber v-model="quantity" :defaultValue="1" />
+                            <InputNumber
+                                v-model:value="form.quantity"
+                                @update:value="updateQuantity"
+                                min="1"
+                            />
                             <span class="ml-2">gab</span>
                         </div>
 
@@ -128,7 +173,7 @@ const addToCart = () => {
                                 !$page.props.auth.user
                             "
                         >
-                            <div class="flex justify-center">
+                            <div class="flex justify-center mt-6">
                                 <button
                                     @click="addToCart"
                                     class="text-primary hover:before:bg-primary border-primary relative h-[50px] w-11/12 overflow-hidden border border-primary bg-white px-3 text-primary shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-primary before:transition-all before:duration-500 hover:text-white hover:shadow-primary hover:before:left-0 hover:before:w-full"

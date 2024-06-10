@@ -5,7 +5,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GoodsPreviewController;
 use App\Http\Controllers\NavigationDataController;
 use App\Http\Controllers\FilterGoodsController;
-use App\Http\Controllers\Cart;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 use App\Http\Controllers\Admin\ClientAccountController;
 use App\Http\Controllers\Admin\CategoryGoodsController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Admin\AttributesGoodsController;
 use App\Http\Controllers\Admin\GoodsController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\AddressOrderController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,15 +40,10 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
-// Google login routes
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-// Facebook login routes
-Route::get('login/facebook', [FacebookController::class, 'redirectToFacebook'])->name('login.facebook');
-Route::get('login/facebook/callback', [FacebookController::class, 'handleFacebookCallback']);
 
-// Privacy policy, cookies information, and terms of use
 Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 });
@@ -57,16 +54,13 @@ Route::get('/terms-of-use', function () {
     return Inertia::render('TermsOfUse');
 });
 
-// Contact routes
 Route::get('/contact', [ContactController::class, 'create']);
 Route::post('/contact', [ContactController::class, 'sendMail'])->name('contact.send');
 
-// About Us route
 Route::get('/about-us', function () {
     return Inertia::render('AboutUs');
 });
 
-// Profile routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -74,15 +68,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Cart routes
 Route::prefix('cart')->middleware(['auth', 'verified'])->group(function () {
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
-    Route::get('/', function () {
-        return Inertia::render('Cart');
-    })->name('cart.index');
+    Route::get('/', [CartController::class, 'index'])->name('cart.index'); 
+    Route::get('/items', [CartController::class, 'getCartItems'])->name('cart.items');
+    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('cart.remove'); // New route
+    Route::patch('/cart/update-and-checkout', [CartController::class, 'updateAndCheckout'])->name('cart.updateAndCheckout');
 });
 
-// Admin routes with authentication and role check
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/checkout', [AddressOrderController::class, 'create'])->name('checkout.index');
+    Route::post('/checkout', [AddressOrderController::class, 'store'])->name('checkout.store');
+});
+
 Route::prefix('admin-orders')->middleware(['auth'])->group(function () {
     Route::get('/', function () {
         if (Auth::user()->role_id === 2) {
@@ -93,26 +91,17 @@ Route::prefix('admin-orders')->middleware(['auth'])->group(function () {
     })->name('admin.orders');
 });
 
-Route::prefix('admin-administrators')->middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        if (Auth::user()->role_id === 2) {
-            return Inertia::render('Admin/Administrators');
-        } else {
-            abort(404);
-        }
-    })->name('admin.administrators');
+Route::prefix('navigation-data')->group(function () {
+    Route::get('/categories', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data.categories');
+    Route::get('/goods-count', [NavigationDataController::class, 'getActiveGoodsCount'])->name('navigation.data.goodsCount');
+    Route::get('/active-goods', [NavigationDataController::class, 'getActiveGoods'])->name('navigation.data.activeGoods');
+    Route::get('/search-goods', [NavigationDataController::class, 'searchGoods'])->name('navigation.data.searchGoods');
 });
 
-// Navigation data routes
-Route::get('/navigation-data/categories', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data.categories');
-Route::get('/navigation-data/goods-count', [NavigationDataController::class, 'getActiveGoodsCount'])->name('navigation.data.goodsCount');
-Route::get('/navigation-data/active-goods', [NavigationDataController::class, 'getActiveGoods'])->name('navigation.data.activeGoods');
 
-// Goods routes
 Route::get('/goods/{id}', [GoodsPreviewController::class, 'show'])->name('goods.show');
 Route::get('/goods', [FilterGoodsController::class, 'index'])->name('goods.filter');
 
-// Define routes under the "admin-goods" prefix
 Route::prefix('admin-goods')->middleware(['auth', 'checkAdminRole'])->group(function () {
     Route::get('/', [GoodsController::class, 'index'])->name('admin.goods.index');
     Route::post('/store', [GoodsController::class, 'store'])->name('admin.goods.store');
@@ -153,5 +142,4 @@ Route::prefix('admin-users')->name('admin-users.')->group(function () {
     Route::delete('/delete', [ClientAccountController::class, 'deleteUsers'])->name('delete')->middleware('checkAdminRole');
 });
 
-// Auth routes
 require __DIR__.'/auth.php';

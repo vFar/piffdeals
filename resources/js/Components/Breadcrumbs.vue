@@ -4,7 +4,7 @@ const props = defineProps(['currentPage'])
 </script>
 
 <template>
-    <nav class="container mx-auto max-w-screen-2xl flex py-3 px-3 text-gray-700 border border-gray-200 rounded-xl bg-whiter shadow-md"
+    <nav class="container max-w-screen-2xl flex py-3 px-3 text-gray-700 border border-gray-200 rounded-xl bg-whiter shadow-md"
         aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li class="inline-flex items-center">

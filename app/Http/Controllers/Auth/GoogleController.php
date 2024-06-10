@@ -15,18 +15,23 @@ class GoogleController extends Controller
     {
         return Socialite::driver('google')->redirect();
     }
-
+    
     public function handleGoogleCallback()
     {
         try {
             $user = Socialite::driver('google')->user();
             Log::info('Retrieved Google user data:', ['user' => $user]);
-    
+
             $finduser = User::where('google_id', $user->id)
                             ->orWhere('email', $user->email)
                             ->first();
-    
+
             if ($finduser) {
+                // Update email_verified_at field for existing Google users
+                if (is_null($finduser->email_verified_at)) {
+                    $finduser->update(['email_verified_at' => now()]);
+                }
+
                 Auth::login($finduser, true);
                 Log::info('User logged in:', ['user' => $finduser]);
                 return redirect()->intended('/');
@@ -35,8 +40,9 @@ class GoogleController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                     'google_id' => $user->id,
+                    'email_verified_at' => now(), // Mark email as verified for new Google users
                 ]);
-    
+
                 Auth::login($newUser, true);
                 Log::info('New user created and logged in:', ['user' => $newUser]);
                 return redirect()->intended('/');

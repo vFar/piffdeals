@@ -173,11 +173,7 @@ const formatDate = (date) => {
                             >
                                 Klients
                             </p>
-                            <div
-                                class="flex gap-1.5 items-center justify-between px-2.5 text-primary uppercase cursor-pointer transition-all hover:underline"
-                            >
-                                Rediģēt
-                            </div>
+                            
                         </div>
                         <span
                             class="text-2xl p-1.5 rounded-md cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950 icon-arrow-up"

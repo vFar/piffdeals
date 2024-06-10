@@ -9,7 +9,7 @@ import Navbar from "@/Components/Navbar.vue";
 import Breadcrumbs from "@/Components/Breadcrumbs.vue";
 import Modal from "@/Components/Modal.vue";
 import { computed, ref } from "vue";
-import { usePage } from "@inertiajs/vue3";
+import { usePage, Link } from "@inertiajs/vue3";
 import { Button } from "ant-design-vue";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -92,7 +92,7 @@ const closeEditPasswordModal = () => {
 
                     <div class="flex flex-col justify-between">
                         <p class="text-2xl font-medium">
-                            Sveiks, {{ $page.props.auth.user.name }}!
+                            Sveiki, {{ $page.props.auth.user.name }}!
                         </p>
                         <p class="text-textColor">
                             {{ $page.props.auth.user.email }}
@@ -131,23 +131,7 @@ const closeEditPasswordModal = () => {
                                     ></span>
                                 </div>
                             </a>
-                            <a href="#">
-                                <div
-                                    class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
-                                >
-                                    <p
-                                        class="flex gap-x-4 items-center text-lg font-medium"
-                                    >
-                                        <span
-                                            class="icon-location text-2xl"
-                                        ></span>
-                                        Adreses
-                                    </p>
-                                    <span
-                                        class="icon-arrow-right text-2xl max-md:hidden"
-                                    ></span>
-                                </div>
-                            </a>
+
                             <a href="#">
                                 <div
                                     class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
@@ -165,7 +149,7 @@ const closeEditPasswordModal = () => {
                                     ></span>
                                 </div>
                             </a>
-                            <a href="#">
+                            <Link href="/cart">
                                 <div
                                     class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
                                 >
@@ -179,7 +163,7 @@ const closeEditPasswordModal = () => {
                                         class="icon-arrow-right text-2xl max-md:hidden"
                                     ></span>
                                 </div>
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

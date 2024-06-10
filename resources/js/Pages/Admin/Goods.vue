@@ -272,8 +272,6 @@ function handlePageChange(url) {
                                     <AdminPaginator :links="paginationLinks" @page-change="handlePageChange" />
 
                                 </div>
-
-                                {{ console.log(paginationLinks)}}
                             </div>
 
                             <div

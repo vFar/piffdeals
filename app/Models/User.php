@@ -63,4 +63,10 @@ class User extends Authenticatable implements MustVerifyEmailContract
     {
         $this->notify(new VerifyEmailNotification());
     }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
 }

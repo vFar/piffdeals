@@ -11,13 +11,9 @@ class Cart extends Model
 
     protected $fillable = ['user_id'];
 
-    public function user()
+    // Define a one-to-many relationship
+    public function items()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function goods()
-    {
-        return $this->belongsToMany(Good::class, 'carts_items');
+        return $this->hasMany(CartItems::class, 'carts_id'); // make sure 'carts_id' matches the foreign key in your migration/schema
     }
 }

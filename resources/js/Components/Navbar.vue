@@ -2,10 +2,10 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { usePage, router } from "@inertiajs/vue3";
 import { Link } from "@inertiajs/vue3";
-import ThemeSwitch from "../Components/ThemeSwitch.vue";
+import AdminSearchbar from "../Components/AdminSearchbar.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
-import { Drawer, Button } from "ant-design-vue";
+import { Drawer, Button, Popover } from "ant-design-vue";
 
 const getImageUrl = (filename) => {
     return `/storage/images/${filename}`;
@@ -14,6 +14,8 @@ const getImageUrl = (filename) => {
 const props = defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
+    goods: Array,
+    cartItemCount: Number,
 });
 
 const activeCategories = ref([]);
@@ -45,11 +47,14 @@ const fetchActiveGoodsCount = async () => {
     }
 };
 
+
+const isAuthenticated = computed(() => !!auth.user);
+const isAdmin = computed(() => user.value.role_id === 2);
+
 onMounted(async () => {
     await fetchCategoryData(); // Fetch the data when the component is mounted
     await fetchActiveGoodsCount(); // Fetch the active goods count when the component is mounted
 });
-
 
 const drawerOpen = ref(false);
 
@@ -82,22 +87,12 @@ const { auth } = usePage().props;
 // Computed property to safely access user information
 const user = computed(() => auth.user || {});
 
-// Computed properties for authentication state
-const isAuthenticated = computed(() => !!auth.user);
-const isAdmin = computed(() => user.value.role_id === 2);
-
 const hasScrolled = ref(false);
 function handleScroll() {
     // This checks if the page is scrolled more than 10 pixels
     hasScrolled.value = window.scrollY > 10;
     closeDrawer();
 }
-
-const handleMouseLeave = (event) => {
-    if (!event.relatedTarget || !event.relatedTarget.closest(".navbar")) {
-        closeDrawer();
-    }
-};
 
 onMounted(() => {
     window.addEventListener("scroll", handleScroll);
@@ -123,7 +118,67 @@ const handleLogout = () => {
     );
 };
 
-// Function to handle logout
+const searchResults = ref(props.goods || []); // Initialize with goods from props
+const searchQuery = ref("");
+const popoverVisible = ref(false);
+
+const handleInput = async () => {
+    if (searchQuery.value.length > 2) {
+        try {
+            const response = await fetch(
+                `/navigation-data/search-goods?query=${searchQuery.value}`
+            );
+            const data = await response.json();
+            searchResults.value = data.goods;
+            popoverVisible.value = searchResults.value.length > 0;
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+            popoverVisible.value = false;
+        }
+    } else {
+        popoverVisible.value = false;
+    }
+};
+
+const handleBlur = () => {
+    setTimeout(() => {
+        popoverVisible.value = false;
+    }, 200);
+};
+
+const handleFocus = () => {
+    if (searchResults.value.length > 0 && searchQuery.value.length > 2) {
+        popoverVisible.value = true;
+    }
+};
+
+const highlightQuery = (text, query) => {
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.replace(
+        regex,
+        '<span class="bg-yellow-200 font-bold">$1</span>'
+    );
+};
+
+const popoverContent = computed(() => {
+    return searchResults.value
+        .map(
+            (result) => `
+        <div class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
+            ${highlightQuery(result.name, searchQuery.value)}
+        </div>
+    `
+        )
+        .join("");
+});
+
+watch(searchQuery, (newQuery) => {
+    if (newQuery === "") {
+        searchResults.value = [];
+        popoverVisible.value = false;
+    }
+});
+
 </script>
 
 <style>
@@ -192,6 +247,11 @@ const handleLogout = () => {
 ::v-deep .ant-drawer-content-wrapper {
     transition: none !important;
     transform: none !important;
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
 }
 </style>
 
@@ -282,33 +342,73 @@ const handleLogout = () => {
             <div class="flex items-center">
                 <!-- Search Bar -->
                 <div class="flex w-80">
-                    <form class="relative">
-                        <div
-                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                    <div>
+                        <Popover
+                            v-model:open="popoverVisible"
+                            placement="bottom"
+                            :arrow="false"
+                            :overlayInnerStyle="{
+                                padding: '0',
+                                maxWidth: '500px',
+                            }"
                         >
-                            <svg
-                                class="w-5 h-5 text-textColor"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 20"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                            <template #content>
+                                <Link
+                                    v-for="result in searchResults"
+                                    :key="result.id"
+                                    :href="
+                                        route('goods.show', { id: result.id })
+                                    "
+                                    class="flex items-center py-2 px-4 hover:bg-gray-100 cursor-pointer"
+                                >
+                                    <img
+                                        :src="result.image"
+                                        alt="Good Image"
+                                        class="w-10 h-10 rounded-md shadow-md mr-2"
+                                    />
+                                    <div
+                                        v-html="
+                                            highlightQuery(
+                                                result.name,
+                                                searchQuery.value
+                                            )
+                                        "
+                                    ></div>
+                                </Link>
+                            </template>
+                            <form class="relative">
+                                <div
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                                >
+                                    <svg
+                                        class="w-5 h-5 text-textColor"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                        />
+                                    </svg>
+                                </div>
+                                <input
+                                    type="search"
+                                    v-model="searchQuery"
+                                    @input="handleInput"
+                                    @blur="handleBlur"
+                                    @focus="handleFocus"
+                                    id="default-search"
+                                    autocomplete="off"
+                                    class="w-72 py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                                    :placeholder="`Meklēt starp ${activeGoodsCount} precēm`"
                                 />
-                            </svg>
-                        </div>
-                        <input
-                            type="search"
-                            id="default-search"
-                            class="w-72 py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-                            :placeholder="`Meklēt starp ${activeGoodsCount} precēm`"
-                            required
-                        />
-                    </form>
+                            </form>
+                        </Popover>
+                    </div>
                 </div>
 
                 <!-- Navigation Links -->
@@ -318,12 +418,19 @@ const handleLogout = () => {
 
                     <!-- Show Grozs and Vēlmes only for guests (no user logged in) or users with role_id = 1 -->
                     <li v-if="!isAdmin" class="text-white uppercase text-base">
-                        <Link href="/cart" class="navbar-hrefs"
+                        <Link href="/cart" class="navbar-hrefs relative"
                             ><i
                                 class="fas fa-sharp fa-cart-shopping text-xl fa-fw"
-                            ></i
-                            ><span></span
-                        ></Link>
+                            >
+                                <!-- <span
+                                    v-if="cartItemCount > 0"
+                                    class="absolute top-1 right-1 transform translate-x-1/2 -translate-y-1/2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full"
+                                >
+                                    {{ cartItemCount }}
+                                </span> -->
+                                </i
+                            >
+                        </Link>
                     </li>
 
                     <!-- Show Admin only for users with role_id = 2 -->
@@ -374,9 +481,11 @@ const handleLogout = () => {
                                 <template #links>
                                     <DropdownLink
                                         href="/cart"
+                                        v-if="!isAdmin"
                                         class="uppercase"
-                                        >IEPIRKUMU GROZS</DropdownLink
                                     >
+                                        IEPIRKUMU GROZS
+                                    </DropdownLink>
                                     <DropdownLink
                                         :href="route('profile.edit')"
                                         class="uppercase"

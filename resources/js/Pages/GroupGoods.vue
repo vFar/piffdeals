@@ -74,10 +74,6 @@ function handlePageChange(newPageUrl) {
                     <AdminPaginator :links="props.filteredGoods.links" @page-change="handlePageChange" />
                 </div>
 
-
-                {{ console.log(props.filteredGoods.links) }}
-                {{ console.log('a')}}
-
                 <div
                     class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4"
                 >

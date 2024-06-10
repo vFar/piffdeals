@@ -1,7 +1,6 @@
 <script setup>
 import { Link, usePage, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
-import AdminThemeSwitch from "./AdminThemeSwitch.vue";
 import AdminNotifications from "./AdminNotifications.vue";
 import AdminSearchbar from "./AdminSearchbar.vue";
 
@@ -99,7 +98,6 @@ aside {
                 </div>
 
                 <div class="flex items-center mr-4 text-white text-xl">
-                    <AdminThemeSwitch />
                     <AdminNotifications />
                     <div class="ml-4">{{ $page.props.auth.user.name }}</div>
                 </div>

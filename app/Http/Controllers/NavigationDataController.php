@@ -33,7 +33,6 @@ class NavigationDataController extends Controller
             }])
             ->get();
     
-        \Log::info('Fetched Categories with active goods:', ['categories' => $activeCategories]);
     
         return response()->json([
             'activeCategories' => $activeCategories,
@@ -45,7 +44,6 @@ class NavigationDataController extends Controller
     {
         $activeGoodsCount = Good::where('status', 'Aktīvs')->count();
 
-        \Log::info('Fetched Active Goods Count:', ['count' => $activeGoodsCount]);
 
         return response()->json([
             'activeGoodsCount' => $activeGoodsCount,
@@ -54,11 +52,29 @@ class NavigationDataController extends Controller
 
     public function getActiveGoods()
     {
-        $activeGoods = Good::where('status', 'Aktīvs')->orderBy('created_at', 'desc')->take(9)->get();
+        $activeGoods = Good::where('status', 'Aktīvs')->orderBy('created_at', 'desc')->take(12)->get();
 
         return response()->json([
             'goods' => $activeGoods,
         ]);
     }
+
+    public function searchGoods(Request $request)
+    {
+        $query = $request->input('query', '');
+        \Log::info('Search query:', ['query' => $query]);
+
+        $goods = Good::where('status', 'Aktīvs')
+            ->where('name', 'like', '%' . $query . '%')
+            ->get();
+
+        \Log::info('Search results:', ['goods' => $goods]);
+
+        return response()->json([
+            'goods' => $goods,
+        ]);
+    }
+    
+    
 }
 
