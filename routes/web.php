@@ -72,14 +72,16 @@ Route::prefix('cart')->middleware(['auth', 'verified'])->group(function () {
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/', [CartController::class, 'index'])->name('cart.index'); 
     Route::get('/items', [CartController::class, 'getCartItems'])->name('cart.items');
-    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('cart.remove'); // New route
+    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::patch('/cart/update-and-checkout', [CartController::class, 'updateAndCheckout'])->name('cart.updateAndCheckout');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/checkout', [AddressOrderController::class, 'create'])->name('checkout.index');
-    Route::post('/checkout', [AddressOrderController::class, 'store'])->name('checkout.store');
+//         'cart.not.empty' => \App\Http\Middleware\EnsureCartIsNotEmpty::class,
+Route::prefix('checkout')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [AddressOrderController::class, 'create'])->name('checkout.index');
+    Route::post('/', [AddressOrderController::class, 'store'])->name('checkout.store');
 });
+
 
 Route::prefix('admin-orders')->middleware(['auth'])->group(function () {
     Route::get('/', function () {

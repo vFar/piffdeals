@@ -5,7 +5,14 @@ import Navbar from "../Components/Navbar.vue";
 import Footer from "../Components/Footer.vue";
 import Breadcrumbs from "../Components/Breadcrumbs.vue";
 import ScrollTopBtn from "../Components/ScrollToTopBtn.vue";
-import { Button, InputNumber, message, Steps } from "ant-design-vue";
+import {
+    Button,
+    InputNumber,
+    message,
+    Steps,
+    Image,
+    Tooltip,
+} from "ant-design-vue";
 
 const { Step } = Steps;
 
@@ -36,36 +43,37 @@ const formattedPrice = (price) => {
     return parseFloat(price).toFixed(2);
 };
 
+const allItemsAvailable = computed(() => {
+    return props.cartItems.every(
+        (item) => quantities[item.id] <= item.good.stock_quantity
+    );
+});
+
+const validateQuantity = (item) => {
+    if (quantities[item.id] > item.good.stock_quantity) {
+        message.error(
+            "Diemžēl, noliktavā nav tik daudz preču!"
+        );
+    }
+};
+
 const redirectToCheckout = async () => {
     const items = props.cartItems.map((item) => ({
         id: item.id,
         quantity: quantities[item.id],
     }));
 
-    console.log('Items to update:', items); // Log the items being sent
-
     try {
-        await router.patch(route("cart.updateAndCheckout"), {
-            items,
-        }).then(() => {
-            // Redirect to checkout page only after the patch request completes
-            router.visit(route("checkout.index"));
-        });
+        await router
+            .patch(route("cart.updateAndCheckout"), { items })
     } catch (error) {
         console.error("Failed to update cart and proceed to checkout:", error);
     }
 };
 
-const updateQuantity = (item, value) => {
-    quantities[item.id] = value;
-    // Optionally, you can call your API to update the quantity
-    console.log(`Update quantity for item ${item.id} to ${value}`);
-};
-
 const removeItem = async (item) => {
     try {
         await router.delete(route("cart.remove", item.id));
-        // Optionally, you can refresh the page or remove the item from the cartItems array
         message.success("Dzēsta prece no groza!");
         console.log(`Removed item ${item.id}`);
     } catch (error) {
@@ -86,6 +94,7 @@ const removeItem = async (item) => {
 
         <div class="space-y-12 container mx-auto">
             <div
+                v-if="props.cartItems.length > 0"
                 class="container max-w-screen-2xl border border-gray-200 rounded-xl bg-whiter shadow-md py-5 px-8"
             >
                 <Steps current="1" class="cursor-none">
@@ -132,7 +141,6 @@ const removeItem = async (item) => {
                                     <th class="py-2 px-4">Skaits</th>
                                     <th class="py-2 px-4">Cena (gab)</th>
                                     <th class="py-2 px-4">Cena</th>
-                                    <th class="py-2 px-4">Darbības</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -142,43 +150,71 @@ const removeItem = async (item) => {
                                     class=""
                                 >
                                     <td class="py-2 px-4">
-                                        <img
+                                        <Image
                                             v-if="item.good && item.good.image"
                                             :src="item.good.image"
                                             alt="Preces attēls"
-                                            class="w-20 h-20 rounded-md"
+                                            class="rounded-md object-cover cursor-pointer"
+                                            width="50px"
+                                            height="50px"
+                                            previewMask="Priekšskatījums"
                                         />
                                     </td>
                                     <td class="py-2 px-4">
-                                        <span v-if="item.good" class="">{{
-                                            item.good.name
-                                        }}</span>
+                                        <span v-if="item.good">
+                                            <template
+                                                v-if="
+                                                    quantities[item.id] >
+                                                    item.good.stock_quantity
+                                                "
+                                            >
+                                                <Tooltip
+                                                    title="Preču skaits pārsniedz noliktavas skaitu!" color="#EF4444"
+                                                >
+                                                    <span
+                                                        class="bg-red-100 text-red-600 p-2 px-3 rounded-xl"
+                                                    >
+                                                        {{ item.good.name }}
+                                                        <i
+                                                            class="fa-regular fa-circle-question ml-2"
+                                                        ></i>
+                                                    </span>
+                                                </Tooltip>
+                                            </template>
+                                            <template v-else>
+                                                <span>{{
+                                                    item.good.name
+                                                }}</span>
+                                            </template>
+                                        </span>
                                     </td>
+
                                     <td class="py-2 px-4">
                                         <InputNumber
                                             :min="1"
                                             v-model:value="quantities[item.id]"
                                             @change="
-                                                (value) =>
-                                                    updateQuantity(item, value)
+                                                () => validateQuantity(item)
                                             "
                                         />
                                     </td>
                                     <td class="py-2 px-4">
                                         <span v-if="item.good"
-                                            >€{{
+                                            >{{
                                                 formattedPrice(item.good.price)
-                                            }}</span
+                                            }}
+                                            €</span
                                         >
                                     </td>
                                     <td class="py-2 px-4">
                                         <span v-if="item.good"
-                                            >€{{
+                                            >{{
                                                 formattedPrice(
                                                     item.good.price *
                                                         quantities[item.id]
                                                 )
-                                            }}</span
+                                            }}
+                                            €</span
                                         >
                                     </td>
                                     <td class="py-2 px-4">
@@ -209,6 +245,7 @@ const removeItem = async (item) => {
                                     type="primary"
                                     class="w-full text-base font-semibold bg-primary text-white rounded-xl uppercase"
                                     @click="redirectToCheckout"
+                                    :disabled="!allItemsAvailable"
                                 >
                                     Pasūtīt
                                 </Button>
