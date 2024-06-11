@@ -30,22 +30,37 @@ class CartController extends Controller
         }
         return back()->with('success', 'Cart updated successfully'); // Atgriež atbildi ar veiksmīgu ziņojumu
     }
-    public function getCartItems() // Iegūst groza preces
+
+    public function getCartItems()
     {
-        $user = Auth::user(); // Iegūst pašreizējo lietotāju
-        $cartItems = $user->cart->items()->with('good')->get() ?? []; // Iegūst preces no groza ar saistītajiem labumiem
-        return response()->json($cartItems); // Atgriež preces kā JSON atbildi
+        $user = Auth::user();
+        if ($user->cart) {
+            $cartItems = $user->cart->items()->with(['good' => function($query) {
+                $query->addSelect(['id', 'name', 'stock_quantity']); // Pārbauda preču skaitu
+            }])->get();
+        } else {
+            $cartItems = [];
+        }
+        return response()->json($cartItems);
     }
+    
+
     public function index() // Parāda groza skatu
     {
         $user = Auth::user(); // Iegūst pašreizējo lietotāju
-        $cartItems = $user->cart->items()->with('good')->get() ?? []; // Iegūst preces no groza ar saistītajiem labumiem
+        if ($user->cart) {
+            $cartItems = $user->cart->items()->with('good')->get();
+        } else {
+            $cartItems = [];
+        }
         return Inertia::render('Cart', [
             'cartItems' => $cartItems,
         ]); // Atgriež Inertia skatu ar groza precēm
     }
+
+
     public function remove($id) // Noņem preci no groza
-    {
+    {#c
         $user = Auth::user(); // Iegūst pašreizējo lietotāju
         $cartItem = $user->cart->items()->find($id); // Atrod preci grozā pēc ID
         if ($cartItem) { // Ja prece ir atrasta

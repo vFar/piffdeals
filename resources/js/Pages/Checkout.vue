@@ -11,6 +11,7 @@ import {
     Steps,
     Alert,
     Select,
+    Image,
 } from "ant-design-vue";
 import Breadcrumbs from "../Components/Breadcrumbs.vue";
 
@@ -20,6 +21,7 @@ const props = defineProps({
     cartItems: Array,
 });
 
+console.log(props.cartItems)
 const totalPrice = computed(() => {
     return props.cartItems
         .reduce((sum, item) => {
@@ -41,16 +43,19 @@ const form = useForm({
 });
 
 const handleSubmit = () => {
-    form.post(route('address-order.store'), {
+    form.post(route("checkout.store"), { // Make sure this route is correctly aliased in your Laravel route definitions
+        preserveScroll: true,
         onSuccess: () => {
             message.success("Order created successfully");
-            router.visit(route('checkout.index'));
+            router.replace(route("checkout.index")); // Redirect or update UI upon success
         },
-        onError: () => {
-            message.error("Failed to create order");
+        onError: error => {
+            console.log(error);
+            message.error("Failed to create order"); // More detailed error handling might be necessary
         }
     });
 };
+
 
 // City options
 const cities = [
@@ -249,7 +254,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
     <Head title="NORĒĶINĀTIES" />
 
     <Navbar />
-    <ScrollToTopBtn/>
+    <ScrollToTopBtn />
     <div class="cross-patternSVGLight bg-whiter">
         <div class="py-8">
             <Breadcrumbs currentPage="Norēķins" />
@@ -280,7 +285,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                         <h2
                             class="text-xl font-semibold text-gray-900 dark:text-white uppercase"
                         >
-                            Pasūtītāja kontaktinformācija
+                            Pircēja kontaktinformācija
                         </h2>
                         <form @submit.prevent="handleSubmit" class="space-y-4">
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -290,7 +295,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                         >Vārds, uzvārds</label
                                     >
-                                    <input
+                                    <Input
                                         v-model="form.name"
                                         id="name"
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -306,7 +311,6 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                     <InputNumber
                                         :controls="false"
                                         v-model="form.phone_number"
-                                        id="phone_number"
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         required
                                     />
@@ -332,7 +336,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                         >Iela</label
                                     >
-                                    <input
+                                    <Input
                                         v-model="form.street"
                                         id="street"
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -346,7 +350,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                         >Pasta indekss</label
                                     >
-                                    <input
+                                    <Input
                                         v-model="form.postal_code"
                                         id="postal_code"
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -382,11 +386,14 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                 class="mb-4 flex items-center space-x-4"
                             >
                                 <div class="relative">
-                                    <img
+                                    <Image
                                         v-if="item.good && item.good.image"
                                         :src="item.good.image"
                                         alt="Preces attēls"
-                                        class="w-16 h-16 rounded-md"
+                                        class="rounded-md cursor-pointer"
+                                        width="64px"
+                                        height="64px"
+                                        previewMask="Priekšskatījums"
                                     />
                                     <span
                                         class="absolute bottom-[50px] left-[50px] bg-red-600 font-semibold text-white text-xs rounded-md p-1"
