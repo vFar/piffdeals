@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\CategoryGoodsController;
 use App\Http\Controllers\Admin\GroupGoodsController;
 use App\Http\Controllers\Admin\AttributesGoodsController;
 use App\Http\Controllers\Admin\GoodsController;
+use App\Http\Controllers\Admin\AdminSearchController;
 
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -90,17 +91,8 @@ Route::prefix('admin-orders')->middleware(['auth', 'checkAdminRole'])->group(fun
     Route::get('/', [OrderController::class, 'index'])->name('admin-orders.index');
     Route::get('/{order}', [OrderController::class, 'show'])->name('admin-orders.show');
     Route::patch('/{order}/status', [OrderController::class, 'updateStatus'])->name('admin-orders.update');
+    Route::get('/recent', [OrderController::class, 'recentOrders'])->name('admin-orders.recent');
 });
-
-Route::prefix('admin')->middleware(['auth', 'checkAdminRole'])->group(function () {
-    // General admin dashboard, stats, etc.
-    // Recent orders accessible from any admin page
-    Route::get('/order-notifications', [OrderController::class, 'orderNotifications'])->name('admin.order-notifications');
-
-
-    // Other admin routes...
-});
-
 
 Route::prefix('navigation-data')->group(function () {
     Route::get('/categories', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data.categories');
@@ -109,6 +101,7 @@ Route::prefix('navigation-data')->group(function () {
     Route::get('/search-goods', [NavigationDataController::class, 'searchGoods'])->name('navigation.data.searchGoods');
 });
 
+Route::get('/admin/search', [AdminSearchController::class, 'search'])->name('admin.search');
 
 Route::get('/goods/{id}', [GoodsPreviewController::class, 'show'])->name('goods.show');
 Route::get('/goods', [FilterGoodsController::class, 'index'])->name('goods.filter');

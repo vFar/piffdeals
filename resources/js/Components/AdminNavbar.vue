@@ -1,8 +1,20 @@
 <script setup>
 import { Link, usePage, useForm } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 import AdminNotifications from "./AdminNotifications.vue";
 import AdminSearchbar from "./AdminSearchbar.vue";
+import { Popover, Button } from "ant-design-vue";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/lv"; // Import Latvian locale
+
+dayjs.extend(relativeTime);
+dayjs.locale("lv"); // Use Latvian locale
+
+const props = defineProps({
+    currentPage: String,
+    filters: Array,
+});
 
 const catalogDropdownOpen = ref(false); // Reactive property to toggle dropdown
 const settingsDropdownOpen = ref(false); // Reactive property to toggle settings dropdown
@@ -33,8 +45,6 @@ const getImageUrl = (filename) => {
     return `/storage/images/${filename}`;
 };
 
-const props = defineProps(["currentPage"]);
-
 if (
     props.currentPage === "logfiles" ||
     props.currentPage === "administrators"
@@ -42,9 +52,116 @@ if (
     settingsDropdownOpen.value = true;
 }
 
-if (props.currentPage === "goods" || props.currentPage === "categories" || props.currentPage === 'groups' || props.currentPage === 'attributes') {
+if (
+    props.currentPage === "goods" ||
+    props.currentPage === "categories" ||
+    props.currentPage === "groups" ||
+    props.currentPage === "attributes"
+) {
     catalogDropdownOpen.value = true;
 }
+
+const searchQuery = ref("");
+const searchResults = ref([]);
+const searchType = ref("goods");
+const popoverVisible = ref(false);
+
+const handleInput = async () => {
+    if (searchQuery.value.length > 1) {
+        try {
+            const response = await fetch(
+                `/admin/search?query=${searchQuery.value}&type=${searchType.value}`
+            );
+            if (!response.ok) {
+                throw new Error(
+                    `Server responded with status: ${response.status}`
+                );
+            }
+            const data = await response.json();
+            searchResults.value = data[searchType.value] || [];
+            popoverVisible.value = true;
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+            searchResults.value = [];
+            popoverVisible.value = true;
+        }
+    } else {
+        searchResults.value = [];
+        popoverVisible.value = false;
+    }
+};
+
+const handleFocus = () => {
+    if (searchQuery.value.length > 1) {
+        popoverVisible.value = true;
+    }
+};
+
+const handleBlur = () => {
+    setTimeout(() => {
+        popoverVisible.value = false;
+    }, 200);
+};
+
+const highlightQuery = (text, query) => {
+    if (!text) return ""; // Ensure text is not undefined
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.replace(
+        regex,
+        '<span class="bg-yellow-100 font-bold">$1</span>'
+    );
+};
+
+const popoverContent = computed(() =>
+    searchResults.value.length > 0
+        ? searchResults.value
+              .map((result) => {
+                  if (searchType.value === "goods") {
+                      return `<div class="py-2 px-4 hover:bg-gray-100 cursor-pointer flex items-center">
+                                <Link href="/admin-goods/${result.id}/edit">
+                                    <img src="${
+                                        result.image
+                                    }" class="w-10 h-10 rounded-md shadow-md mr-2" />
+                                    <span>${highlightQuery(
+                                        result.name,
+                                        searchQuery.value
+                                    )}</span>
+                                </Link>
+                              </div>`;
+                  } else if (searchType.value === "orders") {
+                      return `<div class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
+                                <Link href="/admin-orders/${result.id}">
+                                    #${result.id}<br>
+                                    ${dayjs(result.created_at).format(
+                                        "DD.MM.YYYY"
+                                    )}, 
+                                    ${result.status}, 
+                                    ${result.user?.email || "N/A"}
+                                </Link>
+                              </div>`;
+                  } else if (searchType.value === "customers") {
+                      return `<div class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
+                                <Link href="/admin-users/${result.id}">
+                                    ${highlightQuery(
+                                        result.name || "",
+                                        searchQuery.value
+                                    )}<br>
+                                    ${highlightQuery(
+                                        result.email || "",
+                                        searchQuery.value
+                                    )}
+                                </Link>
+                              </div>`;
+                  }
+              })
+              .join("")
+        : `<div class="py-2 px-4 text-gray-500">Nav rezultātu</div>`
+);
+
+const changeSearchType = (type) => {
+    searchType.value = type;
+    handleInput();
+};
 </script>
 
 <style>
@@ -67,6 +184,11 @@ if (props.currentPage === "goods" || props.currentPage === "categories" || props
     /* Ensures the text color is suitable for the highlight */
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+}
+
+.active-button {
+    background-color: #4f91ed;
+    color: white;
 }
 
 aside {
@@ -94,7 +216,84 @@ aside {
                             class="h-10 mr-2"
                         />
                     </Link>
-                    <AdminSearchbar class="w-1/4" placeholderSearch="Mega meklēt"/>
+
+                    <Popover
+                        v-model:open="popoverVisible"
+                        placement="bottom"
+                        :arrow="false"
+                        :overlay-inner-style="{
+                            padding: '0',
+                            width: '400px',
+                        }"
+                    >
+                        <template #content>
+                            <div v-if="true">
+                                <Button.Group
+                                    class="flex w-full justify-start items-center"
+                                >
+                                    <Button
+                                        @click="changeSearchType('goods')"
+                                        :class="{
+                                            'active-button':
+                                                searchType.value === 'goods',
+                                        }"
+                                        class="flex-1"
+                                        >PRECES</Button
+                                    >
+                                    <Button
+                                        @click="changeSearchType('orders')"
+                                        :class="{
+                                            'active-button':
+                                                searchType.value === 'orders',
+                                        }"
+                                        class="flex-1"
+                                        >PASŪTĪJUMI</Button
+                                    >
+                                    <Button
+                                        @click="changeSearchType('customers')"
+                                        :class="{
+                                            'active-button':
+                                                searchType.value ===
+                                                'customers',
+                                        }"
+                                        class="flex-1"
+                                        >KLIENTI</Button
+                                    >
+                                </Button.Group>
+                                <div v-html="popoverContent"></div>
+                            </div>
+                        </template>
+                        <form class="relative">
+                            <div
+                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                            >
+                                <svg
+                                    class="w-5 h-5 text-textColor"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
+                                </svg>
+                            </div>
+                            <input
+                                type="search"
+                                v-model="searchQuery"
+                                @input="handleInput"
+                                @blur="handleBlur"
+                                @focus="handleFocus"
+                                autocomplete="off"
+                                class="w-[400px] py-2 pl-10 pr-4 text-sm text-textColor border border-gray-300 rounded-xl bg-white shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                                :placeholder="`Mega meklēt...`"
+                            />
+                        </form>
+                    </Popover>
                 </div>
 
                 <div class="flex items-center mr-4 text-white text-xl">

@@ -13,7 +13,6 @@ dayjs.locale("lv"); // Use Latvian locale
 const notifications = ref([]);
 const notificationCount = ref(0);
 const dropdownOpen = ref(false);
-const fetchingOrders = ref(false); // New flag to manage fetching state
 
 function determineIcon(status) {
     switch (status) {
@@ -30,48 +29,21 @@ function determineIcon(status) {
     }
 }
 
-async function fetchRecentOrders() {
-    if (fetchingOrders.value) return; // Prevent fetching if the flag is set
-    fetchingOrders.value = true;
-    try {
-        const { data } = await axios.get("/admin/recent-orders");
-        notifications.value = data.map((order) => ({
-            icon: determineIcon(order.status),
-            message: `Jauns pasūtījums #${order.id}`,
-            time: dayjs(order.created_at).fromNow(),
-        }));
-        notificationCount.value = notifications.value.length;
-        saveNotificationsToLocalStorage();
-    } catch (error) {
-        console.error("Kļūda, iegūstot nesenos pasūtījumus:", error);
-    } finally {
-        fetchingOrders.value = false; // Reset the flag
-    }
-}
+// async function fetchRecentOrders() {
+//     try {
+//         const { data } = await axios.get('/admin-orders/recent');
+//         notifications.value = data.map(order => ({
+//             icon: determineIcon(order.status),
+//             message: `New order #${order.id}`,
+//             time: dayjs(order.created_at).fromNow(),
+//         }));
+//         notificationCount.value = notifications.value.length;
+//     } catch (error) {
+//         console.error('Error fetching recent orders:', error);
+//     }
+// }
 
-function markAllAsRead() {
-    notifications.value = [];
-    notificationCount.value = 0;
-    saveNotificationsToLocalStorage();
-}
-
-function saveNotificationsToLocalStorage() {
-    localStorage.setItem("notifications", JSON.stringify(notifications.value));
-}
-
-function loadNotificationsFromLocalStorage() {
-    const storedNotifications = localStorage.getItem("notifications");
-    if (storedNotifications) {
-        notifications.value = JSON.parse(storedNotifications);
-        notificationCount.value = notifications.value.length;
-    }
-}
-
-onMounted(() => {
-    loadNotificationsFromLocalStorage();
-    fetchRecentOrders();
-    setInterval(fetchRecentOrders, 60000); // Check for new orders every minute
-});
+// onMounted(fetchRecentOrders);
 </script>
 
 <style scoped>
@@ -134,7 +106,6 @@ onMounted(() => {
                         <Link
                             href="#"
                             class="text-xs text-blue-600 hover:underline"
-                            @click.prevent="markAllAsRead"
                         >
                             Atzīmēt kā izlasītus
                         </Link>

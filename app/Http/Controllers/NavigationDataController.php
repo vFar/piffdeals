@@ -68,8 +68,6 @@ class NavigationDataController extends Controller
             ->where('name', 'like', '%' . $query . '%')
             ->get();
 
-        \Log::info('Search results:', ['goods' => $goods]);
-
         return response()->json([
             'goods' => $goods,
         ]);

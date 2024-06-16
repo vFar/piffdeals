@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Password; // Correct import for Password broker
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rules\Password as PasswordRules; // Correct naming for password rules
 use Inertia\Inertia;
+use App\Models\Order;
+
 
 class ClientAccountController extends Controller
 {
@@ -82,8 +84,19 @@ class ClientAccountController extends Controller
 
     public function show($id)
     {
-        $user = User::findOrFail($id); // Fetch the user by ID
-        return Inertia::render('Admin/UserDetail', ['user' => $user]); // Note the path change here
+        $user = User::findOrFail($id);
+        
+        // Fetch the user's orders
+        $orders = Order::where('user_id', $id)->get();
+        
+        // Calculate total revenue
+        $totalRevenue = $orders->sum('total'); // Assuming 'total' is the column name for order total
+    
+        return Inertia::render('Admin/UserDetail', [
+            'user' => $user,
+            'orders' => $orders,
+            'totalRevenue' => $totalRevenue
+        ]);
     }
 
     public function updateStatus(Request $request)

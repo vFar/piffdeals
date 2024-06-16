@@ -35,11 +35,18 @@ class OrderController extends Controller
         $order->load([
             'user',
             'address',
-            'items.good'
+            'items.good' // Ensure the Good model has the image path accessor
         ]);
-
+    
+        // Calculate total revenue for the specific order
+        $totalRevenue = $order->items->sum(function ($item) {
+            return $item->quantity * $item->price;
+        });
+    
         return Inertia::render('Admin/OrderDetail', [
-            'order' => $order
+            'order' => $order,
+            'totalRevenue' => $totalRevenue,
+            'user' => $order->user,
         ]);
     }
 

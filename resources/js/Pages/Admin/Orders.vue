@@ -187,6 +187,7 @@ function handlePageChange(url) {
                                     <tr
                                         v-for="order in orders.data"
                                         :key="order.id"
+                                        class="hover:bg-slate-100"
                                     >
                                         <td class="px-4 py-3 space-y-3">
                                             <span class="font-semibold"
@@ -253,10 +254,14 @@ function handlePageChange(url) {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right px-4 py-3">
+                                        <td class="text-right px-4 py-3">                                            
                                             <button @click="openChangeStatusModal(order)" :class="[order.status === 'Atcelts' ? 'hover:bg-slate-200 cursor-not-allowed' : 'hover:bg-slate-200', 'text-xl rounded-lg p-2']" :disabled="order.status === 'Atcelts'">
                                                 <i class="fa-solid fa-pen-to-square fa-fw text-textColor"></i>
                                             </button>
+
+                                            <Link  :href="route('admin-orders.show', order.id)" class="text-xl hover:bg-slate-200 text-textColor rounded-lg p-2">
+                                                <i class="fa-solid fa-caret-right fa-fw"></i>
+                                            </Link>
                                         </td>
                                     </tr>
                                 </tbody>
