@@ -94,8 +94,6 @@ function fetchUsers() {
     return router.get(route("admin-users.index"), { search: search.value }, {
         preserveState: true,
         replace: true,
-    }).catch(error => {
-        console.error('Failed to fetch users:', error);
     });
 }
 

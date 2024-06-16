@@ -27,6 +27,8 @@
         "@tinymce/tinymce-vue": "^5.1.1",
         "ant-design-vue": "^4.2.1",
         "dayjs": "^1.11.11",
+        "laravel-echo": "^1.16.1",
+        "pusher-js": "^8.4.0-rc2",
         "vue-i18n": "^9.13.1",
         "ziggy-js": "github:tightenco/ziggy"
     }

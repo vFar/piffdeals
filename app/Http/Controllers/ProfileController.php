@@ -88,4 +88,36 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function ordersIndex(Request $request)
+    {
+        $orders = $request->user()->orders()
+                     ->with('items')
+                     ->orderBy('created_at', 'desc')
+                     ->paginate(6); 
+    
+        return Inertia::render('Profile/OrderHistory', [
+            'orders' => $orders
+        ]);
+    }
+
+    public function orderDetail(Request $request, $orderId)
+    {
+        $order = $request->user()->orders()
+                        ->with(['items' => function($query) {
+                            $query->with(['good' => function($subQuery) {
+                                $subQuery->select('id', 'name', 'image');
+                            }])->select('id', 'order_id', 'good_id', 'quantity', 'price');
+                        }])
+                        ->where('id', $orderId)
+                        ->firstOrFail();
+    
+        return Inertia::render('Profile/OrderHistoryDetail', [
+            'order' => $order
+        ]);
+    }
+    
+    
+    
+    
 }

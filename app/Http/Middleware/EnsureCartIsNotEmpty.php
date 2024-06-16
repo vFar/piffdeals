@@ -4,30 +4,32 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\DB; // Import DB facade for database access
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class EnsureCartIsNotEmpty
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
-        $userId = $request->user()->id; // Assumes you're using standard Laravel authentication
-        
-        // Check if the user has cart items
+        $userId = $request->user()->id;
+
+        // Properly check if the user's cart has items
         $hasCartItems = DB::table('cart_items')
-                          ->where('carts_id', $userId)
+                          ->join('carts', 'carts.id', '=', 'cart_items.carts_id')
+                          ->where('carts.user_id', $userId)
                           ->exists();
 
-        Log::debug('Cart items exist: ' . $hasCartItems);
+        Log::debug('Checking cart items for user: ' . $userId . ' - Exist: ' . $hasCartItems);
 
         if (!$hasCartItems) {
-            return redirect('/cart');
+            Log::debug('No cart items found for user: ' . $userId);
+            return redirect('/cart')->with('error', 'Your cart is empty.');
         }
 
         return $next($request);

@@ -61,6 +61,7 @@ class Kernel extends HttpKernel
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'checkAdminRole' => \App\Http\Middleware\CheckAdminRole::class,
+        'preventAdminAccess' => \App\Http\Middleware\PreventAdminAccess::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
@@ -70,4 +71,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'cart.not.empty' => \App\Http\Middleware\EnsureCartIsNotEmpty::class,
     ];
+
+    
 }

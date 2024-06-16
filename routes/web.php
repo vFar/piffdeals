@@ -9,10 +9,12 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 
 use App\Http\Controllers\Admin\ClientAccountController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\CategoryGoodsController;
 use App\Http\Controllers\Admin\GroupGoodsController;
 use App\Http\Controllers\Admin\AttributesGoodsController;
 use App\Http\Controllers\Admin\GoodsController;
+
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\AddressOrderController;
@@ -43,7 +45,6 @@ Route::get('/', function () {
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-
 Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 });
@@ -66,9 +67,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/remove', [ProfileController::class, 'remove'])->name('profile.remove');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/orders', [ProfileController::class, 'ordersIndex'])->name('profile.orders')->middleware('preventAdminAccess');
+    Route::get('/profile/orders/{orderId}', [ProfileController::class, 'orderDetail'])->name('profile.orderDetail');
 });
 
-Route::prefix('cart')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('cart')->middleware(['auth', 'verified', 'preventAdminAccess'])->group(function () {
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/', [CartController::class, 'index'])->name('cart.index'); 
     Route::get('/items', [CartController::class, 'getCartItems'])->name('cart.items');
@@ -76,22 +79,28 @@ Route::prefix('cart')->middleware(['auth', 'verified'])->group(function () {
     Route::patch('/cart/update-and-checkout', [CartController::class, 'updateAndCheckout'])->name('cart.updateAndCheckout');
 });
 
-//         'cart.not.empty' => \App\Http\Middleware\EnsureCartIsNotEmpty::class,
-Route::prefix('checkout')->middleware(['auth', 'verified'])->group(function () {
+//'cart.not.empty' => \App\Http\Middleware\EnsureCartIsNotEmpty::class,
+Route::prefix('checkout')->middleware(['auth', 'verified', 'cart.not.empty'])->group(function () {
     Route::get('/', [AddressOrderController::class, 'create'])->name('checkout.index');
-    Route::post('/', [AddressOrderController::class, 'store'])->name('checkout.store');
+    Route::post('/store', [AddressOrderController::class, 'store'])->name('checkout.store');
 });
 
 
-Route::prefix('admin-orders')->middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        if (Auth::user()->role_id === 2) {
-            return Inertia::render('Admin/Orders');
-        } else {
-            abort(404);
-        }
-    })->name('admin.orders');
+Route::prefix('admin-orders')->middleware(['auth', 'checkAdminRole'])->group(function () {
+    Route::get('/', [OrderController::class, 'index'])->name('admin-orders.index');
+    Route::get('/{order}', [OrderController::class, 'show'])->name('admin-orders.show');
+    Route::patch('/{order}/status', [OrderController::class, 'updateStatus'])->name('admin-orders.update');
 });
+
+Route::prefix('admin')->middleware(['auth', 'checkAdminRole'])->group(function () {
+    // General admin dashboard, stats, etc.
+    // Recent orders accessible from any admin page
+    Route::get('/order-notifications', [OrderController::class, 'orderNotifications'])->name('admin.order-notifications');
+
+
+    // Other admin routes...
+});
+
 
 Route::prefix('navigation-data')->group(function () {
     Route::get('/categories', [NavigationDataController::class, 'getActiveCategories'])->name('navigation.data.categories');

@@ -37,6 +37,8 @@ const page = usePage();
 
 const { auth } = usePage().props;
 
+const isAdmin = computed(() => auth.user && auth.user.role_id === 2);
+
 const formatRelativeDate = (date) => {
     return dayjs(date).fromNow();
 };
@@ -114,9 +116,9 @@ const closeEditPasswordModal = () => {
                         <div
                             class="bg-whiter shadow-md grid border border-t-0 border-r border-l-[1px] border-b border-gray-200 rounded-b-xl max-md:hidden max-md:border-none accordian-content"
                         >
-                            <a href="#">
+                            <Link href="/profile">
                                 <div
-                                    class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer bg-gray-100"
+                                    class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
                                 >
                                     <p
                                         class="flex gap-x-4 items-center text-lg font-medium"
@@ -130,26 +132,45 @@ const closeEditPasswordModal = () => {
                                         class="icon-arrow-right text-2xl max-md:hidden"
                                     ></span>
                                 </div>
-                            </a>
+                            </Link>
 
-                            <a href="#">
-                                <div
-                                    class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
-                                >
-                                    <p
-                                        class="flex gap-x-4 items-center text-lg font-medium"
+                            <div v-if="!isAdmin">
+                                <Link href="/profile/orders">
+                                    <div
+                                        class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
                                     >
+                                        <p
+                                            class="flex gap-x-4 items-center text-lg font-medium"
+                                        >
+                                            <span
+                                                class="icon-orders text-2xl"
+                                            ></span>
+                                            Pasūtījumu vēsture
+                                        </p>
                                         <span
-                                            class="icon-orders text-2xl"
+                                            class="icon-arrow-right text-2xl max-md:hidden"
                                         ></span>
-                                        Pasūtījumu vēsture
-                                    </p>
-                                    <span
-                                        class="icon-arrow-right text-2xl max-md:hidden"
-                                    ></span>
-                                </div>
-                            </a>
-                            <Link href="/cart">
+                                    </div>
+                                </Link>
+                                <Link href="/cart">
+                                    <div
+                                        class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
+                                    >
+                                        <p
+                                            class="flex gap-x-4 items-center text-lg font-medium"
+                                        >
+                                            <span
+                                                class="icon-star text-2xl"
+                                            ></span>
+                                            Iepirkumu grozs
+                                        </p>
+                                        <span
+                                            class="icon-arrow-right text-2xl max-md:hidden"
+                                        ></span>
+                                    </div>
+                                </Link>
+                            </div>
+                            <Link href="/admin-orders" v-if="isAdmin">
                                 <div
                                     class="flex justify-between px-6 py-5 border-t border-gray-200 hover:bg-[#f3f4f682] cursor-pointer"
                                 >
@@ -157,7 +178,7 @@ const closeEditPasswordModal = () => {
                                         class="flex gap-x-4 items-center text-lg font-medium"
                                     >
                                         <span class="icon-star text-2xl"></span>
-                                        Iepirkumu grozs
+                                        Administrācijas panelis
                                     </p>
                                     <span
                                         class="icon-arrow-right text-2xl max-md:hidden"

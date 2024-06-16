@@ -60,7 +60,7 @@ class CartController extends Controller
 
 
     public function remove($id) // Noņem preci no groza
-    {#c
+    {
         $user = Auth::user(); // Iegūst pašreizējo lietotāju
         $cartItem = $user->cart->items()->find($id); // Atrod preci grozā pēc ID
         if ($cartItem) { // Ja prece ir atrasta

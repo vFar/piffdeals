@@ -51,9 +51,7 @@ const allItemsAvailable = computed(() => {
 
 const validateQuantity = (item) => {
     if (quantities[item.id] > item.good.stock_quantity) {
-        message.error(
-            "Diemžēl, noliktavā nav tik daudz preču!"
-        );
+        message.error("Diemžēl, noliktavā nav tik daudz preču!");
     }
 };
 
@@ -64,8 +62,7 @@ const redirectToCheckout = async () => {
     }));
 
     try {
-        await router
-            .patch(route("cart.updateAndCheckout"), { items })
+        await router.patch(route("cart.updateAndCheckout"), { items });
     } catch (error) {
         console.error("Failed to update cart and proceed to checkout:", error);
     }
@@ -169,7 +166,8 @@ const removeItem = async (item) => {
                                                 "
                                             >
                                                 <Tooltip
-                                                    title="Preču skaits pārsniedz noliktavas skaitu!" color="#EF4444"
+                                                    title="Preču skaits pārsniedz noliktavas skaitu!"
+                                                    color="#EF4444"
                                                 >
                                                     <span
                                                         class="bg-red-100 text-red-600 p-2 px-3 rounded-xl"

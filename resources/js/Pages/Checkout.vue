@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, router } from "@inertiajs/vue3";
 import Navbar from "../Components/Navbar.vue";
 import Footer from "../Components/Footer.vue";
 import ScrollToTopBtn from "../Components/ScrollToTopBtn.vue";
@@ -12,6 +12,8 @@ import {
     Alert,
     Select,
     Image,
+    Input,
+    notification
 } from "ant-design-vue";
 import Breadcrumbs from "../Components/Breadcrumbs.vue";
 
@@ -21,7 +23,7 @@ const props = defineProps({
     cartItems: Array,
 });
 
-console.log(props.cartItems)
+console.log(props.cartItems);
 const totalPrice = computed(() => {
     return props.cartItems
         .reduce((sum, item) => {
@@ -42,20 +44,34 @@ const form = useForm({
     postal_code: "",
 });
 
+console.log(route("checkout.store")); // Add this to check the resolved route
 const handleSubmit = () => {
-    form.post(route("checkout.store"), { // Make sure this route is correctly aliased in your Laravel route definitions
+    let submitData = {
+        ...form,
+        phone_number: form.phone_number.toString(), // Convert number to string here
+    };
+
+    form.post(route("checkout.store"), {
+        data: submitData,
         preserveScroll: true,
         onSuccess: () => {
-            message.success("Order created successfully");
-            router.replace(route("checkout.index")); // Redirect or update UI upon success
+            notification.success({
+                message: 'Pasūtījums veiksmīgi izveidots!',
+                description: 'Paldies par Jūsu pasūtījumu! Tuvākajā laikā Jūsu e-pastā saņemsiet rēķinu un piegādātājs drīz sazināsies, lai apspriestu piegādi!',
+                duration: 4.5
+            });
+            router.visit('/'); // Redirect to the home page
         },
-        onError: error => {
-            console.log(error);
-            message.error("Failed to create order"); // More detailed error handling might be necessary
-        }
+        onError: (error) => {
+            notification.error({
+                message: 'Error',
+                description: 'Failed to create order. Please try again.',
+                duration: 4.5
+            });
+            console.log(error)
+        },
     });
 };
-
 
 // City options
 const cities = [
@@ -295,7 +311,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                         >Vārds, uzvārds</label
                                     >
-                                    <Input
+                                    <input
                                         v-model="form.name"
                                         id="name"
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -308,9 +324,22 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                         >Telefona numurs</label
                                     >
-                                    <InputNumber
+                                    <!-- <InputNumber
                                         :controls="false"
+                                        :value="form.phone_number"
+                                        class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                        required
+                                    /> -->
+                                    <Input
                                         v-model="form.phone_number"
+                                        type="text"
+                                        @input="
+                                            form.phone_number =
+                                                $event.target.value.replace(
+                                                    /[^0-9]/g,
+                                                    ''
+                                                )
+                                        "
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                         required
                                     />
@@ -336,7 +365,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                         >Iela</label
                                     >
-                                    <Input
+                                    <input
                                         v-model="form.street"
                                         id="street"
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -350,7 +379,7 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                                         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                                         >Pasta indekss</label
                                     >
-                                    <Input
+                                    <input
                                         v-model="form.postal_code"
                                         id="postal_code"
                                         class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
@@ -367,7 +396,10 @@ const cityOptions = cities.map((city) => ({ value: city, label: city }));
                             />
 
                             <div class="mt-4">
-                                <Button type="primary" class="w-full uppercase"
+                                <Button
+                                    type="primary"
+                                    class="w-full uppercase"
+                                    @click="handleSubmit"
                                     >Pasūtīt</Button
                                 >
                             </div>

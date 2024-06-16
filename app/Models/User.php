@@ -71,4 +71,14 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasOne(Cart::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(CartItems::class, 'carts_id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
 }
