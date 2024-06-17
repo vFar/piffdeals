@@ -112,89 +112,11 @@ const highlightQuery = (text, query) => {
     );
 };
 
-const popoverContent = computed(() =>
-    searchResults.value.length > 0
-        ? searchResults.value
-              .map((result) => {
-                  if (searchType.value === "goods") {
-                      return `<div class="py-2 px-4 hover:bg-gray-100 cursor-pointer flex items-center">
-                                <Link href="/admin-goods/${result.id}/edit">
-                                    <img src="${
-                                        result.image
-                                    }" class="w-10 h-10 rounded-md shadow-md mr-2" />
-                                    <span>${highlightQuery(
-                                        result.name,
-                                        searchQuery.value
-                                    )}</span>
-                                </Link>
-                              </div>`;
-                  } else if (searchType.value === "orders") {
-                      return `<div class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
-                                <Link href="/admin-orders/${result.id}">
-                                    #${result.id}<br>
-                                    ${dayjs(result.created_at).format(
-                                        "DD.MM.YYYY"
-                                    )}, 
-                                    ${result.status}, 
-                                    ${result.user?.email || "N/A"}
-                                </Link>
-                              </div>`;
-                  } else if (searchType.value === "customers") {
-                      return `<div class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
-                                <Link href="/admin-users/${result.id}">
-                                    ${highlightQuery(
-                                        result.name || "",
-                                        searchQuery.value
-                                    )}<br>
-                                    ${highlightQuery(
-                                        result.email || "",
-                                        searchQuery.value
-                                    )}
-                                </Link>
-                              </div>`;
-                  }
-              })
-              .join("")
-        : `<div class="py-2 px-4 text-gray-500">Nav rezultātu</div>`
-);
-
 const changeSearchType = (type) => {
     searchType.value = type;
     handleInput();
 };
 </script>
-
-<style>
-.rotate-180 {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
-}
-
-.scale-on-hover:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
-    border-radius: 0.375rem;
-    /* 6px */
-}
-
-.highlighted {
-    background-color: #4f91ed;
-    /* Change this color based on your theme */
-    color: white;
-    /* Ensures the text color is suitable for the highlight */
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-.active-button {
-    background-color: #4f91ed;
-    color: white;
-}
-
-aside {
-    transition: transform 0.3s ease-out;
-}
-</style>
 
 <template>
     <div class="flex flex-col h-24">
@@ -227,7 +149,7 @@ aside {
                         }"
                     >
                         <template #content>
-                            <div v-if="true">
+                            <div>
                                 <Button.Group
                                     class="flex w-full justify-start items-center"
                                 >
@@ -260,7 +182,33 @@ aside {
                                         >KLIENTI</Button
                                     >
                                 </Button.Group>
-                                <div v-html="popoverContent"></div>
+                                <div>
+                                    <div v-if="searchResults.length > 0">
+                                        <div v-for="result in searchResults" :key="result.id" class="py-2 px-4 hover:bg-gray-100 cursor-pointer">
+                                            <template v-if="searchType === 'goods'">
+                                                <Link :href="`/admin-goods/${result.id}/edit`" class="flex items-center">
+                                                    <img :src="result.image" class="w-10 h-10 rounded-md shadow-md mr-2" />
+                                                    <span v-html="highlightQuery(result.name, searchQuery)"></span>
+                                                </Link>
+                                            </template>
+                                            <template v-else-if="searchType === 'orders'">
+                                                <Link :href="`/admin-orders/${result.id}`">
+                                                    #{{ result.id }}<br>
+                                                    {{ dayjs(result.created_at).format('DD.MM.YYYY') }},
+                                                    {{ result.status }},
+                                                    {{ result.user?.email || 'N/A' }}
+                                                </Link>
+                                            </template>
+                                            <template v-else-if="searchType === 'customers'">
+                                                <Link :href="`/admin-users/${result.id}`">
+                                                    <span v-html="highlightQuery(result.name || '', searchQuery)"></span><br>
+                                                    <span v-html="highlightQuery(result.email || '', searchQuery)"></span>
+                                                </Link>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div v-else class="py-2 px-4 text-gray-500">Nav rezultātu</div>
+                                </div>
                             </div>
                         </template>
                         <form class="relative">
@@ -479,3 +427,35 @@ aside {
         </aside>
     </div>
 </template>
+
+<style>
+.rotate-180 {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.scale-on-hover:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+    border-radius: 0.375rem;
+    /* 6px */
+}
+
+.highlighted {
+    background-color: #4f91ed;
+    /* Change this color based on your theme */
+    color: white;
+    /* Ensures the text color is suitable for the highlight */
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.active-button {
+    background-color: #4f91ed;
+    color: white;
+}
+
+aside {
+    transition: transform 0.3s ease-out;
+}
+</style>

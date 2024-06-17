@@ -16,7 +16,6 @@ class AdminSearchController extends Controller
         $query = $request->input('query', '');
         $type = $request->input('type', 'goods');
 
-        Log::info('Search query received', ['query' => $query, 'type' => $type]);
 
         try {
             $results = [];
@@ -24,19 +23,20 @@ class AdminSearchController extends Controller
                 $results = Good::where('name', 'like', "%{$query}%")
                                 ->orWhere('sku', 'like', "%{$query}%")
                                 ->get();
-                Log::info('Goods search results', ['results' => $results]);
             } elseif ($type === 'orders') {
                 $query = ltrim($query, '#'); // Remove hashtag if present
                 $results = Order::where('id', 'like', "%{$query}%")
                                 ->orWhere('status', 'like', "%{$query}%")
+                                ->orWhereHas('user', function($q) use ($query) {
+                                    $q->where('name', 'like', "%{$query}%")
+                                      ->orWhere('email', 'like', "%{$query}%");
+                                })
                                 ->with('user')
                                 ->get();
-                Log::info('Orders search results', ['results' => $results]);
             } elseif ($type === 'customers') {
                 $results = User::where('name', 'like', "%{$query}%")
                                ->orWhere('email', 'like', "%{$query}%")
                                ->get();
-                Log::info('Customers search results', ['results' => $results]);
             } else {
                 return response()->json(['message' => 'Invalid search type'], 400);
             }
