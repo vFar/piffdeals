@@ -91,12 +91,15 @@ const createUserSubmitForm = () => {
 
 // Function to fetch users
 function fetchUsers() {
-    return router.get(route("admin-users.index"), { search: search.value }, {
-        preserveState: true,
-        replace: true,
-    });
+    return router.get(
+        route("admin-users.index"),
+        { search: search.value },
+        {
+            preserveState: true,
+            replace: true,
+        }
+    );
 }
-
 
 const search = ref(props.filters.search);
 // watch(search, (value) => {
@@ -144,7 +147,7 @@ const togglePasswordVisibility = () => {
 };
 
 function handlePageChange(url) {
-    router.visit(url);  // Or fetch data based on the new page URL
+    router.visit(url); // Or fetch data based on the new page URL
 }
 </script>
 
@@ -324,7 +327,7 @@ function handlePageChange(url) {
                                         :initialQuery="props.filters.search"
                                         @update:searchQuery="search = $event"
                                         @search="fetchUsers"
-                                        placeholderSearch = "Meklēt"
+                                        placeholderSearch="Meklēt"
                                     />
 
                                     <p>
@@ -347,7 +350,10 @@ function handlePageChange(url) {
                                     <!-- PAGINATOR -->
 
                                     <div class="flex items-center space-x-6">
-                                        <AdminPaginator :links="users.links" @page-change="handlePageChange" />
+                                        <AdminPaginator
+                                            :links="users.links"
+                                            @page-change="handlePageChange"
+                                        />
                                     </div>
 
                                     <!-- <button
@@ -409,14 +415,11 @@ function handlePageChange(url) {
                                             </p>
                                         </div>
                                     </div> -->
-                                   
                                 </div>
                             </div>
                         </div>
 
-
                         <div class="overflow-x-auto">
-
                             <table
                                 class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
                             >
@@ -468,6 +471,18 @@ function handlePageChange(url) {
                                             >
                                                 {{ user.status }}
                                             </span>
+                                            {{
+                                                user.orders_count ||
+                                                user.orders_count === 0
+                                                    ? "NAV"
+                                                    : user.orders_count
+                                            }} / 
+                                            {{
+                                                user.addresses_count ||
+                                                user.addresses_count === 0
+                                                    ? "NAV"
+                                                    : user.addresses_count
+                                            }}
                                         </td>
                                         <td class="px-4 py-3">
                                             {{ formatDate(user.created_at) }}

@@ -68,7 +68,7 @@ class AttributesGoodsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'group_id' => 'nullable|exists:groups,id'  // Changed from 'required' to 'nullable'
+            'group_id' => 'nullable|exists:groups,id' 
         ]);
 
         Attribute::create($validated);
@@ -85,7 +85,7 @@ class AttributesGoodsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'group_id' => 'nullable|exists:groups,id',
-            'status' => 'required|in:Aktīvs,Deaktivizēts' // Ensure 'status' is validated
+            'status' => 'required|in:Aktīvs,Deaktivizēts' 
         ]);
     
         $attribute = Attribute::findOrFail($id);

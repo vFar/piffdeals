@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Address;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password; // Correct import for Password broker
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\Rules\Password as PasswordRules; // Correct naming for password rules
 use Inertia\Inertia;
-use App\Models\Order;
 
 
 class ClientAccountController extends Controller
@@ -62,25 +63,39 @@ class ClientAccountController extends Controller
         if (!Auth::check() || Auth::user()->role_id !== 2) {
             abort(404);
         }
-
-        $users = User::where('role_id', 1)
-            ->whereIn('status', ['Aktīvs', 'Deaktivizēts'])
-            ->when($search, function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                          ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10); // Adjust pagination as needed
-
+    
+        $users = User::with(['orders', 'orders.address'])  // Eager load orders and their addresses
+                    ->where('role_id', 1)
+                    ->whereIn('status', ['Aktīvs', 'Deaktivizēts'])
+                    ->when($search, function ($query, $search) {
+                        $query->where(function ($query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%")
+                                  ->orWhere('email', 'like', "%{$search}%");
+                        });
+                    })
+                    ->withCount('orders')  // Count of orders directly
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
+    
+        // Compute the count of unique addresses per user
+        foreach ($users as $user) {
+            $addressIds = [];
+            foreach ($user->orders as $order) {
+                $addressIds[$order->address->id] = true;  // Collect unique address IDs
+            }
+            $user->addresses_count = count($addressIds);  // Count unique addresses
+        }
+    
         $totalUsers = $users->total();
-
+    
         return [
             'users' => $users,
             'totalUsers' => $totalUsers
         ];
     }
+    
+    
+    
 
     public function show($id)
     {

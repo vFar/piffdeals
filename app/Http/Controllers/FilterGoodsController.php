@@ -26,7 +26,7 @@ class FilterGoodsController extends Controller
         }
 
         // Apply pagination with query parameters
-        $filteredGoods = $goods->paginate(9)->appends($request->query());
+        $filteredGoods = $goods->paginate(20)->appends($request->query());
 
         return Inertia::render('GroupGoods', [
             'filteredGoods' => $filteredGoods,

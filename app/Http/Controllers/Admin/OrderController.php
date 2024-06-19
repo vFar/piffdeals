@@ -17,11 +17,10 @@ class OrderController extends Controller
         $orders = Order::with([
             'user',
             'address',
-            'items.good'  // Ensure the Good model has the image path accessor
+            'items.good' 
         ])->orderBy('created_at', 'desc')
-          ->paginate(10); // Customize pagination as needed
+          ->paginate(10); 
 
-        // Include total orders count
         $totalOrders = Order::count();
 
         return Inertia::render('Admin/Orders', [
@@ -35,10 +34,9 @@ class OrderController extends Controller
         $order->load([
             'user',
             'address',
-            'items.good' // Ensure the Good model has the image path accessor
+            'items.good'
         ]);
     
-        // Calculate total revenue for the specific order
         $totalRevenue = $order->items->sum(function ($item) {
             return $item->quantity * $item->price;
         });
@@ -56,7 +54,6 @@ class OrderController extends Controller
             'status' => 'required|string|in:Gaida,Procesā,Atcelts,Pabeigts'
         ]);
 
-        // If the new status is 'Atcelts', revert the stock quantities
         if ($validated['status'] === 'Atcelts' && $order->status !== 'Atcelts') {
             foreach ($order->items as $item) {
                 $good = Good::find($item->good_id);
@@ -66,7 +63,6 @@ class OrderController extends Controller
             }
         }
 
-        // Update the order status
         $order->update(['status' => $validated['status']]);
 
         return redirect()->back()->with('message', 'Order status updated successfully!');
