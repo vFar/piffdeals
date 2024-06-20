@@ -431,8 +431,7 @@ function handlePageChange(url) {
                                             Vārds, uzvārds / E-pasts / Telefons
                                         </th>
                                         <th scope="col" class="px-4 py-3">
-                                            Statuss / Pasūtījumu skaits / Adrešu
-                                            skaits
+                                            Statuss / Pasūtījumu skaits
                                         </th>
                                         <th scope="col" class="px-4 py-3">
                                             Izveidots / Modificēts
@@ -455,7 +454,12 @@ function handlePageChange(url) {
                                                 class="font-semibold text-md text-textColor"
                                                 >{{ user.name }}
                                             </span>
-                                            <br />{{ user.email }}
+                                            <br />{{ user.email }} <br />
+                                            <!-- {{
+                                                user.latestOrder.address
+                                                    .phone_number || "NAV"
+                                            }} -->
+                                                    NAV
                                         </td>
                                         <td class="px-4 py-3">
                                             <span
@@ -472,16 +476,9 @@ function handlePageChange(url) {
                                                 {{ user.status }}
                                             </span>
                                             {{
-                                                user.orders_count ||
-                                                user.orders_count === 0
-                                                    ? "NAV"
-                                                    : user.orders_count
-                                            }} / 
-                                            {{
-                                                user.addresses_count ||
-                                                user.addresses_count === 0
-                                                    ? "NAV"
-                                                    : user.addresses_count
+                                                user.orders_count > 0
+                                                    ? user.orders_count
+                                                    : "NAV"
                                             }}
                                         </td>
                                         <td class="px-4 py-3">

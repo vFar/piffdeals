@@ -27,7 +27,6 @@ class GoogleController extends Controller
                             ->first();
 
             if ($finduser) {
-                // Update email_verified_at field for existing Google users
                 if (is_null($finduser->email_verified_at)) {
                     $finduser->update(['email_verified_at' => now()]);
                 }
@@ -40,7 +39,7 @@ class GoogleController extends Controller
                     'name' => $user->name,
                     'email' => $user->email,
                     'google_id' => $user->id,
-                    'email_verified_at' => now(), // Mark email as verified for new Google users
+                    'email_verified_at' => now(), 
                 ]);
 
                 Auth::login($newUser, true);

@@ -63,36 +63,37 @@ class ClientAccountController extends Controller
         if (!Auth::check() || Auth::user()->role_id !== 2) {
             abort(404);
         }
-    
-        $users = User::with(['orders', 'orders.address'])  // Eager load orders and their addresses
+
+        $users = User::with(['orders' => function($query) {
+            $query->where('status', 'successful');  // Filter only successful orders
+        }, 'orders.address'])  // Eager load orders and their addresses
                     ->where('role_id', 1)
                     ->whereIn('status', ['Aktīvs', 'Deaktivizēts'])
                     ->when($search, function ($query, $search) {
                         $query->where(function ($query) use ($search) {
                             $query->where('name', 'like', "%{$search}%")
-                                  ->orWhere('email', 'like', "%{$search}%");
+                                ->orWhere('email', 'like', "%{$search}%");
                         });
                     })
                     ->withCount('orders')  // Count of orders directly
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
-    
-        // Compute the count of unique addresses per user
+
+        // Append phone numbers to each user
         foreach ($users as $user) {
-            $addressIds = [];
-            foreach ($user->orders as $order) {
-                $addressIds[$order->address->id] = true;  // Collect unique address IDs
-            }
-            $user->addresses_count = count($addressIds);  // Count unique addresses
+            $user->phone_number = $user->orders->map(function($order) {
+                return $order->address->phone_number ?? null; // Collect phone numbers, null if not available
+            })->filter()->first(); // Get the first non-null phone number
         }
-    
+
         $totalUsers = $users->total();
-    
+
         return [
             'users' => $users,
             'totalUsers' => $totalUsers
         ];
     }
+
     
     
     

@@ -85,4 +85,10 @@ class User extends Authenticatable implements MustVerifyEmailContract
     {
         return $this->hasMany(Address::class);
     }
+
+    public function latestOrder()
+    {
+        // Assumes 'created_at' is the column to sort on; replace with 'order_date' if you have a different column
+        return $this->hasOne(Order::class)->latest('order_date');
+    }
 }
