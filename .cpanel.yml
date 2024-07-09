@@ -1,0 +1,13 @@
+---
+deployment:
+  tasks:
+    - export PATH=$HOME/bin:$HOME/.local/bin:/opt/cpanel/composer/bin:$PATH
+    - cd $DEPLOYMENT_SOURCE
+    - /opt/cpanel/composer/bin/composer install --no-dev --optimize-autoloader
+    - cp .env.example .env
+    - php artisan key:generate
+    - php artisan migrate --force
+    - php artisan db:seed --force
+    - php artisan config:cache
+    - php artisan route:cache
+    - php artisan view:cache
