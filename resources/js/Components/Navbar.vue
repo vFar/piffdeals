@@ -265,7 +265,7 @@ watch(searchQuery, (newQuery) => {
                 <a
                     href="mailto:info@piffdeals.lv"
                     class="text-textColor text-sm hover:underline"
-                    >info@piffdeals.lv</a
+                    >info@piffdeals.lvasdasdasd</a
                 >
                 <a
                     href="tel:+37129999999"
